@@ -11,13 +11,15 @@
 #include "solver.h"
 #include "command.h"
 #include "board.h"
+#include "error.h"
 #define blockRows 3
 #define blockColumns 3
+
+typedef enum{
+    INIT_MODE, SOLVE_MODE, EDIT_MODE
+} GAME_MODE;
+
 typedef struct{
-	/*each board contains numbers in range 0-9
-	 * the regular board (and not the boardSol) might contain negative numbers s.t:
-		 * if board[i][j] = -j then the value of the (i,j) cell is j and the
-		 * cell is FIXED*/
 	int seed;
 	board* board;
 	board* boardSol;
@@ -25,6 +27,9 @@ typedef struct{
 	/*0 - for regular cell
 	* 1 - for fixed cell
 	* 2 - for error cell*/
+	GAME_MODE currMode;
+	int mark_errors;
+
 
 } game;
 game* createGame(int seed);
@@ -53,6 +58,7 @@ void buildBoardFromSolution(game* Pgame,int fixedCells);
  * if the command is exit or restart, the main function handles the
  * flow of the game
  */
-void executeCommand(command* PcurrCommand,game* Pgame);
+ERROR executeCommand(command* currCommand, game* currGame);
+void executeCommandDEPRECATED(command* PcurrCommand, game* Pgame);
 
 #endif /* GAME_H_ */
