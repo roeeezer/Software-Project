@@ -8,14 +8,18 @@
 
 #ifndef COMMAND_H_
 #define COMMAND_H_
+
+#define MAX_INPUT_SIZE 1024
 typedef enum{
-	SET,HINT,VALIDATE,RESTART,EX, NONE
+	SOLVE, EDIT, MARK_ERRORS, PRINT_BOARD, GUESS,
+	GENERATE, UNDO, REDO, SAVE, GUESS_HINT,
+	NUM_SOLUTIONS, AUTOFILL, RESET, SET,HINT,VALIDATE,EXIT, NONE
 }commandName;
 typedef struct{
 	commandName name; /*what type of command is it*/
-	int j, i, z; /*The column, row, and, if necessary, value of the command*/
+	char* param1, *param2, *param3; /*At most 3 commands*/
 }command;
 command* createCommand();
 void destroyCommand(command* PcurrCommand);
-
+int numberOfParams(commandName name);
 #endif /* COMMAND_H_ */

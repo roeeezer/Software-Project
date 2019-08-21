@@ -13,6 +13,8 @@
 #include "solver.h"
 #include "command.h"
 #include "board.h"
+#include "error.h"
+#include "gurobi_c.h"
 #include "files.h"
 #include <time.h>
 
@@ -58,6 +60,7 @@ int main(){
 
 int finalMain(int argc, char *argv[]){
 	int exitInd,restartInd,seed;
+	ERROR commandError;
 	game* Pgame; /*need to use createGame?*/
 	seed = argc;
 	seed = atoi(argv[1]);
@@ -76,12 +79,12 @@ int finalMain(int argc, char *argv[]){
 
 			command* PcurrCommand=createCommand();
 			/*check malloc success*/
-            readCommand(PcurrCommand);
+            commandError = readCommand(PcurrCommand, Pgame);
 
-			exitInd=(PcurrCommand->name==EX);
+			exitInd=(PcurrCommand->name == EXIT);
 			restartInd=(PcurrCommand->name==RESTART);
 
-			executeCommand(PcurrCommand,Pgame);
+            executeCommandDEPRECATED(PcurrCommand, Pgame);
 			destroyCommand(PcurrCommand);
 		}
 		destroyGame(Pgame);
