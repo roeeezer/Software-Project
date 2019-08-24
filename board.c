@@ -77,7 +77,7 @@ int validAsignmentRow(board* b,int v,int i){
 	int boardColumns,k;
 	boardColumns = b->squareSideSize;
 	for(k=0;k<boardColumns;k++){
-		if(abs(getCell(b,i,k))==abs(v)){
+		if(getCell(b,i,k)==v){
 			return 0;
 		}
 	}
@@ -88,7 +88,7 @@ int validAsignmentColumn(board* b,int v,int j){
 	int boardRows,k;
 	boardRows = b->squareSideSize;
 		for(k=0;k<boardRows;k++){
-			if(abs(getCell(b,k,j))==abs(v)){
+			if(getCell(b,k,j)==v){
 				return 0;
 			}
 		}
@@ -109,7 +109,7 @@ int validAsignmentBlock(board* b,int v,int i,int j){
 
 	for(k=blockIndices[0]*b->rows;k<(blockIndices[0]+1)*b->rows;k++){
 		for(r=blockIndices[1]*b->columns;r<(blockIndices[1]+1)*b->columns;r++){
-			if(abs(getCell(b,k,r))==abs(v)){
+			if(getCell(b,k,r)==v){
 				return 0;
 					}
 		}
@@ -203,15 +203,15 @@ void printCellValue(board* b,int i,int j,board* bTypes){
 	if(val==0){
 			printf("  ");
 		}
-	else if(type==0){
+	else if(type==REGULAR){
 		printf(" %d",val);
 	}
 
-	else if(type==1){
+	else if(type==FIXED){
 		printf("%d.",val);
 
 		}
-	else if(type==1){
+	else if(type==ERROR){
 		printf("%d*",val);
 
 			}

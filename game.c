@@ -61,7 +61,7 @@ void buildBoardFromSolution(game*Pgame,int fixedCells){
 	for (i=0; i < fixedCells; i++){
 	    x = rand() % size;
         y = rand() % size;
-        while (getCell(Pgame->board, y, x) < 0){
+        while (getCell(Pgame->boardTypes, y, x) ==1){
             x = rand() % size;
             y = rand() % size;
         }

@@ -6,10 +6,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "solver.h"
-
+#define PRINTER -1
 
 int DeterministicBackTracingRec(board* b,board* bSol,int startInd){
-
 	int s,cellsInBoard,v,nextEmptyCell;
 	int indices[2];
 	s=b->squareSideSize;
@@ -17,7 +16,7 @@ int DeterministicBackTracingRec(board* b,board* bSol,int startInd){
 	if(startInd==cellsInBoard){
 		/*the entire board was solved successfully therefore the recursion
 		 * call called a cell which is beyond the last cell(cell[81] in a regular
-		 * 3X3 soduko*/
+		 * 3X3 sudoku*/
 		return 1;
 	}
 	oneDto2Dindices(b,indices,startInd);
@@ -27,17 +26,127 @@ int DeterministicBackTracingRec(board* b,board* bSol,int startInd){
 		if(validAsignment(bSol,v,indices[0],indices[1])){
 			setCell(bSol,indices[0],indices[1],v);
 			if(DeterministicBackTracingRec(b,bSol,nextEmptyCell)){
-
 				return 1;
 			}
-
 		}
 		setCell(bSol,indices[0],indices[1],0);
 	}
 	return 0;
-
-
 }
+/*
+int BackTracingWithStack(board* b,board* bSol){
+	int s,cellsInBoard,v,firstEmptyCell,startInd;
+	int indices[2];
+	s=b->squareSideSize;
+	cellsInBoard=s*s;
+	firstEmptyCell = findNextEmptyCell(b,0);
+	stack s = createStack();
+	push(s,firstEmptyCell);
+	while(!emptyStack()){
+		startInd = top(s);
+		if(startInd==cellsInBoard){
+				the entire board was solved successfully therefore the recursion
+				  call called a cell which is beyond the last cell(cell[81] in a regular
+				  3X3 sudoku
+				return 1;
+			}
+
+	}
+}
+*/
+int exhaustiveBackTracingWithStack(board* b,board* bSol){
+	int i=0,s,cellsInBoard,currInd,nextEmptyInd,returnVal=0,addReturnVal,skipToNextStackNode=0;
+	int indices[2];stack* Pstack;stackNode* currNode;
+	s=b->squareSideSize;
+	cellsInBoard=s*s;
+	currInd = findNextEmptyCell(b,0);
+	Pstack = createStack(currInd,0);
+	while(!emptyStack(Pstack)){
+		skipToNextStackNode=0;
+		currNode = top(Pstack);
+		currInd = currNode->cellIndex;
+		if(i<PRINTER){
+			printf("node Index:%d, counter:%d, fromVal:%d\n",currNode->cellIndex,currNode->counter,currNode->fromVal);
+			i++;}
+		if(addReturnVal&&!skipToNextStackNode){
+			currNode->counter+=returnVal;
+			addReturnVal=0;
+			/*currNode->fromVal++;*/
+			}
+		if(currInd==cellsInBoard&&!skipToNextStackNode){
+			addReturnVal=1;
+			returnVal= 1;
+			deleteTop(Pstack);
+			skipToNextStackNode=1;}
+		oneDto2Dindices(b,indices,currInd);
+		nextEmptyInd=findNextEmptyCell(b,currInd+1);
+		for(;currNode->fromVal<=s&&!skipToNextStackNode;currNode->fromVal++){
+			if(i<PRINTER){
+			printf("loop v:=%d \n",currNode->fromVal);
+			}
+		if(validAsignment(bSol,currNode->fromVal,indices[0],indices[1])){
+			if(i<PRINTER){
+			printf("valid assignment! \n");
+						}
+			setCell(bSol,indices[0],indices[1],currNode->fromVal);
+			if(i<PRINTER){
+			printf("push index:%d\n",nextEmptyInd);
+			}
+			push(Pstack,nextEmptyInd,0);
+			skipToNextStackNode=1;
+	}
+		}
+		if(currNode->fromVal>= s && !skipToNextStackNode){
+			if(i<PRINTER){
+			printf("finished all values!\n");
+			}
+			setCell(bSol,indices[0],indices[1],0);
+			addReturnVal=1;
+			returnVal= currNode->counter;
+			if(i<PRINTER){
+				printf("return val updated to:%d\n",returnVal);
+				printf("going to delete top nodeInd:%d\n",currNode->cellIndex);
+			}
+			deleteTop(Pstack);
+			skipToNextStackNode=1;}
+		/*if(i<PRINTER){
+		printf("skipInd:%d\n",skipToNextStackNode);}*/
+		}
+	/*tmp*/
+	if(!addReturnVal){
+		printf("error");
+	}
+	destroyStack(Pstack);
+	return returnVal;
+}
+
+		int exhaustiveBackTracingRec(board* b,board* bSol,int startInd){
+			int s,cellsInBoard,v,nextEmptyCell,counter=0;
+			int indices[2];
+			s=b->squareSideSize;
+			cellsInBoard=s*s;
+			if(startInd==cellsInBoard){
+				/*the entire board was solved successfully therefore the recursion
+				 * call called a cell which is beyond the last cell(cell[81] in a regular
+				 * 3X3 sudoku*/
+				/*printf("startInd=%d \t res=%d\n",startInd,1);*/
+				return 1;
+			}
+			oneDto2Dindices(b,indices,startInd);
+			nextEmptyCell=findNextEmptyCell(b,startInd+1);
+			for(v=1;v<=s;v++){
+				/*squareSideSize is the maximal possible value of a single digit in the board*/
+				if(validAsignment(bSol,v,indices[0],indices[1])){
+					setCell(bSol,indices[0],indices[1],v);
+					counter+= exhaustiveBackTracingRec(b,bSol,nextEmptyCell);
+
+				}
+
+			}
+			setCell(bSol,indices[0],indices[1],0);
+			/*printf("startInd=%d \t counter=%d\n",startInd,counter);*/
+			return counter;
+		}
 int createValidValuesList(int* valuesList,board* bSol,int i,int j){
 	int v,curr;
 	curr=0;
@@ -117,6 +226,18 @@ int findDeterministicSolution(board* Pboard,board* PboardSol){
     destroyBoard(pSol);
 	return 0;
 }
+/*
+int findNumberOfSolutions(board* Pboard,board* PboardSol){
+	int res;
+	board* pSol = createBoard(Pboard->rows, Pboard->columns);
+	copyBoard(pSol,Pboard);
+	res=exhaustiveBackTracingWithStack(Pboard,pSol);
+
+    destroyBoard(pSol);
+    return res;
+
+}
+*/
 int findRandomSolution(board* Pboard,board* PboardSol){
 	int firstEmptyCell;
 	copyBoard(PboardSol,Pboard);

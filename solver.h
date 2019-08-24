@@ -9,6 +9,7 @@
 #ifndef SOLVER_H_
 #define SOLVER_H_
 #include "board.h"
+#include "stack.h"
 void solveBoardRandomly(board* sol);
 /*recursively implements the deterministic back tracking algorithm of the board
  * from cell number startInd (a 1D index) to the last cell in the board*/
@@ -35,6 +36,7 @@ int findRandomSolution(board* Pboard,board* PboardSol);
 /*recursively implements the random back tracking algorithm of the board
  * from cell number startInd (a 1D index) to the last cell in the board*/
 int RandomBackTracingRec(board* b,board* bSol,int startInd);
-
+int exhaustiveBackTracingRec(board* b,board* bSol,int startInd);
+int exhaustiveBackTracingWithStack(board* b,board* bSol);
 
 #endif /* SOLVER_H_ */

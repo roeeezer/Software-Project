@@ -13,8 +13,43 @@
 #include "solver.h"
 #include "command.h"
 #include "board.h"
+#include <time.h>
 
-int main(int argc, char *argv[]){
+void exhaustiveBackTrackingTester(){
+	clock_t start, end;
+	double cpu_time_used;
+	game* Pgame=createGame(2);
+	resetBoard(Pgame->board,0);
+	resetBoard(Pgame->boardSol,0);
+	resetBoard(Pgame->boardTypes,0);
+	buildBoardRandom(60,Pgame);
+	printBoard(Pgame->board,Pgame->boardTypes);
+	copyBoard(Pgame->boardSol,Pgame->board);
+
+
+
+
+     start = clock();
+     printf("old func:%d\n",exhaustiveBackTracingRec(Pgame->board,Pgame->boardSol,0));
+     end = clock();
+     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+     printf("time:%f\n",cpu_time_used);
+     start = clock();
+     printf("new func:%d\n",exhaustiveBackTracingWithStack(Pgame->board,Pgame->boardSol));
+     end = clock();
+     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+     printf("time:%f\n",cpu_time_used);
+
+}
+int main(){
+	exhaustiveBackTrackingTester();
+	return 1;
+
+
+}
+
+
+int finalMain(int argc, char *argv[]){
 	int exitInd,restartInd,seed;
 	game* Pgame; /*need to use createGame?*/
 	seed = argc;

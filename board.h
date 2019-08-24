@@ -20,6 +20,10 @@
  * columns - number of columns in each block of the soduko board
  * squareSideSize = rows*columns - saved for readability and convenience
  * */
+/*cell Types in boardTypes of the game */
+#define REGULAR 0
+#define FIXED 1
+#define ERROR 2
 typedef struct{
 	int* boardArr;
 	int rows;
