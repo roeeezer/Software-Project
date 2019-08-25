@@ -30,3 +30,7 @@ void saveGame(board* b,board* bTypes,char* path){
 	}
 	fclose(fo);
 }
+ERROR* loadBoard(board* b,board* bTypes,char* path){
+	printf("%d%d%s",b,bTypes,path);
+	return NULL;
+}

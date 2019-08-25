@@ -9,15 +9,24 @@
 #define PARSER_H_
 #include "command.h"
 #include "game.h"
-/*getIntializationInput
+#include "error.h"
+/*getInitializationInput
  * returns the number of fixed cells (cells o fill)
  *  the user wants at the beginning*/
-int getIntializationInput();
+int getInitializationInput();
+/**
+ * Checks that the command is legal for the current game state.
+ * i.e., checks for type 3 and 4 errors in project specifications, page 8.
+ * @param pCommand the
+ * @param pGame
+ * @return the appropriate error, or NO_ERROR if command is legal.
+ */
+ERROR checkLegalParam(command* pCommand, game* pGame);
 
 /*Reads the command from the user
  * returns a valid command if possible. Otherwise,
  * returns a command with name equal to NONE */
-void *readCommand(command *pCommand);
+ERROR readCommand(command *pCommand, game* pGame);
 
 
 #endif /* PARSER_H_ */

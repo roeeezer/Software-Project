@@ -211,7 +211,7 @@ void printCellValue(board* b,int i,int j,board* bTypes){
 		printf("%d.",val);
 
 		}
-	else if(type==ERROR){
+	else if(type==ERR){
 		printf("%d*",val);
 
 			}
