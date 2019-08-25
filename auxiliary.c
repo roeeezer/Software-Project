@@ -6,3 +6,4 @@
  *      General auxiliary functions
  */
 
+void emptyFunc(){}

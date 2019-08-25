@@ -33,10 +33,11 @@ stackNode* top(stack* s){
 	return s->topNode;
 }
 void deleteTop(stack* s){
+	stackNode* prevTop;
 	if(emptyStack(s)){
 		return;
 	}
-	stackNode* prevTop = s->topNode;
+	prevTop = s->topNode;
 	s->topNode = prevTop->lower;
 	destroyStackNode(prevTop);
 }

@@ -13,6 +13,7 @@
 #include "solver.h"
 #include "command.h"
 #include "board.h"
+#include "files.h"
 #include <time.h>
 
 void exhaustiveBackTrackingTester(){
@@ -22,12 +23,9 @@ void exhaustiveBackTrackingTester(){
 	resetBoard(Pgame->board,0);
 	resetBoard(Pgame->boardSol,0);
 	resetBoard(Pgame->boardTypes,0);
-	buildBoardRandom(60,Pgame);
+	buildBoardRandom(35,Pgame);
 	printBoard(Pgame->board,Pgame->boardTypes);
 	copyBoard(Pgame->boardSol,Pgame->board);
-
-
-
 
      start = clock();
      printf("old func:%d\n",exhaustiveBackTracingRec(Pgame->board,Pgame->boardSol,0));
@@ -41,11 +39,20 @@ void exhaustiveBackTrackingTester(){
      printf("time:%f\n",cpu_time_used);
 
 }
+void filesTester(){
+	game* Pgame=createGame(1);
+	resetBoard(Pgame->board,0);
+	resetBoard(Pgame->boardSol,0);
+	buildBoardRandom(35,Pgame);
+	resetBoard(Pgame->boardTypes,REGULAR);
+	printBoard(Pgame->board,Pgame->boardTypes);
+	copyBoard(Pgame->boardSol,Pgame->board);
+	saveGame(Pgame->board,Pgame->boardTypes,"C:\fileName.txt");
+
+}
 int main(){
-	exhaustiveBackTrackingTester();
+	filesTester();
 	return 1;
-
-
 }
 
 
