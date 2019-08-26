@@ -15,11 +15,11 @@ ERROR saveGame(board* b,board* bTypes,char* path,int gameMode){
 	s = b->squareSideSize;
 	if(!boardIsValid(b)){
 		/*TODO: deal with the error*/
-		return NULL;
+		return TMP_ERROR;
 	}
 	if(erroneousBoard(bTypes)){
 		/*TODO: deal with the error*/
-		return NULL;
+		return TMP_ERROR;
 	}
 	fo = fopen(path,"w+");
 	if(fo==NULL){
@@ -41,14 +41,14 @@ ERROR saveGame(board* b,board* bTypes,char* path,int gameMode){
 			}
 		}
 	}
-	if(fclose(fo)==NULL){
+	if(fclose(fo)==-1){/*fclose returns EOF when it fails*/
 		return FCLOSE_ERROR;
 	}
 	return NO_ERROR;
 }
 /*b,bTypes should NOT be the real boards of the current game, they should be 2 new
  * empty boards so we can restore the old game in case the load command has failed*/
-ERROR* loadBoard(board* b,board* bTypes,char* path){
+ERROR loadBoard(board* b,board* bTypes,char* path){
 	int n,m;
 	FILE* f;
 	f = fopen(path,"r");
@@ -59,13 +59,13 @@ ERROR* loadBoard(board* b,board* bTypes,char* path){
 	if(fscanf(f,"%d",&n)<=0){
 		return INVALID_FILE_FORMAT;
 	}
-	if(fscanf(f,"%d",&n)<=0){
+	if(fscanf(f,"%d",&m)<=0){
 		return INVALID_FILE_FORMAT;
 	}
-	if(fclose(f)==NULL){
+	if(fclose(f)==-1){/*fclose returns EOF when it fails*/
 		return FCLOSE_ERROR;
 	}
 	printf("n:%d, m:%d\n",n,m);
 	printf("%d%d%s",b,bTypes,path);
-	return NULL;
+	return NO_ERROR;
 }

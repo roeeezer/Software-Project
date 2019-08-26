@@ -9,6 +9,6 @@
 #include "board.h"
 #include "error.h"
 
-void saveGame(board* b,board* bTypes,char* path,int gameMode);
-
+ERROR saveGame(board* b,board* bTypes,char* path,int gameMode);
+ERROR loadBoard(board* b,board* bTypes,char* path);
 #endif /* FILES_H_ */

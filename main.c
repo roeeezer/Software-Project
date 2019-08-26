@@ -62,12 +62,12 @@ int main(){
 
 
 
-
+/*
 int finalMain(int argc, char *argv[]){
 	int exitInd,restartInd,seed;
-	/*Roee for compilation
-	 * ERROR commandError;*/
-	game* Pgame; /*need to use createGame?*/
+
+	 * ERROR commandError;*
+	game* Pgame; *need to use createGame?*
 	seed = argc;
 	seed = atoi(argv[1]);
     srand(seed);
@@ -84,20 +84,21 @@ int finalMain(int argc, char *argv[]){
 		while(!exitInd&&!restartInd){
 
 			command* PcurrCommand=createCommand();
-			/*check malloc success*/
-            /*Roee for compilation
+			*check malloc success*
+            *Roee for compilation
              * commandError = readCommand(PcurrCommand, Pgame);
 
 			exitInd=(PcurrCommand->name == EXIT);
-			restartInd=(PcurrCommand->name==RESTART);*/
+			restartInd=(PcurrCommand->name==RESTART);
 
             executeCommandDEPRECATED(PcurrCommand, Pgame);
-			destroyCommand(PcurrCommand);
+			destroyCommand(PcurrCommand);*
 		}
 		destroyGame(Pgame);
 	}
 	printf("Exiting...\n");
 	return 0;
 }
+*/
 
 
