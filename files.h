@@ -8,6 +8,7 @@
 #define FILES_H_
 #include "board.h"
 #include "error.h"
-void saveGame(board* b,board* bTypes,char* path);
+
+void saveGame(board* b,board* bTypes,char* path,int gameMode);
 
 #endif /* FILES_H_ */

@@ -37,6 +37,7 @@ int findRandomSolution(board* Pboard,board* PboardSol);
  * from cell number startInd (a 1D index) to the last cell in the board*/
 int RandomBackTracingRec(board* b,board* bSol,int startInd);
 int exhaustiveBackTracingRec(board* b,board* bSol,int startInd);
+/*@pre bSol is a copy of the board*/
 int exhaustiveBackTracingWithStack(board* b,board* bSol);
 
 #endif /* SOLVER_H_ */

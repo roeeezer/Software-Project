@@ -12,6 +12,7 @@
 #include "command.h"
 #include "board.h"
 #include "error.h"
+#include "files.h"
 #define blockRows 3
 #define blockColumns 3
 

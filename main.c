@@ -7,7 +7,6 @@
 #include "SPBufferset.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 #include "parser.h"
 #include "game.h"
 #include "solver.h"
@@ -18,7 +17,10 @@
 #include "files.h"
 #include <time.h>
 
-void exhaustiveBackTrackingTester(){
+void loaderTester(){
+	loadBoard(NULL,NULL,"board");
+}
+/*void exhaustiveBackTrackingTester(){
 	clock_t start, end;
 	double cpu_time_used;
 	game* Pgame=createGame(2);
@@ -40,8 +42,8 @@ void exhaustiveBackTrackingTester(){
      cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
      printf("time:%f\n",cpu_time_used);
 
-}
-void filesTester(){
+}*/
+void saveGameTester(){
 	game* Pgame=createGame(1);
 	resetBoard(Pgame->board,0);
 	resetBoard(Pgame->boardSol,0);
@@ -49,11 +51,11 @@ void filesTester(){
 	resetBoard(Pgame->boardTypes,REGULAR);
 	printBoard(Pgame->board,Pgame->boardTypes);
 	copyBoard(Pgame->boardSol,Pgame->board);
-	saveGame(Pgame->board,Pgame->boardTypes,"C:\fileName.txt");
+	saveGame(Pgame->board,Pgame->boardTypes,"board.txt",2);
 
 }
 int main(){
-	filesTester();
+	saveGameTester();
 	return 1;
 }
 

@@ -217,3 +217,20 @@ void printCellValue(board* b,int i,int j,board* bTypes){
 			}
 	printf(" ");
 }
+int boardIsValid(board* b){
+	/*TODO: Omer return true if it has a solution*/
+	printf("%d",b);
+	return 1;
+}
+int erroneousBoard(board* bTypes){
+	int i,j,s = bTypes->squareSideSize;
+	for(i=0;i<s;i++){
+		for(j=0;j<s;j++){
+			if(getCell(bTypes,i,j)==ERR){
+				return 1;
+			}
+		}
+	}
+	return 0;
+}
+
