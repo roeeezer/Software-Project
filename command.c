@@ -60,4 +60,5 @@ int numberOfParams(commandName name) {
         case NONE:
             return -1;
     }
+    return -1;
 }

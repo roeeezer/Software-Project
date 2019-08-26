@@ -23,6 +23,7 @@ typedef enum {
     INVALID_GAME_MODE_SOLVE_EDIT,
     INVALID_GAME_MODE_SOLVE,
     INVALID_GAME_MODE_EDIT,
+    GUROBI_ERROR,
     UNKNOWN_ERROR /*An unknown error occurred. For checking if we reached unexpected situations*/
 } ERROR;
 void printErrorMessage(ERROR error, command *pCommand);
