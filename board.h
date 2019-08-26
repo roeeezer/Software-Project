@@ -23,7 +23,7 @@
 /*cell Types in boardTypes of the game */
 #define REGULAR 0
 #define FIXED 1
-#define ERROR 2
+#define ERRONEOUS 2
 typedef struct{
 	int* boardArr;
 	int rows;
@@ -43,6 +43,8 @@ int getCell(board* Pboard,int i,int j);
 void setCell(board* Pboard,int i,int j,int val);
 /*@post: all cells in the board contains the value: v*/
 void resetBoard(board* b,int v);
+/*returns 1 if cell is empty*/
+int emptyCell(board* Pboard,int i,int j);
 /*prints the board according the format described in the instructions*/
 int printBoard(board* b,board* bTypes);
 /*prints row of blocks number blockRow in the board

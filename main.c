@@ -13,6 +13,7 @@
 #include "solver.h"
 #include "command.h"
 #include "board.h"
+#include "error.h"
 #include "files.h"
 #include <time.h>
 
@@ -58,12 +59,12 @@ int main(){
 
 int finalMain(int argc, char *argv[]){
 	int exitInd,restartInd,seed;
+	ERROR commandError;
 	game* Pgame; /*need to use createGame?*/
 	seed = argc;
 	seed = atoi(argv[1]);
     srand(seed);
 	exitInd=0;
-
 	while(!exitInd){
 	    restartInd = 0;
 		exitInd = initializeGame(seed, &Pgame);
@@ -76,12 +77,14 @@ int finalMain(int argc, char *argv[]){
 
 			command* PcurrCommand=createCommand();
 			/*check malloc success*/
-            readCommand(PcurrCommand);
+            commandError = readCommand(PcurrCommand, Pgame);
 
-			exitInd=(PcurrCommand->name==EX);
-			restartInd=(PcurrCommand->name==RESTART);
-
-			executeCommand(PcurrCommand,Pgame);
+			exitInd=(PcurrCommand->name == EXIT);
+			/*restartInd=(PcurrCommand->name==RESTART);*/
+            if (commandError) {
+                printf("nothing\n"); /*TODO: remove me*/
+            }
+            executeCommandDEPRECATED(PcurrCommand, Pgame);
 			destroyCommand(PcurrCommand);
 		}
 		destroyGame(Pgame);
