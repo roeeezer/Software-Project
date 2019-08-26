@@ -24,4 +24,4 @@ int countVars(board *pBoard, int N);
 
 
 
-#endif //GIT_GUROBI_H
+#endif

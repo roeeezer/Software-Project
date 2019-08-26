@@ -6,10 +6,14 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <vss.h>
+
 #include "command.h"
 #include "game.h"
 #include "error.h"
+
+typedef enum {
+    X, Y, Z
+} SETPARAMS;
 
 int correctNumberOfParams(commandName name, int numOfParams);
 int readInteger(char *token, int *pInt);
@@ -23,9 +27,8 @@ ERROR checkGuessParam(char *param);
 
 ERROR checkCommandValidForMode(commandName name, GAME_MODE mode);
 
-typedef enum {
-    X, Y, Z
-} SETPARAMS;
+ERROR checkSetParam(char *param1, SETPARAMS paramOrder);
+
 
 int getInitializationInput(){
 	int res,validScan;
@@ -104,6 +107,7 @@ ERROR matchCommandName(const char *token, commandName *name) {
  */
 ERROR checkLegalParam(command* pCommand, game* pGame) {
     char * param1, *param2, *param3;
+    if (!pGame) return UNKNOWN_ERROR; /*TODO: remove this*/
     param1 = pCommand->param1;
     param2 = pCommand->param2;
     param3 = pCommand->param3;
@@ -129,11 +133,11 @@ ERROR checkLegalParam(command* pCommand, game* pGame) {
         case GUESS:
             return checkGuessParam(param1);
         case GENERATE:
-            return checkGenerateParams(param1, param2);
+            /*return checkGenerateParams(param1, param2);TODO: uncomment this*/
         case GUESS_HINT:
-            return checkGuessHintParams(param1, param2);
+            /*return checkGuessHintParams(param1, param2);TODO: uncomment this*/
         case HINT:
-            return checkHintParams(param1, param2);
+            /*return checkHintParams(param1, param2);TODO: uncomment this*/
         case NONE:
         default:
             break;
@@ -156,9 +160,15 @@ ERROR checkSetParams(char *param1, char *param2, char *param3) {
     error3 = checkSetParam(param3, Z);
     if (error1 != NO_ERROR)
         return error1;
-    if error2
+    if (error2) return NO_ERROR; /*TODO: changeme*/
+    if (error3) return NO_ERROR; /*TODO: changme*/
     return NO_ERROR;
 }
+
+ERROR checkSetParam(char *param1, SETPARAMS paramOrder) {
+    if (!param1 || !paramOrder) return UNKNOWN_ERROR;
+    return NO_ERROR;
+} /*TODO: uncomment this*/
 
 ERROR checkMarkErrorsParam(char *param1) {
 

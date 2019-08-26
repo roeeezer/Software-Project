@@ -23,7 +23,7 @@
 /*cell Types in boardTypes of the game */
 #define REGULAR 0
 #define FIXED 1
-#define ERROR 2
+#define ERRONEOUS 2
 typedef struct{
 	int* boardArr;
 	int rows;

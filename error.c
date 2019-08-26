@@ -50,5 +50,8 @@ void printErrorMessage(ERROR error, command *pCommand){
         case INVALID_GAME_MODE_EDIT:
             printf("Error: This command is only available in Edit mode.\n");
             break;
+        case GUROBI_ERROR:
+            printf("Error: Gurobi has encountered an error!\n");
+            break;
     }
 }

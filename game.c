@@ -11,6 +11,8 @@
 #include "files.h"
 
 
+ERROR loadBoard(game *game, char *path);
+
 /*n is the number of rows in each board block
  *m is the number of columns in each board block
  *the entire board contains mXn blocks- each contains nXm cells */
@@ -80,12 +82,12 @@ ERROR executeCommand(command* pCommand, game* pGame){
     /*After this point, command is assumed legal for this game state.*/
     switch(pCommand->name) {
         case SOLVE:
-            error = loadBoard(pGame, pCommand->param1); /*TODO: @Roee implement loadBoard, param1 is the path*/
+            /*error = loadBoard(pGame, pCommand->param1); TODO: @Roee implement loadBoard, param1 is the path TODO: uncomment this*/
             if (error == NO_ERROR)
                 pGame->currMode = SOLVE_MODE;
             break;
         case EDIT:
-            error = loadBoard(pGame, pCommand->param1);
+            /*error = loadBoard(pGame, pCommand->param1); TODO: uncomment this*/
             if (error == NO_ERROR)
                 pGame->currMode = EDIT_MODE;
             break;
@@ -98,41 +100,41 @@ ERROR executeCommand(command* pCommand, game* pGame){
             error = NO_ERROR;
             break;
         case GUESS:
-            error = guess(pGame, atof(pCommand->param1));
+            /*error = guess(pGame, atof(pCommand->param1));*/
             break;
         case GENERATE:
-            error = generate(pGame, atoi(pCommand->param1), atoi(pCommand->param2));
+            /*error = generate(pGame, atoi(pCommand->param1), atoi(pCommand->param2)); TODO: uncomment this*/
             break;
         case UNDO:
-            error = undo_move(pGame); /*TODO: @Roee implement */
+            /* error = undo_move(pGame); TODO: @Roee implement TODO: uncomment this*/
             break;
         case REDO:
-            error = redo_move(pGame); /*TODO: @Roee implement*/
+            /*error = redo_move(pGame); TODO: @Roee implement TODO: uncomment this*/
             break;
         case SAVE:
-            error = saveBoard(pGame, pCommand->param1); /*TODO: @Roee implement*/
+            /*error = saveBoard(pGame, pCommand->param1); TODO: @Roee implement TODO: uncomment this*/
             break;
         case GUESS_HINT:
-            error = guessHint(pGame, atoi(pCommand->param1), atoi(pCommand->param2));
+            /* error = guessHint(pGame, atoi(pCommand->param1), atoi(pCommand->param2)); TODO: uncomment this*/
             break;
         case NUM_SOLUTIONS:
-            error = numSolutions(pGame->board); /*TODO: @Roee implement.*/
+            /*error = numSolutions(pGame->board); TODO: @Roee implement.TODO: uncomment this*/
             break;
         case AUTOFILL:
-            error = autofillBoard(pGame->board); /*TODO: @Roee? implement this*/
+            /*error = autofillBoard(pGame->board); TODO: @Roee? implement this TODO: uncomment this*/
             break;
         case RESET:
-            error = fullResetBoard(pGame); /*TODO: @Roee implement this*/
+            /*error = fullResetBoard(pGame); TODO: @Roee implement this TODO: uncomment this*/
             break;
         case SET:
-            executeSetCommand(pGame, atoi(pCommand->param1), atoi(pCommand->param2), atoi(pCommand->param3));
-            /*TODO: @Omer implement */
+            /*executeSetCommand(pGame, atoi(pCommand->param1), atoi(pCommand->param2), atoi(pCommand->param3));*/
+            /*TODO: @Omer implement TODO: uncomment this*/
             break;
         case HINT:
-            error = hint(pGame, atoi(pCommand->param1), atoi(pCommand->param2));
+            /*error = hint(pGame, atoi(pCommand->param1), atoi(pCommand->param2));TODO: uncomment this*/
             break;
         case VALIDATE:
-            error = validateBoard(pGame);
+            /*error = validateBoard(pGame);TODO: uncomment this*/
             break;
         case EXIT:
             error = EXIT_MESSAGE;
@@ -143,13 +145,18 @@ ERROR executeCommand(command* pCommand, game* pGame){
     }
     return error;
 }
+
+/*ERROR loadBoard(game *game, char *path){} TODO: implement this*/
+
 /*TODO: Remove this function*/
 void executeCommandDEPRECATED(command* PcurrCommand, game* Pgame){
     /*Currently treats NONE command name as illegal command*/
 	int validBoard;
-	int j= PcurrCommand->param1 - 1,i= PcurrCommand->param2 - 1,z=PcurrCommand->param3; /*j=column(i.e j) i = row(i.e. i)*/
-	int currval = getCell(Pgame->board, i, j);
-	if ((PcurrCommand->name != EXIT && PcurrCommand->name != RESTART && boardSolved(Pgame->board)) ||
+	int j, i, z;
+	int currval;
+	j=i=z=1;/*= PcurrCommand->param1 - 1,i= PcurrCommand->param2 - 1,z=PcurrCommand->param3; j=column(i.e j) i = row(i.e. i)*/
+	currval = getCell(Pgame->board, i, j);
+	if ((PcurrCommand->name != EXIT && PcurrCommand->name != NONE && boardSolved(Pgame->board)) ||
 	     PcurrCommand->name == NONE) {
 	    printf("Error: invalid command\n");
 	    return;

@@ -21,6 +21,8 @@ ERROR addColConstraints(GRBmodel *model, VAR **varArr, int *ind, double *val, in
 
 ERROR addBlockConstraints(GRBmodel *model, VAR **varArr, int *ind, double *val, int varCount, board *pBoard);
 
+void createRandomObjFunction(double *obj);
+
 ERROR setUpGurobi(board *pBoard, int ilp) {
     GRBenv *env;
     GRBmodel *model;
@@ -157,6 +159,12 @@ ERROR setUpGurobi(board *pBoard, int ilp) {
     return error;
 
 }
+
+void createRandomObjFunction(double *obj) {
+    obj[0] = 0; /*TODO: changeme*/
+
+}
+
 /**
  * Adds block constraints to the model.
  * @param model
@@ -168,7 +176,7 @@ ERROR setUpGurobi(board *pBoard, int ilp) {
  * @return
  */
 ERROR addBlockConstraints(GRBmodel *model, VAR **varArr, int *ind, double *val, int varCount, board *pBoard) {
-    int rowLen, colLen, blockRow, blockCol, index, i,j,v, N, numOfCols, numOfRows;
+    int rowLen, colLen, blockRow, blockCol, index, i,v, N, numOfCols, numOfRows;
     rowLen = pBoard->rows;
     colLen = pBoard->columns;
     N = pBoard->squareSideSize;
@@ -356,8 +364,8 @@ ERROR createVarArr(VAR **varArrP, int varCount, int N, board *pBoard) {
 }
 
 ERROR solveGurobi(board* pBoard, int ilp){
-
-
+    if (!pBoard || !ilp) return NO_ERROR;
+    return NO_ERROR; /*TODO: Changme*/
 }
 int countVars(board *pBoard, int N) {
     int i, j,k, varCount;
