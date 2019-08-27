@@ -17,9 +17,7 @@
 #include "files.h"
 #include <time.h>
 
-void loaderTester(){
-	loadBoard(NULL,NULL,"board1.txt");
-}
+
 void exhaustiveBackTrackingTester(){
 	clock_t start, end;
 	double cpu_time_used;
@@ -54,7 +52,25 @@ void saveGameTester(){
 	saveGame(Pgame->board,Pgame->boardTypes,"board.txt",2);
 
 }
+void loaderTester(){
+	board *b,*bt;
+	game* Pgame=createGame(1);
+	b = Pgame->board;
+	bt = Pgame->boardTypes;
+/*
 
+	resetBoard(Pgame->boardSol,0);
+	buildBoardRandom(35,Pgame);
+
+	printBoard(b,bt);
+	saveGame(b,bt,"board1.txt",2);*/
+	resetBoard(b,0);
+	resetBoard(bt,REGULAR);
+	loadBoard(b,bt,"board1.txt");
+	printf("After loading:\n");
+	printBoard(b,bt);
+
+}
 int finalMain(int argc, char *argv[]){
 	int exitInd,restartInd,seed;
 	command* PcurrCommand;
