@@ -18,7 +18,7 @@
 #include <time.h>
 
 void loaderTester(){
-	loadBoard(NULL,NULL,"board");
+	loadBoard(NULL,NULL,"board1.txt");
 }
 /*void exhaustiveBackTrackingTester(){
 	clock_t start, end;
@@ -53,10 +53,6 @@ void saveGameTester(){
 	copyBoard(Pgame->boardSol,Pgame->board);
 	saveGame(Pgame->board,Pgame->boardTypes,"board.txt",2);
 
-}
-int main(){
-	saveGameTester();
-	return 1;
 }
 
 
@@ -100,5 +96,8 @@ int finalMain(int argc, char *argv[]){
 	return 0;
 }
 */
-
+int main(){
+	loaderTester();
+	return 1;
+}
 
