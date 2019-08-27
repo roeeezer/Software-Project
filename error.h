@@ -27,6 +27,7 @@ typedef enum {
 	FCLOSE_ERROR,
 	INVALID_FILE_FORMAT,
 	TMP_ERROR,/*just for compilation reasons*/
+    GUROBI_ERROR,
     UNKNOWN_ERROR /*An unknown error occurred. For checking if we reached unexpected situations*/
 } ERROR;
 void printErrorMessage(ERROR error, command *pCommand);
