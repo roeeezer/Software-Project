@@ -20,7 +20,7 @@
 void loaderTester(){
 	loadBoard(NULL,NULL,"board1.txt");
 }
-/*void exhaustiveBackTrackingTester(){
+void exhaustiveBackTrackingTester(){
 	clock_t start, end;
 	double cpu_time_used;
 	game* Pgame=createGame(2);
@@ -42,7 +42,7 @@ void loaderTester(){
      cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
      printf("time:%f\n",cpu_time_used);
 
-}*/
+}
 void saveGameTester(){
 	game* Pgame=createGame(1);
 	resetBoard(Pgame->board,0);
@@ -58,12 +58,12 @@ void saveGameTester(){
 
 
 
-/*
+
 int finalMain(int argc, char *argv[]){
 	int exitInd,restartInd,seed;
 
-	 * ERROR commandError;*
-	game* Pgame; *need to use createGame?*
+	 /* ERROR commandError;*/
+	game* Pgame; /*need to use createGame?*/
 	seed = argc;
 	seed = atoi(argv[1]);
     srand(seed);
@@ -80,9 +80,9 @@ int finalMain(int argc, char *argv[]){
 		while(!exitInd&&!restartInd){
 
 			command* PcurrCommand=createCommand();
-			*check malloc success*
-            *Roee for compilation
-             * commandError = readCommand(PcurrCommand, Pgame);
+			/*check malloc success*/
+
+             commandError = readCommand(PcurrCommand, Pgame);
 
 			exitInd=(PcurrCommand->name == EXIT);
 			restartInd=(PcurrCommand->name==RESTART);
@@ -95,7 +95,7 @@ int finalMain(int argc, char *argv[]){
 	printf("Exiting...\n");
 	return 0;
 }
-*/
+
 int main(){
 	loaderTester();
 	return 1;

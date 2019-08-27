@@ -10,7 +10,7 @@
  * @param error
  * @param pCommand
  */
-/*
+
 void printErrorMessage(ERROR error, command *pCommand){
     switch(error) {
         case NO_ERROR:
@@ -52,4 +52,4 @@ void printErrorMessage(ERROR error, command *pCommand){
             break;
     }
 }
-*/
+

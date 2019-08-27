@@ -71,16 +71,16 @@ void buildBoardFromSolution(game*Pgame,int fixedCells){
         setCell(Pgame->boardTypes, y, x, 1);
 	}
 }
-/*Roee hidding for compilation
+
 ERROR executeCommand(command* pCommand, game* pGame){
     ERROR error;
     error = checkLegalParam(pCommand, pGame);
     if (error != NO_ERROR)
         return error;
-    After this point, command is assumed legal for this game state.
+    /*After this point, command is assumed legal for this game state.*/
     switch(pCommand->name) {
         case SOLVE:
-            error = loadBoard(pGame->board,pGame->boardTypes, pCommand->param1); TODO: @Roee implement loadBoard, param1 is the path
+            error = loadBoard(pGame->board,pGame->boardTypes, pCommand->param1); /*TODO: @Roee implement loadBoard, param1 is the path*/
             if (error == NO_ERROR)
                 pGame->currMode = SOLVE_MODE;
             break;
@@ -104,29 +104,29 @@ ERROR executeCommand(command* pCommand, game* pGame){
             error = generate(pGame, atoi(pCommand->param1), atoi(pCommand->param2));
             break;
         case UNDO:
-            error = undo_move(pGame); TODO: @Roee implement
+            error = undo_move(pGame); /*TODO: @Roee implement*/
             break;
         case REDO:
-            error = redo_move(pGame); TODO: @Roee implement
+            error = redo_move(pGame); /*TODO: @Roee implement*/
             break;
         case SAVE:
-            error = saveBoard(pGame, pCommand->param1); TODO: @Roee implement
+            error = saveBoard(pGame, pCommand->param1); /*TODO: @Roee implement*/
             break;
         case GUESS_HINT:
             error = guessHint(pGame, atoi(pCommand->param1), atoi(pCommand->param2));
             break;
         case NUM_SOLUTIONS:
-            error = numSolutions(pGame->board); TODO: @Roee implement.
+            error = numSolutions(pGame->board); /*TODO: @Roee implement.*/
             break;
         case AUTOFILL:
-            error = autofillBoard(pGame->board); *TODO: @Roee? implement this
+            error = autofillBoard(pGame->board); /**TODO: @Roee? implement this*/
             break;
         case RESET:
-            error = fullResetBoard(pGame); *TODO: @Roee implement this
+            error = fullResetBoard(pGame); /**TODO: @Roee implement this*/
             break;
         case SET:
             executeSetCommand(pGame, atoi(pCommand->param1), atoi(pCommand->param2), atoi(pCommand->param3));
-            *TODO: @Omer implement
+            /*TODO: @Omer implement*/
             break;
         case HINT:
             error = hint(pGame, atoi(pCommand->param1), atoi(pCommand->param2));
@@ -143,13 +143,13 @@ ERROR executeCommand(command* pCommand, game* pGame){
     }
     return error;
 }
-*/
-/*Roee hiding for compilation
- * TODO: Remove this function
+
+
+ /* TODO: Remove this function*/
 void executeCommandDEPRECATED(command* PcurrCommand, game* Pgame){
-    *Currently treats NONE command name as illegal command
+	/*Currently treats NONE command name as illegal command*/
 	int validBoard;
-	int j= PcurrCommand->param1 - 1,i= PcurrCommand->param2 - 1,z=PcurrCommand->param3; *j=column(i.e j) i = row(i.e. i)
+	int j= PcurrCommand->param1 - 1,i= PcurrCommand->param2 - 1,z=PcurrCommand->param3; /*j=column(i.e j) i = row(i.e. i)*/
 	int currval = getCell(Pgame->board, i, j);
 	if ((PcurrCommand->name != EXIT && PcurrCommand->name != RESTART && boardSolved(Pgame->board)) ||
 	     PcurrCommand->name == NONE) {
@@ -157,11 +157,11 @@ void executeCommandDEPRECATED(command* PcurrCommand, game* Pgame){
 	    return;
 	}
 	if(PcurrCommand->name==SET){
-        if (currval < 0) *TODO: Change to use some is_fixed_cell function
+        if (currval < 0) /*TODO: Change to use some is_fixed_cell function*/
             printf("Error: cell is fixed\n");
         else if (z != 0 && !validAsignment(Pgame->board, z, i, j))
-	            printf("Error: value is invalid\n"); *TODO: This is allowed, need to confirm printing*
-        else{ *No error, should set cell value*
+	            printf("Error: value is invalid\n"); /*TODO: This is allowed, need to confirm printing*/
+        else{ /*No error, should set cell value*/
 	        setCell(Pgame->board, i, j, z);
 	        printBoard(Pgame->board,Pgame->boardTypes);
 	        if (boardSolved(Pgame->board)){
@@ -173,7 +173,7 @@ void executeCommandDEPRECATED(command* PcurrCommand, game* Pgame){
 	else if(PcurrCommand->name==HINT){
         printf("Hint: set cell to %d\n", abs(getCell(Pgame->boardSol, i, j)));
 		}
-	else if(PcurrCommand->name==VALIDATE){ *TODO: change to using gurobi ILP. First check if board is errnoeus!*
+	else if(PcurrCommand->name==VALIDATE){ /*TODO: change to using gurobi ILP. First check if board is errnoeus!*/
 		validBoard=findDeterministicSolution(Pgame->board,Pgame->boardSol);
 		if(validBoard==1){
 			printf("Validation passed: board is solvable\n");
@@ -184,6 +184,6 @@ void executeCommandDEPRECATED(command* PcurrCommand, game* Pgame){
 
 			}
 }
-*/
+
 
 

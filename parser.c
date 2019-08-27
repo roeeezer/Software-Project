@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-/*#include <vss.h>*/
+#include <vss.h>
 #include "command.h"
 #include "game.h"
 #include "error.h"
@@ -102,15 +102,15 @@ ERROR matchCommandName(const char *token, commandName *name) {
  * @param param3
  * @return the appropriate ERROR, or NO_ERROR if all params are legal
  */
-/*
+
 ERROR checkLegalParam(command* pCommand, game* pGame) {
     char * param1, *param2, *param3;
     param1 = pCommand->param1;
     param2 = pCommand->param2;
     param3 = pCommand->param3;
     switch (pCommand->name){
-        *Assumes all text (i.e. path) or 0 param commands are by definition valid.
-         * If path is incorrect the save/load will fail.*
+        /*Assumes all text (i.e. path) or 0 param commands are by definition valid.
+         * If path is incorrect the save/load will fail.*/
         case SOLVE:
         case EDIT:
         case PRINT_BOARD:
@@ -138,19 +138,19 @@ ERROR checkLegalParam(command* pCommand, game* pGame) {
         case NONE:
         default:
             break;
-        *TODO: implement these checks*
+        /*TODO: implement these checks*/
     }
 
     return UNKNOWN_ERROR;
 }
-*/
+
 
 ERROR checkGuessParam(char *param) {
     if (checkValidFloat(param) && atof(param)>= 0.0 && atof(param) <= 1.0)
         return NO_ERROR;
     return PARAM_OUT_OF_RANGE;
 }
-/*Roee hiding for compilation
+
 ERROR checkSetParams(char *param1, char *param2, char *param3) {
     ERROR error1, error2, error3;
     error1 = checkSetParam(param1, X);
@@ -161,7 +161,7 @@ ERROR checkSetParams(char *param1, char *param2, char *param3) {
     if error2
     return NO_ERROR;
 }
-*/
+
 ERROR checkMarkErrorsParam(char *param1) {
 
     if (strcmp(param1, "0") == 0 || strcmp(param1, "1") == 0)

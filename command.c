@@ -60,6 +60,5 @@ int numberOfParams(commandName name) {
         case NONE:
             return -1;
     }
-    /*Roee for compilation:*/
     return 0;
 }
