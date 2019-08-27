@@ -47,9 +47,9 @@ ERROR saveGame(board* b,board* bTypes,char* path,int gameMode){
 	return NO_ERROR;
 }
 /*b,bTypes should NOT be the real boards of the current game, they should be 2 new
- * empty boards so we can restore the old game in case the load command has failed*/
+ * empty board pointers so we can restore the old game in case the load command has failed*/
 ERROR loadBoard(board* b,board* bTypes,char* path){
-	int n,m;
+	int n,m,N,i,j,val;
 	FILE* f;
 	f = fopen(path,"r");
 	if(f==NULL){
@@ -61,6 +61,17 @@ ERROR loadBoard(board* b,board* bTypes,char* path){
 	}
 	if(fscanf(f,"%d",&m)<=0){
 		return INVALID_FILE_FORMAT;
+	}
+	N=n*m;
+	b = createBoard(n,m);
+	bTypes = createBoard(n,m);
+	resetBoard(bTypes,REGULAR);
+	for(i=0;i<N;i++){
+		for(j=0;j<N;j++){
+			fscanf(f,"%d",&val);
+			setCell(b,i,j,val);
+
+		}
 	}
 	if(fclose(f)==-1){/*fclose returns EOF when it fails*/
 		return FCLOSE_ERROR;

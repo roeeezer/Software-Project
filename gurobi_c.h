@@ -8,7 +8,7 @@ extern "C" {
 #endif
  
 #include <stdio.h>
-
+#include "board.h"
 typedef struct _GRBmodel GRBmodel;
 typedef struct _GRBenv GRBenv;
 

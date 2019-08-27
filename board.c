@@ -211,7 +211,8 @@ void printCellValue(board* b,int i,int j,board* bTypes){
 		printf("%d.",val);
 
 		}
-	else if(type==ERR){
+
+	else if(type==ERRONEOUS){
 		printf("%d*",val);
 
 			}
@@ -226,7 +227,7 @@ int erroneousBoard(board* bTypes){
 	int i,j,s = bTypes->squareSideSize;
 	for(i=0;i<s;i++){
 		for(j=0;j<s;j++){
-			if(getCell(bTypes,i,j)==ERR){
+			if(getCell(bTypes,i,j)==ERRONEOUS){
 				return 1;
 			}
 		}
