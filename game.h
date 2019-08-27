@@ -13,8 +13,8 @@
 #include "board.h"
 #include "error.h"
 #include "files.h"
-#define blockRows 3
-#define blockColumns 3
+#define blockRows 4
+#define blockColumns 4
 
 typedef enum{
     INIT_MODE, SOLVE_MODE, EDIT_MODE

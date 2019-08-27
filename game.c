@@ -81,7 +81,7 @@ ERROR executeCommand(command* pCommand, game* pGame){
     /*After this point, command is assumed legal for this game state.*/
     switch(pCommand->name) {
         case SOLVE:
-            error = loadBoard(pGame->board,pGame->boardTypes, pCommand->param1); /*TODO: @Roee implement loadBoard, param1 is the path*/
+            error = loadGame(pGame->board,pGame->boardTypes, pCommand->param1); /*TODO: @Roee implement loadBoard, param1 is the path*/
             if (error == NO_ERROR)
                 pGame->currMode = SOLVE_MODE;
             break;

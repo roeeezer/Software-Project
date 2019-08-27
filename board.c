@@ -216,11 +216,12 @@ void printCellValue(board* b,int i,int j,board* bTypes){
 		printf("%d*",val);
 
 			}
-	printf(" ");
+	if(val<10){
+		printf(" ");}
 }
 int boardIsValid(board* b){
 	/*TODO: Omer return true if it has a solution*/
-	printf("%d",b);
+	printf("",b);
 	return 1;
 }
 int erroneousBoard(board* bTypes){

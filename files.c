@@ -4,10 +4,8 @@
  *      Author: roee
  */
 #include "files.h"
-#define INIT 0
-#define EDIT 1
-#define SOLVE 2
-void emptyFunction5(){}
+
+
 
 ERROR saveGame(board* b,board* bTypes,char* path,int gameMode){
 	FILE* fo;
@@ -48,11 +46,10 @@ ERROR saveGame(board* b,board* bTypes,char* path,int gameMode){
 }
 /*b,bTypes should NOT be the real boards of the current game, they should be 2 new
  * empty board pointers so we can restore the old game in case the load command has failed*/
-ERROR loadBoard(board* b,board* bTypes,char* path){
+ERROR loadGame(board* b,board* bTypes,char* path){
 	int n,m,N,i,j,val;
 	char ch;
 	FILE* f;
-
 	f = fopen(path,"r");
 	if(f==NULL){
 		/*TODO: deal with the error*/
@@ -81,7 +78,5 @@ ERROR loadBoard(board* b,board* bTypes,char* path){
 	if(fclose(f)==-1){/*fclose returns EOF when it fails*/
 		return FCLOSE_ERROR;
 	}
-	printf("n:%d, m:%d\n",n,m);
-	printf("%d%d%s",b,bTypes,path);
 	return NO_ERROR;
 }

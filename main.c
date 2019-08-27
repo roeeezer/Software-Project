@@ -57,17 +57,15 @@ void loaderTester(){
 	game* Pgame=createGame(1);
 	b = Pgame->board;
 	bt = Pgame->boardTypes;
-/*
 
-	resetBoard(Pgame->boardSol,0);
+	/*resetBoard(Pgame->boardSol,0);
+	resetBoard(bt,REGULAR);
 	buildBoardRandom(35,Pgame);
 
 	printBoard(b,bt);
-	saveGame(b,bt,"board1.txt",2);*/
-	resetBoard(b,0);
-	resetBoard(bt,REGULAR);
-	loadBoard(b,bt,"board1.txt");
-	printf("After loading:\n");
+	saveGame(b,bt,"board1.txt",SOLVE);*/
+
+	loadGame(b,bt,"board1.txt");
 	printBoard(b,bt);
 
 }
