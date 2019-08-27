@@ -53,20 +53,26 @@ void saveGameTester(){
 
 }
 void loaderTester(){
+	int n=0,m=0;
 	board *b,*bt;
-	game* Pgame=createGame(1);
+	game* Pgame=createGame(5);
 	b = Pgame->board;
 	bt = Pgame->boardTypes;
-
+	buildBoardRandom(45,Pgame);
 	/*resetBoard(Pgame->boardSol,0);
 	resetBoard(bt,REGULAR);
-	buildBoardRandom(35,Pgame);
+
 
 	printBoard(b,bt);
 	saveGame(b,bt,"board1.txt",SOLVE);*/
-
-	loadGame(b,bt,"board1.txt");
 	printBoard(b,bt);
+	printf("before load b val=%d\n",b);
+
+	loadGame(&b,&bt,"board1.txt",&n,&m);
+	printf("after load b val=%d\n",b);
+
+	printBoard(b,bt);
+
 
 }
 int finalMain(int argc, char *argv[]){

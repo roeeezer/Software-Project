@@ -75,15 +75,30 @@ void buildBoardFromSolution(game*Pgame,int fixedCells){
 
 ERROR executeCommand(command* pCommand, game* pGame){
     ERROR error;
+    int *n=NULL,*m=NULL;
+    board *newBoard=NULL,*newBoardTypes=NULL;
     error = checkLegalParam(pCommand, pGame);
     if (error != NO_ERROR)
         return error;
     /*After this point, command is assumed legal for this game state.*/
     switch(pCommand->name) {
         case SOLVE:
-            error = loadGame(pGame->board,pGame->boardTypes, pCommand->param1); /*TODO: @Roee implement loadBoard, param1 is the path*/
-            if (error == NO_ERROR)
+
+            error = loadGame(&newBoard,&newBoardTypes, pCommand->param1,n,m);
+            if (error == NO_ERROR){
+            	destroyBoard(pGame->board);
+            	destroyBoard(pGame->boardTypes);
+            	destroyBoard(pGame->boardSol);
+            	pGame->board = newBoard;
+            	pGame->boardTypes = newBoardTypes;
+            	pGame->boardSol = createBoard(*n,*m);
                 pGame->currMode = SOLVE_MODE;
+            }
+            else{
+            	destroyBoard(newBoard);
+            	destroyBoard(newBoardTypes);
+            }
+
             break;
         case EDIT:
             /*error = loadBoard(pGame, pCommand->param1); TODO: uncomment this*/
@@ -112,7 +127,7 @@ ERROR executeCommand(command* pCommand, game* pGame){
             /*error = redo_move(pGame); TODO: @Roee implement TODO: uncomment this*/
             break;
         case SAVE:
-            /*error = saveBoard(pGame, pCommand->param1); TODO: @Roee implement TODO: uncomment this*/
+            error = saveGame(pGame->board,pGame->boardTypes, pCommand->param1,pGame->currMode);
             break;
         case GUESS_HINT:
             /* error = guessHint(pGame, atoi(pCommand->param1), atoi(pCommand->param2)); TODO: uncomment this*/
