@@ -22,5 +22,4 @@ int countVars(board *pBoard, int N);
  * create block vars
  */
 
-
 #endif

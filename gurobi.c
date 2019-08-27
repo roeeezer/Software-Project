@@ -1,5 +1,4 @@
 
-
 #include "gurobi.h"
 #include <stdlib.h>
 #include "board.h"
@@ -384,4 +383,3 @@ int countVars(board *pBoard, int N) {
     }
     return varCount;
 }
-
