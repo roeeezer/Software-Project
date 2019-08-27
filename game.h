@@ -16,9 +16,7 @@
 #define blockRows 4
 #define blockColumns 4
 
-typedef enum{
-    INIT_MODE, SOLVE_MODE, EDIT_MODE
-} GAME_MODE;
+
 
 typedef struct{
 	int seed;
@@ -28,7 +26,7 @@ typedef struct{
 	/*0 - for regular cell
 	* 1 - for fixed cell
 	* 2 - for error cell*/
-	GAME_MODE currMode;
+	int currMode;
 	int mark_errors;
 
 

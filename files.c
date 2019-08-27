@@ -28,7 +28,7 @@ ERROR saveGame(board* b,board* bTypes,char* path,int gameMode){
 	for(i=0;i<s;i++){
 		for(j=0;j<s;j++){
 			fprintf(fo,"%d",getCell(b,i,j));
-			if(getCell(bTypes,i,j)==FIXED||gameMode==EDIT){
+			if(getCell(bTypes,i,j)==FIXED||gameMode==EDIT_MODE){
 				fprintf(fo,".");
 			}
 			if(j!=s-1){

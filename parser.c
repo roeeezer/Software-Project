@@ -25,7 +25,7 @@ ERROR checkSetParams(char *param1, char *param2, char *param3);
 
 ERROR checkGuessParam(char *param);
 
-ERROR checkCommandValidForMode(commandName name, GAME_MODE mode);
+ERROR checkCommandValidForMode(commandName name, int mode);
 
 ERROR checkSetParam(char *param1, SETPARAMS paramOrder);
 
@@ -237,7 +237,7 @@ ERROR readCommand(command *pCommand, game* pGame) {
     return NO_ERROR;
 }
 
-ERROR checkCommandValidForMode(commandName name, GAME_MODE mode) {
+ERROR checkCommandValidForMode(commandName name, int mode) {
     ERROR returnCode = NO_ERROR;
     switch (name){
         case SOLVE:
