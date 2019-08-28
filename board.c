@@ -74,28 +74,7 @@ int findNextEmptyCell(board* b,int fromInd){
 	}
 	return i;
 }
-int validAsignmentRow(board* b,int v,int i){
-	int boardColumns,k;
-	boardColumns = b->squareSideSize;
-	for(k=0;k<boardColumns;k++){
-		if(getCell(b,i,k)==v){
-			return 0;
-		}
-	}
-	return 1;
 
-}
-int validAsignmentColumn(board* b,int v,int j){
-	int boardRows,k;
-	boardRows = b->squareSideSize;
-		for(k=0;k<boardRows;k++){
-			if(getCell(b,k,j)==v){
-				return 0;
-			}
-		}
-		return 1;
-
-}
 void findCellBlockIndices(board* b,int i,int j,int* blockIndices){
 	int rowsOfBlocks,columnsOfBlocks;
 	rowsOfBlocks = b->columns;
@@ -103,24 +82,7 @@ void findCellBlockIndices(board* b,int i,int j,int* blockIndices){
 	blockIndices[0] = i/rowsOfBlocks;
 	blockIndices[1] = j/columnsOfBlocks;
 }
-int validAsignmentBlock(board* b,int v,int i,int j){
-	int blockIndices[2],k,r;
 
-	findCellBlockIndices(b,i,j,blockIndices);
-
-	for(k=blockIndices[0]*b->rows;k<(blockIndices[0]+1)*b->rows;k++){
-		for(r=blockIndices[1]*b->columns;r<(blockIndices[1]+1)*b->columns;r++){
-			if(getCell(b,k,r)==v){
-				return 0;
-					}
-		}
-	}
-	return 1;
-}
-int validAsignment(board* b,int v,int i,int j){
-	return validAsignmentRow(b,v,i)&&validAsignmentColumn(b,v,j)&&validAsignmentBlock(b,v,i,j);
-
-}
 
 
 void oneDto2Dindices(board* b,int* indices,int oneDind){
@@ -303,5 +265,17 @@ int setCausesErroneousCell(board* b,board* bTypes,int i,int j,int v,int markErro
 	}
 	res= b1||b2||b3;
 	return res;
+}
+int validAsignment(board* b,int v,int i,int j){
+	return !setCausesErroneousCell( b,NULL,i, j, v, 0);
+
+}
+void setCellAndMarkErroneous(board* b,board* bTypes,int i,int j,int val){
+	int erroneous;
+	erroneous=setCausesErroneousCell( b,bTypes,i,j,val,1);
+	setCell(b,i,j,val);
+	if(erroneous){
+		setCell(bTypes,i,j,ERRONEOUS);
+	}
 }
 

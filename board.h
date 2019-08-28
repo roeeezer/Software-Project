@@ -65,12 +65,6 @@ int boardSolved(board * pBoard);
 /*prints a single cell according to the described format.
  * negative values represent fixed cell and zero values represent empty cells*/
 void printCellValue(board* b,int i,int j,board* bTypes);
-/*@ret>1 if and only if row number i in the board doesn't contain the value v*/
-int validAsignmentRow(board* b,int v,int i);
-/*@ret>1 if and only if column number j in the board doesn't contain the value v*/
-int validAsignmentColumn(board* b,int v,int j);
-/*@ret>1 if and only if block number (i,j) in the board doesn't contain the value v*/
-int validAsignmentBlock(board* b,int v,int i,int j);
 /*@ret>1 if and only if the assignment of value v in the (i,j) cell follows the soduko rules*/
 int validAsignment(board* b,int v,int i,int j);
 /*returns the next empty cell index in the board s.t $result and fromInd is 1D index
@@ -88,4 +82,5 @@ void copyBoard(board* copy,board* orig);
 int boardHasASolution(board* b);
 int erroneousBoard(board* bTypes);
 int setCausesErroneousCell(board* b,board* bTypes,int i,int j,int v,int markErroneousCells);
+void setCellAndMarkErroneous(board* b,board* bTypes,int i,int j,int val);
 #endif /* BOARD_H_ */
