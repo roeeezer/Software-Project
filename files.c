@@ -61,12 +61,8 @@ ERROR loadGame(board** b,board** bTypes,char* path,int *n,int *m){
 		return INVALID_FILE_FORMAT;
 	}
 	N=(*n)*(*m);
-	/*printf("before: b points to:%d\n",*b);
-	printf("Cell 0,1 val:%d\n",getCell(*b,0,1));*/
 	*b = createBoard(*n,*m);
 	*bTypes = createBoard(*n,*m);
-	/*printf("after: b points to:%d\n",*b);
-	printf("Cell 0,1 val:%d\n",getCell(*b,0,1));*/
 	resetBoard(*bTypes,REGULAR);
 	for(i=0;i<N;i++){
 		for(j=0;j<N;j++){

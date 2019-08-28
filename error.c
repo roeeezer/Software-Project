@@ -14,6 +14,8 @@
 void printErrorMessage(ERROR error, command *pCommand){
     switch(error) {
         case NO_ERROR:
+        	/*temp: just for debuging*/
+        	printf("No error message!\n");
             break;
         case INPUT_TOO_LONG:
             printf("Error: input must be at most 256 characters long.\n");
@@ -56,15 +58,19 @@ void printErrorMessage(ERROR error, command *pCommand){
         /*Roee: for compilation*/
         case FOPEN_ERROR:
             /*TODO:@Omer choose a message*/
+            printf("Error: fopen error!\n");
             break;
         case FCLOSE_ERROR:
             /*TODO:@Omer choose a message*/
+            printf("Error: fclose error!\n");
             break;
         case INVALID_FILE_FORMAT:
             /*TODO:@Omer choose a message*/
+            printf("Error: invalid file format error!\n");
             break;
         case TMP_ERROR:
             /*TODO:@Omer choose a message*/
+            printf("Error: temporary error!\n");
             break;
     }
 }

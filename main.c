@@ -52,29 +52,7 @@ void saveGameTester(){
 	saveGame(Pgame->board,Pgame->boardTypes,"board.txt",2);
 
 }
-void loaderTester(){
-	int n=0,m=0;
-	board *b,*bt;
-	game* Pgame=createGame(5);
-	b = Pgame->board;
-	bt = Pgame->boardTypes;
-	buildBoardRandom(45,Pgame);
-	/*resetBoard(Pgame->boardSol,0);
-	resetBoard(bt,REGULAR);
 
-
-	printBoard(b,bt);
-	saveGame(b,bt,"board1.txt",SOLVE);*/
-	printBoard(b,bt);
-	printf("before load b val=%d\n",b);
-
-	loadGame(&b,&bt,"board1.txt",&n,&m);
-	printf("after load b val=%d\n",b);
-
-	printBoard(b,bt);
-
-
-}
 int finalMain(int argc, char *argv[]){
 	int exitInd,restartInd,seed;
 	command* PcurrCommand;
@@ -114,9 +92,45 @@ int finalMain(int argc, char *argv[]){
 	printf("%d",commandError);
 	return 0;
 }
+void loaderTester(){
+	int n=0,m=0;
+	board *b,*bt;
+	game* Pgame=createGame(5);
+	/*b = Pgame->board;
+	bt = Pgame->boardTypes;*/
+	buildBoardRandom(45,Pgame);
+	/*resetBoard(Pgame->boardSol,0);
+	resetBoard(bt,REGULAR);
 
+
+	printBoard(b,bt);
+	saveGame(b,bt,"board1.txt",SOLVE);*/
+	printBoard(Pgame->board,Pgame->boardTypes);
+	printf("before load b val=%d\n",b);
+
+	loadGame(&b,&bt,"board1.txt",&n,&m);
+	printf("after load b val=%d\n",b);
+
+	printBoard(b,bt);
+
+
+}
+void executeCommandTester(){
+	game* Pgame;
+	command *c;
+	c = createCommand();
+	Pgame=createGame(5);
+	c->name = SOLVE;
+	c->param1 = "board1.txt";
+	buildBoardRandom(45,Pgame);
+	resetBoard(Pgame->boardTypes,REGULAR);
+	printBoard(Pgame->board,Pgame->boardTypes);
+	executeCommand(c,Pgame);
+	printBoard(Pgame->board,Pgame->boardTypes);
+
+}
 int main(){
-	loaderTester();
+	executeCommandTester();
 	return 1;
 }
 

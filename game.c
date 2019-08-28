@@ -27,7 +27,7 @@ game* createGame(int seed){
 	res->board = createBoard(blockRows,blockColumns);
 	res->boardSol = createBoard(blockRows,blockColumns);
 	res->boardTypes = createBoard(blockRows,blockColumns);
-	resetBoard(res->boardTypes,0);
+	resetBoard(res->boardTypes,REGULAR);
 	res->currMode = INIT_MODE;
 
 	return res;
@@ -75,7 +75,7 @@ void buildBoardFromSolution(game*Pgame,int fixedCells){
 
 ERROR executeCommand(command* pCommand, game* pGame){
     ERROR error;
-    int *n=NULL,*m=NULL;
+    int n=0,m=0;
     board *newBoard=NULL,*newBoardTypes=NULL;
     error = checkLegalParam(pCommand, pGame);
     if (error != NO_ERROR)
@@ -83,22 +83,20 @@ ERROR executeCommand(command* pCommand, game* pGame){
     /*After this point, command is assumed legal for this game state.*/
     switch(pCommand->name) {
         case SOLVE:
-
-            error = loadGame(&newBoard,&newBoardTypes, pCommand->param1,n,m);
+            error = loadGame(&newBoard,&newBoardTypes,pCommand->param1,&n,&m);
             if (error == NO_ERROR){
             	destroyBoard(pGame->board);
             	destroyBoard(pGame->boardTypes);
             	destroyBoard(pGame->boardSol);
             	pGame->board = newBoard;
             	pGame->boardTypes = newBoardTypes;
-            	pGame->boardSol = createBoard(*n,*m);
+            	pGame->boardSol = createBoard(n,m);
                 pGame->currMode = SOLVE_MODE;
             }
-            else{
+            if(error==FCLOSE_ERROR){/*all the errors that occur after the new boards are created*/
             	destroyBoard(newBoard);
             	destroyBoard(newBoardTypes);
             }
-
             break;
         case EDIT:
             /*error = loadBoard(pGame, pCommand->param1); TODO: uncomment this*/
