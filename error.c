@@ -56,7 +56,6 @@ void printErrorMessage(ERROR error, command *pCommand){
             printf("Error: Gurobi has encountered an error!\n");
             break;
         case FOPEN_ERROR:
-            /*TODO:@Omer choose a message*/
             printf("Error: file could not be opened!\n");
             break;
         case FCLOSE_ERROR:
@@ -70,8 +69,13 @@ void printErrorMessage(ERROR error, command *pCommand){
         case FPRINTF_ERROR:
             printf("Error: failure to write to the specified file!\n");
             break;
+        case SAVE_ERRONEOUS_CELLS_IN_EDIT_MODE:
+            printf("Error: cannot save a board with erroneous cell in edit mode!\n");
+            break;
+        case SAVE_UNSOLVABLE_BOARD_IN_EDIT_MODE:
+            printf("Error: cannot save a board without a solution in edit mode!\n");
+            break;
         case TMP_ERROR:
-            /*TODO:@Omer choose a message*/
             printf("Error: temporary error!\n");
             break;
     }

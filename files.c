@@ -13,12 +13,10 @@ ERROR saveGame(board* b,board* bTypes,char* path,int gameMode){
 	s = b->squareSideSize;
 	if(gameMode==EDIT_MODE){
 		if(erroneousBoard(bTypes)){
-			/*TODO: deal with the error*/
-			return TMP_ERROR;
+			return SAVE_ERRONEOUS_CELLS_IN_EDIT_MODE;
 		}
 		if(!boardHasASolution(b)){
-			/*TODO: deal with the error*/
-			return TMP_ERROR;
+			return SAVE_UNSOLVABLE_BOARD_IN_EDIT_MODE;
 		}
 	}
 

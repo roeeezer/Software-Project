@@ -27,6 +27,8 @@ typedef enum {
 	FCLOSE_ERROR,
 	INVALID_FILE_FORMAT,
 	FPRINTF_ERROR,
+	SAVE_ERRONEOUS_CELLS_IN_EDIT_MODE,
+	SAVE_UNSOLVABLE_BOARD_IN_EDIT_MODE,
 	TMP_ERROR,/*just for compilation reasons*/
     GUROBI_ERROR,
     UNKNOWN_ERROR /*An unknown error occurred. For checking if we reached unexpected situations*/
