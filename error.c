@@ -55,18 +55,20 @@ void printErrorMessage(ERROR error, command *pCommand){
         case GUROBI_ERROR:
             printf("Error: Gurobi has encountered an error!\n");
             break;
-        /*Roee: for compilation*/
         case FOPEN_ERROR:
             /*TODO:@Omer choose a message*/
-            printf("Error: fopen error!\n");
+            printf("Error: file could not be opened!\n");
             break;
         case FCLOSE_ERROR:
-            /*TODO:@Omer choose a message*/
+            /*TODO:@Omer choose a message. we need to decide whether to continue with the loaded board
+             * with the previous board in that case*/
             printf("Error: fclose error!\n");
             break;
         case INVALID_FILE_FORMAT:
-            /*TODO:@Omer choose a message*/
-            printf("Error: invalid file format error!\n");
+            printf("Error: invalid file format!\n");
+            break;
+        case FPRINTF_ERROR:
+            printf("Error: failure to write to the specified file!\n");
             break;
         case TMP_ERROR:
             /*TODO:@Omer choose a message*/

@@ -85,7 +85,7 @@ void oneDto2Dindices(board* b,int* indices,int oneDind);
  * replace the values of the cells in the board copy to have the same values
  * of the cells in the board orig*/
 void copyBoard(board* copy,board* orig);
-int boardIsValid(board* b);
+int boardHasASolution(board* b);
 int erroneousBoard(board* bTypes);
-
+int setCausesErroneousCell(board* b,board* bTypes,int i,int j,int v,int markErroneousCells);
 #endif /* BOARD_H_ */

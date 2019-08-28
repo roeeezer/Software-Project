@@ -92,12 +92,14 @@ ERROR executeCommand(command* pCommand, game* pGame){
             	pGame->boardTypes = newBoardTypes;
             	pGame->boardSol = createBoard(n,m);
                 pGame->currMode = SOLVE_MODE;
+                return error;
             }
+            printErrorMessage(error, pCommand);
             if(error==FCLOSE_ERROR){/*all the errors that occur after the new boards are created*/
             	destroyBoard(newBoard);
             	destroyBoard(newBoardTypes);
             }
-            break;
+            return error;
         case EDIT:
             /*error = loadBoard(pGame, pCommand->param1); TODO: uncomment this*/
             if (error == NO_ERROR)

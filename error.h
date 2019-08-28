@@ -26,6 +26,7 @@ typedef enum {
 	FOPEN_ERROR,
 	FCLOSE_ERROR,
 	INVALID_FILE_FORMAT,
+	FPRINTF_ERROR,
 	TMP_ERROR,/*just for compilation reasons*/
     GUROBI_ERROR,
     UNKNOWN_ERROR /*An unknown error occurred. For checking if we reached unexpected situations*/

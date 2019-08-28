@@ -31,6 +31,7 @@ void destroyBoard(board* board){
 
 }
 
+
 int getCell(board* Pboard,int i,int j){
 	int s;
 	s= Pboard->squareSideSize;
@@ -219,7 +220,7 @@ void printCellValue(board* b,int i,int j,board* bTypes){
 	if(val<10){
 		printf(" ");}
 }
-int boardIsValid(board* b){
+int boardHasASolution(board* b){
 	/*TODO: Omer return true if it has a solution*/
 	printf("",b);
 	return 1;
@@ -234,5 +235,73 @@ int erroneousBoard(board* bTypes){
 		}
 	}
 	return 0;
+}
+int setCausesErroneousCellInRow(board* b,board* bTypes,int i,int v,int markErroneousCells){
+	int boardColumns,k,res=0;
+	boardColumns = b->squareSideSize;
+	for(k=0;k<boardColumns;k++){
+		if(getCell(b,i,k)==v){
+			if(!markErroneousCells){
+				return 1;
+			}
+			res=1;
+			setCell(bTypes,i,k,ERRONEOUS);
+
+		}
+	}
+	return res;
+
+}
+int setCausesErroneousCellInColumn(board* b,board* bTypes,int j,int v,int markErroneousCells){
+	int boardRows,k,res=0;
+	boardRows = b->squareSideSize;
+		for(k=0;k<boardRows;k++){
+			if(getCell(b,k,j)==v){
+				if(!markErroneousCells){
+					return 1;
+				}
+				res=1;
+				setCell(bTypes,k,j,ERRONEOUS);
+			}
+		}
+		return res;
+
+}
+int setCausesErroneousCellInBlock(board* b,board* bTypes,int i,int j,int v,int markErroneousCells){
+	int blockIndices[2],k,r,res=0;
+
+	findCellBlockIndices(b,i,j,blockIndices);
+
+	for(k=blockIndices[0]*b->rows;k<(blockIndices[0]+1)*b->rows;k++){
+		for(r=blockIndices[1]*b->columns;r<(blockIndices[1]+1)*b->columns;r++){
+			if(getCell(b,k,r)==v){
+				if(!markErroneousCells){
+					return 1;
+				}
+				res=1;
+				setCell(bTypes,k,r,ERRONEOUS);
+					}
+		}
+	}
+	return res;
+}
+
+/*@pre: cell(i,j) is empty, namely =0*/
+int setCausesErroneousCell(board* b,board* bTypes,int i,int j,int v,int markErroneousCells){
+	int b1,b2,b3,res;
+	b1 = setCausesErroneousCellInRow(b,bTypes,i,v,markErroneousCells);
+	if(b1&&!markErroneousCells){
+		return 1;
+	}
+	b2 = setCausesErroneousCellInColumn(b,bTypes,j,v,markErroneousCells);
+	if(b2&&!markErroneousCells){
+		return 1;
+	}
+	b3 = setCausesErroneousCellInBlock(b,bTypes,i,j,v,markErroneousCells);
+	if(b3&&!markErroneousCells){
+		return 1;
+	}
+	res= b1||b2||b3;
+	return res;
 }
 

@@ -11,14 +11,17 @@ ERROR saveGame(board* b,board* bTypes,char* path,int gameMode){
 	FILE* fo;
 	int s,i,j;
 	s = b->squareSideSize;
-	if(!boardIsValid(b)){
-		/*TODO: deal with the error*/
-		return TMP_ERROR;
+	if(gameMode==EDIT_MODE){
+		if(erroneousBoard(bTypes)){
+			/*TODO: deal with the error*/
+			return TMP_ERROR;
+		}
+		if(!boardHasASolution(b)){
+			/*TODO: deal with the error*/
+			return TMP_ERROR;
+		}
 	}
-	if(erroneousBoard(bTypes)){
-		/*TODO: deal with the error*/
-		return TMP_ERROR;
-	}
+
 	fo = fopen(path,"w+");
 	if(fo==NULL){
 		/*TODO: deal with the error*/
@@ -27,7 +30,9 @@ ERROR saveGame(board* b,board* bTypes,char* path,int gameMode){
 	fprintf(fo,"%d %d\n",b->rows,b->columns);
 	for(i=0;i<s;i++){
 		for(j=0;j<s;j++){
-			fprintf(fo,"%d",getCell(b,i,j));
+			if(fprintf(fo,"%d",getCell(b,i,j))<0){
+				return FPRINTF_ERROR;
+			}
 			if(getCell(bTypes,i,j)==FIXED||gameMode==EDIT_MODE){
 				fprintf(fo,".");
 			}
@@ -43,6 +48,18 @@ ERROR saveGame(board* b,board* bTypes,char* path,int gameMode){
 		return FCLOSE_ERROR;
 	}
 	return NO_ERROR;
+}
+int validChar(char c){
+	if(((int)c)>=48 &&((int)c)<=57){/*c is a digit 0-9*/
+		return 1;
+	}
+	if(c=='.'||c==' '){
+		return 1;
+	}
+	if(((int)c)==10){/*I think ch gets this value when the scan was invalid*/
+		return 1;
+	}
+	return 0;
 }
 /*b,bTypes should NOT be the real boards of the current game, they should be 2 new
  * empty board pointers so we can restore the old game in case the load command has failed*/
@@ -60,21 +77,40 @@ ERROR loadGame(board** b,board** bTypes,char* path,int *n,int *m){
 	if(fscanf(f,"%d",m)<=0){
 		return INVALID_FILE_FORMAT;
 	}
+	if(*n<1 ||*m<1){
+		return INVALID_FILE_FORMAT;
+	}
 	N=(*n)*(*m);
+	if(N>=100){/*we do not support 3 digits numbers in cells*/
+		return INVALID_FILE_FORMAT;
+	}
 	*b = createBoard(*n,*m);
 	*bTypes = createBoard(*n,*m);
 	resetBoard(*bTypes,REGULAR);
 	for(i=0;i<N;i++){
 		for(j=0;j<N;j++){
-			fscanf(f,"%d",&val);
+			if(fscanf(f,"%d",&val)<=0){
+				return INVALID_FILE_FORMAT;
+			}
+			if(val<0||val>N){
+				return INVALID_FILE_FORMAT;
+			}
 			setCell(*b,i,j,val);
 			fscanf(f,"%c",&ch);
 			/*if this scan could not scan a char (but a number) then the pointer in the file will not
 			 * progress so we won't have to change the process of the next iteration*/
+			/*printf("i=%d, j=%d, val=%d, ch=%c, chVal=%d\n",i,j,val,ch,ch);*/
+			if(!validChar(ch)){
+				return INVALID_FILE_FORMAT;
+			}
 			if(ch=='.'){
 				setCell(*bTypes,i,j,FIXED);}
+			/*printf("i=%d, j=%d, val=%d, ch=%c, chVal=%d\n",i,j,val,ch,ch);*/
 		}
 
+	}
+	if(fscanf(f,"%d",&val)>0){/*the file contains too many numbers for the give n,m*/
+		return INVALID_FILE_FORMAT;
 	}
 	if(fclose(f)==-1){/*fclose returns EOF when it fails*/
 		return FCLOSE_ERROR;

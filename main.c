@@ -118,19 +118,32 @@ void loaderTester(){
 void executeCommandTester(){
 	game* Pgame;
 	command *c;
+	ERROR err;
 	c = createCommand();
 	Pgame=createGame(5);
 	c->name = SOLVE;
-	c->param1 = "board1.txt";
+	c->param1 = "Board1.txt";
 	buildBoardRandom(45,Pgame);
 	resetBoard(Pgame->boardTypes,REGULAR);
 	printBoard(Pgame->board,Pgame->boardTypes);
-	executeCommand(c,Pgame);
-	printBoard(Pgame->board,Pgame->boardTypes);
+	err=executeCommand(c,Pgame);
+	if(err==NO_ERROR){
+		printBoard(Pgame->board,Pgame->boardTypes);}
 
 }
+void erroneousCheckTester(){
+	game* Pgame;
+	int i=0,j=0,v=6;
+	Pgame=createGame(5);
+	buildBoardRandom(45,Pgame);
+	resetBoard(Pgame->boardTypes,REGULAR);
+	printBoard(Pgame->board,Pgame->boardTypes);
+	printf("i=%d,j=%d,val=%d,erroneous=%d\n",i,j,v,setCausesErroneousCell(Pgame->board,Pgame->boardTypes,i,j,v,1));
+
+	printBoard(Pgame->board,Pgame->boardTypes);
+}
 int main(){
-	executeCommandTester();
+	erroneousCheckTester();
 	return 1;
 }
 
