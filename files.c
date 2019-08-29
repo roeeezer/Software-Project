@@ -110,6 +110,9 @@ ERROR loadGame(board** b,board** bTypes,char* path,int *n,int *m){
 	if(fscanf(f,"%d",&val)>0){/*the file contains too many numbers for the give n,m*/
 		return INVALID_FILE_FORMAT;
 	}
+	if(boardContainsFixedErroneousCells(*b,*bTypes)){
+		return FIXED_ERRONEOUS_CELLS_IN_FILE;
+	}
 	if(fclose(f)==-1){/*fclose returns EOF when it fails*/
 		return FCLOSE_ERROR;
 	}

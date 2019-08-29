@@ -198,38 +198,46 @@ int erroneousBoard(board* bTypes){
 	}
 	return 0;
 }
-int setCausesErroneousCellInRow(board* b,board* bTypes,int i,int v,int markErroneousCells){
+int setCausesErroneousCellInRow(board* b,board* bTypes,int i,int v,int ind){
 	int boardColumns,k,res=0;
 	boardColumns = b->squareSideSize;
 	for(k=0;k<boardColumns;k++){
 		if(getCell(b,i,k)==v){
-			if(!markErroneousCells){
+			if(ind==2&&getCell(bTypes,i,k)==FIXED){
 				return 1;
 			}
-			res=1;
-			setCell(bTypes,i,k,ERRONEOUS);
+			if(ind==0){
+				return 1;
+			}
+			if(ind==1){
+				res=1;
+				setCell(bTypes,i,k,ERRONEOUS);}
 
 		}
 	}
 	return res;
 
 }
-int setCausesErroneousCellInColumn(board* b,board* bTypes,int j,int v,int markErroneousCells){
+int setCausesErroneousCellInColumn(board* b,board* bTypes,int j,int v,int ind){
 	int boardRows,k,res=0;
 	boardRows = b->squareSideSize;
 		for(k=0;k<boardRows;k++){
 			if(getCell(b,k,j)==v){
-				if(!markErroneousCells){
+				if(ind==2&&getCell(bTypes,k,j)==FIXED){
 					return 1;
 				}
-				res=1;
-				setCell(bTypes,k,j,ERRONEOUS);
+				if(ind==0){
+					return 1;
+				}
+				if(ind==1){
+					res=1;
+					setCell(bTypes,k,j,ERRONEOUS);}
 			}
 		}
 		return res;
 
 }
-int setCausesErroneousCellInBlock(board* b,board* bTypes,int i,int j,int v,int markErroneousCells){
+int setCausesErroneousCellInBlock(board* b,board* bTypes,int i,int j,int v,int ind){
 	int blockIndices[2],k,r,res=0;
 
 	findCellBlockIndices(b,i,j,blockIndices);
@@ -237,30 +245,40 @@ int setCausesErroneousCellInBlock(board* b,board* bTypes,int i,int j,int v,int m
 	for(k=blockIndices[0]*b->rows;k<(blockIndices[0]+1)*b->rows;k++){
 		for(r=blockIndices[1]*b->columns;r<(blockIndices[1]+1)*b->columns;r++){
 			if(getCell(b,k,r)==v){
-				if(!markErroneousCells){
+				if(ind==2&&getCell(bTypes,k,r)==FIXED){
 					return 1;
 				}
-				res=1;
-				setCell(bTypes,k,r,ERRONEOUS);
+				if(ind==0){
+					return 1;
+				}
+				if(ind==1){
+					res=1;
+					setCell(bTypes,k,r,ERRONEOUS);}
 					}
 		}
 	}
 	return res;
 }
 
-/*@pre: cell(i,j) is empty, namely =0*/
-int setCausesErroneousCell(board* b,board* bTypes,int i,int j,int v,int markErroneousCells){
+/*ind=0 for checking if this set command causes erroneous cells
+ * ind=1 for checking if this set command causes erroneous cells and marking the erroneous cells in bTypes
+ * ind=2 if we want to set a fixed cell to (i,j) and to check if the set will cause a collision with
+ * other fixed cells - used in function boardContainsFixedErroneousCells
+ * @pre: cell(i,j) is empty, namely =0
+ * @POST: $RET=1 iff the answer to the question determined by ind is YES*/
+
+int setCausesErroneousCell(board* b,board* bTypes,int i,int j,int v,int ind){
 	int b1,b2,b3,res;
-	b1 = setCausesErroneousCellInRow(b,bTypes,i,v,markErroneousCells);
-	if(b1&&!markErroneousCells){
+	b1 = setCausesErroneousCellInRow(b,bTypes,i,v,ind);
+	if(b1&&!ind){
 		return 1;
 	}
-	b2 = setCausesErroneousCellInColumn(b,bTypes,j,v,markErroneousCells);
-	if(b2&&!markErroneousCells){
+	b2 = setCausesErroneousCellInColumn(b,bTypes,j,v,ind);
+	if(b2&&!ind){
 		return 1;
 	}
-	b3 = setCausesErroneousCellInBlock(b,bTypes,i,j,v,markErroneousCells);
-	if(b3&&!markErroneousCells){
+	b3 = setCausesErroneousCellInBlock(b,bTypes,i,j,v,ind);
+	if(b3&&!ind){
 		return 1;
 	}
 	res= b1||b2||b3;
@@ -277,5 +295,24 @@ void setCellAndMarkErroneous(board* b,board* bTypes,int i,int j,int val){
 	if(erroneous){
 		setCell(bTypes,i,j,ERRONEOUS);
 	}
+}
+int boardContainsFixedErroneousCells(board *b,board *bTypes){
+	int N,i,j,v;
+	N = b->squareSideSize;
+	for(i=0;i<N;i++){
+		for(j=0;j<N;j++){
+			if(getCell(bTypes,i,j)==FIXED){
+				v=getCell(b,i,j);
+				setCell(b,i,j,0);
+				if(setCausesErroneousCell(b,bTypes, i, j, v, 2)){
+					return 1;
+				}
+				setCell(b,i,j,v);
+
+			}
+		}
+	}
+
+	return 0;
 }
 

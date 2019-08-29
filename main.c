@@ -133,17 +133,16 @@ void executeCommandTester(){
 }
 void erroneousCheckTester(){
 	game* Pgame;
-	int i=4,j=2,v=7;
+	int i=4,j=2,v=2;
 	Pgame=createGame(5);
 	buildBoardRandom(45,Pgame);
-	resetBoard(Pgame->boardTypes,REGULAR);
+	resetBoard(Pgame->boardTypes,FIXED);
 	printBoard(Pgame->board,Pgame->boardTypes);
-	/*printf("i=%d,j=%d,val=%d,erroneous=%d\n",i,j,v,setCausesErroneousCell(Pgame->board,Pgame->boardTypes,i,j,v,1));*/
-	setCellAndMarkErroneous(Pgame->board,Pgame->boardTypes, i, j, v);
+	printf("i=%d,j=%d,val=%d,erroneous=%d\n",i,j,v,setCausesErroneousCell(Pgame->board,Pgame->boardTypes,i,j,v,2));
 	printBoard(Pgame->board,Pgame->boardTypes);
 }
 int main(){
-	erroneousCheckTester();
+	executeCommandTester();
 	return 1;
 }
 

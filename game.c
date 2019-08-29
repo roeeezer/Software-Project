@@ -72,9 +72,8 @@ void buildBoardFromSolution(game*Pgame,int fixedCells){
         setCell(Pgame->boardTypes, y, x, 1);
 	}
 }
-ERROR executeSolveCommand(board* newBoard,board* newBoardTypes,command* pCommand,
-		game* pGame){
-    ERROR error;
+ERROR executeSolveCommand(command* pCommand,game* pGame,ERROR error){
+    board *newBoard=NULL,*newBoardTypes=NULL;
     int n=0,m=0;
     error = loadGame(&newBoard,&newBoardTypes,pCommand->param1,&n,&m);
     if (error == NO_ERROR){
@@ -97,33 +96,22 @@ ERROR executeSolveCommand(board* newBoard,board* newBoardTypes,command* pCommand
 }
 ERROR executeCommand(command* pCommand, game* pGame){
     ERROR error;
-    int n=0,m=0;
-    board *newBoard=NULL,*newBoardTypes=NULL;
     error = checkLegalParam(pCommand, pGame);
     if (error != NO_ERROR)
         return error;
     /*After this point, command is assumed legal for this game state.*/
     switch(pCommand->name) {
         case SOLVE:
-            error = loadGame(&newBoard,&newBoardTypes,pCommand->param1,&n,&m);
-            if (error == NO_ERROR){
-            	destroyBoard(pGame->board);
-            	destroyBoard(pGame->boardTypes);
-            	destroyBoard(pGame->boardSol);
-            	pGame->board = newBoard;
-            	pGame->boardTypes = newBoardTypes;
-            	pGame->boardSol = createBoard(n,m);
-                pGame->currMode = SOLVE_MODE;
-                return error;
-            }
-            printErrorMessage(error, pCommand);
-            if(error==FCLOSE_ERROR){/*all the errors that occur after the new boards are created*/
-            	destroyBoard(newBoard);
-            	destroyBoard(newBoardTypes);
-            }
-            return error;
+            return executeSolveCommand(pCommand,pGame,error);
         case EDIT:
-            /*error = loadBoard(pGame, pCommand->param1); TODO: uncomment this*/
+        	/*Roee: need to be tested!*/
+        	if(pCommand->param1!=NULL){
+        		return executeSolveCommand(pCommand,pGame,error);
+        	}
+        	else{
+        		destroyGame(pGame);
+        		pGame = createGame(1);/*seed=1 is arbitrary and temporary (no need for a seed)*/
+        	}
             if (error == NO_ERROR)
                 pGame->currMode = EDIT_MODE;
             break;

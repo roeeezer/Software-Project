@@ -83,4 +83,5 @@ int boardHasASolution(board* b);
 int erroneousBoard(board* bTypes);
 int setCausesErroneousCell(board* b,board* bTypes,int i,int j,int v,int markErroneousCells);
 void setCellAndMarkErroneous(board* b,board* bTypes,int i,int j,int val);
+int boardContainsFixedErroneousCells(board *b,board *bTypes);
 #endif /* BOARD_H_ */

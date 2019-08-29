@@ -75,6 +75,9 @@ void printErrorMessage(ERROR error, command *pCommand){
         case SAVE_UNSOLVABLE_BOARD_IN_EDIT_MODE:
             printf("Error: cannot save a board without a solution in edit mode!\n");
             break;
+        case FIXED_ERRONEOUS_CELLS_IN_FILE:
+            printf("Error: cannot load a board with fixed erroneous cells!\n");
+        	break;
         case TMP_ERROR:
             printf("Error: temporary error!\n");
             break;
