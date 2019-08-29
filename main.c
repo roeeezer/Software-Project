@@ -152,31 +152,27 @@ void erroneousCheckTester(){
 void autofillTester(){
 	game* Pgame;
 	command *c;
-	int i;
 	ERROR err=NO_ERROR;
 	c = createCommand();
 	c->name = AUTOFILL;
 	Pgame=createGame(5);
-	/*
-	buildBoardRandom(45,Pgame);*/
-	for(i=0;i<8;i++){
-		setCellAndMarkErroneous(Pgame->board,Pgame->boardTypes,0,i,i+1);
-	}
-	for(i=0;i<8;i++){
-		setCellAndMarkErroneous(Pgame->board,Pgame->boardTypes,8,i,9-(i+1));
-	}
+
+	buildBoardRandom(55,Pgame);
 	resetBoard(Pgame->boardTypes,REGULAR);
 
 	printBoard(Pgame->board,Pgame->boardTypes);
+	printf("emptyCellsCounter=%d\n",Pgame->board->emptyCellsCounter);
 	executeCommand(c,Pgame);
 	printErrorMessage( err, c);
 	if(err==NO_ERROR){
-		printBoard(Pgame->board,Pgame->boardTypes);}
+		printBoard(Pgame->board,Pgame->boardTypes);
+		printf("emptyCellsCounter=%d\n",Pgame->board->emptyCellsCounter);
+	}
 
 
 }
 int main(){
-	executeCommandTester();
+	autofillTester();
 	return 1;
 }
 

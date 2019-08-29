@@ -31,6 +31,7 @@ typedef struct{
 	/*meaning blockRows and blockColumns
 	 * n = rows, m = =columns*/
 	int squareSideSize;
+	int emptyCellsCounter;
 
 
 }board;

@@ -22,6 +22,7 @@ board* createBoard(int blockRows,int blockColumns){
         exit(-42);
 	}
     resetBoard(res, 0);
+    res->emptyCellsCounter=(res->squareSideSize)*(res->squareSideSize);
 	return res;
 }
 void destroyBoard(board* board){
@@ -38,9 +39,21 @@ int getCell(board* Pboard,int i,int j){
 	return Pboard->boardArr[i*s+j];
 }
 void setCell(board* Pboard,int i,int j,int val){
-	int s;
+	int s,prevVal;
     s= Pboard->squareSideSize;
+	prevVal = Pboard->boardArr[i*s+j];
 	Pboard->boardArr[i*s+j]=val;
+	if(val==0){
+		if(prevVal!=0){
+			Pboard->emptyCellsCounter++;
+
+		}
+	}
+	else{
+		if(prevVal==0){
+			Pboard->emptyCellsCounter--;
+		}
+	}
 }
 int emptyCell(board* Pboard,int i,int j){
 	return getCell(Pboard, i, j)==0;

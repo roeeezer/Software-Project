@@ -191,6 +191,9 @@ ERROR executeCommand(command* pCommand, game* pGame){
             error = UNKNOWN_ERROR;
             break;
     }
+    if(pGame->board->emptyCellsCounter==0){
+    	/*@Omer: TODO: there is a special treatment for that case*/
+    	}
     return error;
 }
 
