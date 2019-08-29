@@ -164,9 +164,7 @@ ERROR executeCommand(command* pCommand, game* pGame){
             break;
         case NUM_SOLUTIONS:
         	res = executeNumSolutions(pGame->board);
-        	/*this function ^^ should not cause any errors*/
-        	/*@Omer print the result in your format*/
-        	printf("number of solutions is:%d\n",res);
+        	printf("Number of solutions is:%d\n",res);
             error = NO_ERROR;
             break;
         case AUTOFILL:
@@ -177,7 +175,8 @@ ERROR executeCommand(command* pCommand, game* pGame){
             break;
         case SET:
             /*executeSetCommand(pGame, atoi(pCommand->param1), atoi(pCommand->param2), atoi(pCommand->param3));*/
-            /*TODO: @Omer implement TODO: uncomment this*/
+            /*TODO: @Omer implement TODO: uncomment this
+             * Comment from Roee: remember that you cannot set a fixed cell to the value 0*/
             break;
         case HINT:
             /*error = hint(pGame, atoi(pCommand->param1), atoi(pCommand->param2));TODO: uncomment this*/

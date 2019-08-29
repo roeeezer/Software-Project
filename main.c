@@ -123,19 +123,16 @@ void executeCommandTester(){
 	Pgame=createGame(700);
 	buildBoardRandom(28,Pgame);
 	resetBoard(Pgame->boardTypes,REGULAR);
-	printBoard(Pgame->board,Pgame->boardTypes);
-	c->name=NUM_SOLUTIONS;
-	err=executeCommand(c,Pgame);
 
 
-	Pgame->currMode=EDIT_MODE;
+	Pgame->currMode=SOLVE_MODE;
 	c->name=SAVE;
-	c->param1 = "Board2.txt";
+	c->param1 = "board2.txt";
 	err=executeCommand(c,Pgame);
 	printBoard(Pgame->board,Pgame->boardTypes);
 
 	c->name = SOLVE;
-	c->param1 = "invalidBoard1.txt";
+	c->param1 = "invalidBoard.txt";
 
 	err=executeCommand(c,Pgame);
 	if(err==NO_ERROR){
@@ -179,7 +176,7 @@ void autofillTester(){
 
 }
 int main(){
-	autofillTester();
+	executeCommandTester();
 	return 1;
 }
 

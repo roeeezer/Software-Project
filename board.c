@@ -315,5 +315,21 @@ int boardContainsFixedErroneousCells(board *b,board *bTypes){
 
 	return 0;
 }
+void markAllErroneousCellsInBoard(board* b,board* bt){
+	int i,j,v,erroneous,N=b->squareSideSize;
+	for(i=0;i<N;i++){
+		for(j=0;j<N;j++){
+			if(getCell(bt,i,j)==REGULAR){
+				v = getCell(b,i,j);
+				setCell(b,i,j,0);
+				erroneous=setCausesErroneousCell( b,bt,i,j,v,1);
+				setCell(b,i,j,v);
+				if(erroneous){
+					setCell(bt,i,j,ERRONEOUS);
+				}
+			}
+
+		}}
+}
 
 

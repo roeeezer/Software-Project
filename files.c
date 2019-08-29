@@ -31,7 +31,7 @@ ERROR saveGame(board* b,board* bTypes,char* path,int gameMode){
 			if(fprintf(fo,"%d",getCell(b,i,j))<0){
 				return FPRINTF_ERROR;
 			}
-			if(getCell(bTypes,i,j)==FIXED||gameMode==EDIT_MODE){
+			if((getCell(bTypes,i,j)==FIXED||gameMode==EDIT_MODE)&&getCell(b,i,j)!=0){
 				fprintf(fo,".");
 			}
 			if(j!=s-1){
@@ -113,6 +113,7 @@ ERROR loadGame(board** b,board** bTypes,char* path,int *n,int *m){
 	if(boardContainsFixedErroneousCells(*b,*bTypes)){
 		return FIXED_ERRONEOUS_CELLS_IN_FILE;
 	}
+	markAllErroneousCellsInBoard( *b,*bTypes);
 	if(fclose(f)==-1){/*fclose returns EOF when it fails*/
 		return FCLOSE_ERROR;
 	}
