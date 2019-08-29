@@ -316,3 +316,4 @@ int boardContainsFixedErroneousCells(board *b,board *bTypes){
 	return 0;
 }
 
+

@@ -80,6 +80,7 @@ void oneDto2Dindices(board* b,int* indices,int oneDind);
  * of the cells in the board orig*/
 void copyBoard(board* copy,board* orig);
 int boardHasASolution(board* b);
+/*$ret==1 iff the bTypes contains and erroneous cell*/
 int erroneousBoard(board* bTypes);
 int setCausesErroneousCell(board* b,board* bTypes,int i,int j,int v,int markErroneousCells);
 void setCellAndMarkErroneous(board* b,board* bTypes,int i,int j,int val);

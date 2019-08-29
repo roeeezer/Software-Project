@@ -105,6 +105,13 @@ int executeNumSolutions(board* b){
 
 
 }
+ERROR executeAutofill(game* g){
+	if(erroneousBoard(g->boardTypes)){
+		return AUTOFILL_ERRONEOUS_BOARD;
+	}
+	return autofillBoard(g->board,g->boardTypes);
+
+}
 ERROR executeCommand(command* pCommand, game* pGame){
     ERROR error;
     int res;
@@ -114,11 +121,12 @@ ERROR executeCommand(command* pCommand, game* pGame){
     /*After this point, command is assumed legal for this game state.*/
     switch(pCommand->name) {
         case SOLVE:
-            return executeSolveCommand(pCommand,pGame,error);
+            error= executeSolveCommand(pCommand,pGame,error);
+            break;
         case EDIT:
         	/*Roee: need to be tested!*/
         	if(pCommand->param1!=NULL){
-        		return executeSolveCommand(pCommand,pGame,error);
+        		error= executeSolveCommand(pCommand,pGame,error);
         	}
         	else{
         		destroyGame(pGame);
@@ -156,11 +164,13 @@ ERROR executeCommand(command* pCommand, game* pGame){
             break;
         case NUM_SOLUTIONS:
         	res = executeNumSolutions(pGame->board);
+        	/*this function ^^ should not cause any errors*/
         	/*@Omer print the result in your format*/
-        	printf("num of solutions is:%d\n",res);
+        	printf("number of solutions is:%d\n",res);
+            error = NO_ERROR;
             break;
         case AUTOFILL:
-            /*error = autofillBoard(pGame->board); TODO: @Roee? implement this TODO: uncomment this*/
+           error = executeAutofill(pGame);
             break;
         case RESET:
             /*error = fullResetBoard(pGame); TODO: @Roee implement this TODO: uncomment this*/

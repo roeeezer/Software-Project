@@ -78,6 +78,9 @@ void printErrorMessage(ERROR error, command *pCommand){
         case FIXED_ERRONEOUS_CELLS_IN_FILE:
             printf("Error: cannot load a board with fixed erroneous cells!\n");
         	break;
+        case AUTOFILL_ERRONEOUS_BOARD:
+            printf("Error: cannot autofill a board with erroneous cells!\n");
+        	break;
         case TMP_ERROR:
             printf("Error: temporary error!\n");
             break;

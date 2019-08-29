@@ -30,6 +30,7 @@ typedef enum {
 	SAVE_ERRONEOUS_CELLS_IN_EDIT_MODE,
 	SAVE_UNSOLVABLE_BOARD_IN_EDIT_MODE,
 	FIXED_ERRONEOUS_CELLS_IN_FILE,
+	AUTOFILL_ERRONEOUS_BOARD,
 	TMP_ERROR,/*just for compilation reasons*/
     GUROBI_ERROR,
     UNKNOWN_ERROR /*An unknown error occurred. For checking if we reached unexpected situations*/
