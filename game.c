@@ -94,8 +94,20 @@ ERROR executeSolveCommand(command* pCommand,game* pGame,ERROR error){
     return error;
 
 }
+int executeNumSolutions(board* b){
+	board* tmpCopy;
+	int res;
+	tmpCopy= createBoard(b->rows,b->columns);
+	copyBoard(tmpCopy,b);
+	res = exhaustiveBackTracingWithStack(b,tmpCopy);
+	destroyBoard(tmpCopy);
+	return res;
+
+
+}
 ERROR executeCommand(command* pCommand, game* pGame){
     ERROR error;
+    int res;
     error = checkLegalParam(pCommand, pGame);
     if (error != NO_ERROR)
         return error;
@@ -143,7 +155,9 @@ ERROR executeCommand(command* pCommand, game* pGame){
             /* error = guessHint(pGame, atoi(pCommand->param1), atoi(pCommand->param2)); TODO: uncomment this*/
             break;
         case NUM_SOLUTIONS:
-            /*error = numSolutions(pGame->board); TODO: @Roee implement.TODO: uncomment this*/
+        	res = executeNumSolutions(pGame->board);
+        	/*@Omer print the result in your format*/
+        	printf("num of solutions is:%d\n",res);
             break;
         case AUTOFILL:
             /*error = autofillBoard(pGame->board); TODO: @Roee? implement this TODO: uncomment this*/

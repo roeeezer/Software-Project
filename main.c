@@ -120,12 +120,23 @@ void executeCommandTester(){
 	command *c;
 	ERROR err;
 	c = createCommand();
-	Pgame=createGame(5);
-	c->name = SOLVE;
-	c->param1 = "Board1.txt";
-	buildBoardRandom(45,Pgame);
+	Pgame=createGame(700);
+	buildBoardRandom(28,Pgame);
 	resetBoard(Pgame->boardTypes,REGULAR);
 	printBoard(Pgame->board,Pgame->boardTypes);
+	c->name=NUM_SOLUTIONS;
+	err=executeCommand(c,Pgame);
+
+
+	Pgame->currMode=EDIT_MODE;
+	c->name=SAVE;
+	c->param1 = "Board2.txt";
+	err=executeCommand(c,Pgame);
+	printBoard(Pgame->board,Pgame->boardTypes);
+
+	c->name = SOLVE;
+	c->param1 = "invalidBoard1.txt";
+
 	err=executeCommand(c,Pgame);
 	if(err==NO_ERROR){
 		printBoard(Pgame->board,Pgame->boardTypes);}
