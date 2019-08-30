@@ -4,11 +4,10 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
-#include"board.h"
 #ifndef CHANGENODE_H_
 #define CHANGENODE_H_
 typedef struct ChangeNode{
-	board* b;
+	int whichBoard;
 	int i;
 	int j;
 	int prevVal;
