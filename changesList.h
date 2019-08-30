@@ -12,7 +12,8 @@ typedef struct{
 }changesList;
 
 changesList* createChangesList();
-void destroyChangesList();
-
+void destroyChangesList(changesList* l);
+void InsertFirst(changesList* list,changeNode* change);
+void printChangesList(changesList* list);
 
 #endif /* CHANGESLIST_H_ */

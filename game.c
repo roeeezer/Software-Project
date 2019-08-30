@@ -196,6 +196,8 @@ ERROR executeCommand(command* pCommand, game* pGame){
             break;
     }
     if(commandIsAMove(pCommand)&&error==NO_ERROR){
+    	/*tmp printer*/
+    	printChangesList(move->changes);
     	addMove(pGame->undoList,move);
     	promoteCurrPointer(pGame->undoList);
     }

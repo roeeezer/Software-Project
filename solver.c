@@ -129,9 +129,6 @@ ERROR autofillBoard(board* b,board* bt,moveNode* move){
 	int* valuesList;
 	int i,j,size,v,N=b->squareSideSize;
 	board* cellsToFillBoard;
-	/*tmp*:*/
-	printf("",move);
-
 
 	cellsToFillBoard = createBoard(b->rows,b->columns);
 	resetBoard(cellsToFillBoard,0);
@@ -157,7 +154,7 @@ ERROR autofillBoard(board* b,board* bt,moveNode* move){
 		for(j=0;j<N;j++){
 			v=getCell(cellsToFillBoard,i,j);
 			if(v!=0){
-			setCellAndMarkErroneous(b,bt, i, j,v);
+				setCellMarkErroneousUpdateMove(b,bt,move, i, j,v);
 			}
 		}}
 	free(valuesList);

@@ -156,25 +156,26 @@ void autofillTester(){
 	command *c;
 	ERROR err=NO_ERROR;
 	c = createCommand();
-	c->name = AUTOFILL;
-	Pgame=createGame(5);
 
+	Pgame=createGame(5);
+	c->name = SAVE;
+	c->param1 = "tmpBoard.txt";
 	buildBoardRandom(55,Pgame);
 	resetBoard(Pgame->boardTypes,REGULAR);
 
 	printBoard(Pgame->board,Pgame->boardTypes);
-	printf("emptyCellsCounter=%d\n",Pgame->board->emptyCellsCounter);
+	executeCommand(c,Pgame);
+	c->name = AUTOFILL;
 	executeCommand(c,Pgame);
 	printErrorMessage( err, c);
 	if(err==NO_ERROR){
 		printBoard(Pgame->board,Pgame->boardTypes);
-		printf("emptyCellsCounter=%d\n",Pgame->board->emptyCellsCounter);
 	}
 
 
 }
 int main(){
-	executeCommandTester();
+	autofillTester();
 	return 1;
 }
 

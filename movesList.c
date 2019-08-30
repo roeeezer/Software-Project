@@ -14,15 +14,17 @@ movesList* createMovesList(){
 	return res;
 
 }
-void destroyMovesList(){
-	/*TODO*/
 
-}
-int EmptyList(movesList *l){
+int emptyMovesList(movesList *l){
 	return l->first==NULL;
 }
+void destroyMovesList(movesList* l){
+	if(!emptyMovesList(l)){
+		destroyAllMoveNodesStartingFrom(l->first);}
+	free(l);
+}
 void addMove(movesList *l,moveNode *m){
-	if(EmptyList(l)){
+	if(emptyMovesList(l)){
 		l->first = m;
 		l->curr = m;
 		l->last = m;

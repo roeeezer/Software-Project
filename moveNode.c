@@ -10,8 +10,9 @@ moveNode* createMoveNode(command* c){
 		printf("ERROR! cannot envelope a command that is not a move in a moveNode");
 		return NULL;
 	}
-	res = (moveNode*)malloc(sizeof(moveNode*));
+	res = (moveNode*)malloc(sizeof(moveNode));
 	res->command = c;
+	res->changes = createChangesList();
 	res->next=NULL;
 	res->prev=NULL;
 	return res;
@@ -20,6 +21,14 @@ moveNode* createMoveNode(command* c){
 }
 void destroyMoveNode(moveNode* m){
 	destroyCommand(m->command);
+	destroyChangesList(m->changes);
 	free(m);
+}
+void destroyAllMoveNodesStartingFrom(moveNode* start){
+	if(start->next==NULL){
+		destroyMoveNode(start);
+	}
+	destroyAllMoveNodesStartingFrom(start->next);
+	destroyMoveNode(start);
 }
 

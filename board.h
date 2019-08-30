@@ -87,7 +87,8 @@ int erroneousBoard(board* bTypes);
 int setCausesErroneousCell(board* b,board* bTypes,int i,int j,int v,int markErroneousCells);
 void setCellAndMarkErroneous(board* b,board* bTypes,int i,int j,int val);
 /*set the cell in board b, mark erroneous cells in bTypes and update the changes in move*/
-void setCellAndUpdate(board* b,board* bTypes,moveNode* move,int i,int j,int val);
+void setCellMarkErroneousUpdateMove(board* b,board* bTypes,moveNode* move,int i,int j,int val);
+void setCellUpdateMove(board* b,moveNode* move,int i,int j,int val);
 int boardContainsFixedErroneousCells(board *b,board *bTypes);
 void markAllErroneousCellsInBoard(board* b,board* bt);
 #endif /* BOARD_H_ */
