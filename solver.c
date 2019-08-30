@@ -125,10 +125,14 @@ void deleteIndexFromList(int* valuesList,int ind,int size){
 
 
 }
-ERROR autofillBoard(board* b,board* bt){
+ERROR autofillBoard(board* b,board* bt,moveNode* move){
 	int* valuesList;
 	int i,j,size,v,N=b->squareSideSize;
 	board* cellsToFillBoard;
+	/*tmp*:*/
+	printf("",move);
+
+
 	cellsToFillBoard = createBoard(b->rows,b->columns);
 	resetBoard(cellsToFillBoard,0);
 	valuesList = malloc(sizeof(int)*b->squareSideSize);
@@ -140,26 +144,20 @@ ERROR autofillBoard(board* b,board* bt){
 	 * if b(i,j) has multiple possible values then cellsToFillBoard(i,j)=0*/
 	for(i=0;i<N;i++){
 		for(j=0;j<N;j++){
-
 			if(getCell(b,i,j)==0){
 				size=createValidValuesList(valuesList,b, i, j);
 				if(size==1){
-					/*printf("before set: i=%d,	j=%d, v=%d\n",i,j,valuesList[0]);*/
 					setCell(cellsToFillBoard,i,j,valuesList[0]);
 			}
 		}
 		}
 	}
-	/*printf("cellsToFillBoard:\n");*/
-	printBoard(cellsToFillBoard,bt);
 	/*now we shall set the cells with "obvious" values to the board b*/
 	for(i=0;i<N;i++){
 		for(j=0;j<N;j++){
 			v=getCell(cellsToFillBoard,i,j);
 			if(v!=0){
 			setCellAndMarkErroneous(b,bt, i, j,v);
-			/*printf("board after set cell(%d,%d) to %d:\n",i,j,v);
-			printBoard(b,bt);*/
 			}
 		}}
 	free(valuesList);

@@ -13,6 +13,7 @@
 #include "board.h"
 #include "error.h"
 #include "files.h"
+#include "movesList.h"
 #define blockRows 3
 #define blockColumns 3
 
@@ -23,6 +24,7 @@ typedef struct{
 	board* board;
 	board* boardSol;
 	board* boardTypes;
+	movesList* undoList;
 	/*0 - for regular cell
 	* 1 - for fixed cell
 	* 2 - for error cell*/

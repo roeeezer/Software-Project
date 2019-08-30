@@ -15,11 +15,13 @@ typedef enum{
 	GENERATE, UNDO, REDO, SAVE, GUESS_HINT,
 	NUM_SOLUTIONS, AUTOFILL, RESET, SET,HINT,VALIDATE,EXIT, NONE
 }commandName;
-typedef struct{
+typedef struct {
 	commandName name; /*what type of command is it*/
 	char* param1, *param2, *param3; /*At most 3 commands*/
 }command;
 command* createCommand();
 void destroyCommand(command* PcurrCommand);
 int numberOfParams(commandName name);
+/*follows the definition of "move" in page 3*/
+int commandIsAMove(command* c);
 #endif /* COMMAND_H_ */

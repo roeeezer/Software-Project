@@ -63,3 +63,13 @@ int numberOfParams(commandName name) {
     return -1;
 
 }
+int commandIsAMove(command* c){
+	commandName name = c->name;
+	if(name==SET||name==AUTOFILL||name==GENERATE||name==GUESS){
+		return 1;
+	}
+	else{
+		return 0;
+	}
+
+}

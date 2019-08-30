@@ -11,6 +11,7 @@
 #include "board.h"
 #include "stack.h"
 #include "error.h"
+#include "moveNode.h"
 void solveBoardRandomly(board* sol);
 /*recursively implements the deterministic back tracking algorithm of the board
  * from cell number startInd (a 1D index) to the last cell in the board*/
@@ -40,6 +41,6 @@ int RandomBackTracingRec(board* b,board* bSol,int startInd);
 int exhaustiveBackTracingRec(board* b,board* bSol,int startInd);
 /*@pre bSol is a copy of the board*/
 int exhaustiveBackTracingWithStack(board* b,board* bSol);
-ERROR autofillBoard(board* b,board* bt);
+ERROR autofillBoard(board* b,board* bt,moveNode* move);
 
 #endif /* SOLVER_H_ */

@@ -7,6 +7,7 @@
 #ifndef BOARD_H_
 #define BOARD_H_
 #include <stdio.h>
+#include "moveNode.h"
 /*Board Structure:
  * the board structure was necessary because the modules game and solver need to
  * exchange game boards among them in a way that is not depended on the data structure
@@ -85,6 +86,8 @@ int boardHasASolution(board* b);
 int erroneousBoard(board* bTypes);
 int setCausesErroneousCell(board* b,board* bTypes,int i,int j,int v,int markErroneousCells);
 void setCellAndMarkErroneous(board* b,board* bTypes,int i,int j,int val);
+/*set the cell in board b, mark erroneous cells in bTypes and update the changes in move*/
+void setCellAndUpdate(board* b,board* bTypes,moveNode* move,int i,int j,int val);
 int boardContainsFixedErroneousCells(board *b,board *bTypes);
 void markAllErroneousCellsInBoard(board* b,board* bt);
 #endif /* BOARD_H_ */

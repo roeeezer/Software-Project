@@ -309,6 +309,16 @@ void setCellAndMarkErroneous(board* b,board* bTypes,int i,int j,int val){
 		setCell(bTypes,i,j,ERRONEOUS);
 	}
 }
+
+void setCellAndUpdate(board* b,board* bTypes,moveNode* move,int i,int j,int val){
+	int erroneous;
+	printf("",move);
+	erroneous=setCausesErroneousCell( b,bTypes,i,j,val,1);
+	setCell(b,i,j,val);
+	if(erroneous){
+		setCell(bTypes,i,j,ERRONEOUS);
+	}
+}
 int boardContainsFixedErroneousCells(board *b,board *bTypes){
 	int N,i,j,v;
 	N = b->squareSideSize;

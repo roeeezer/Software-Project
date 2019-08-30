@@ -28,6 +28,7 @@ game* createGame(int seed){
 	res->boardSol = createBoard(blockRows,blockColumns);
 	res->boardTypes = createBoard(blockRows,blockColumns);
 	resetBoard(res->boardTypes,REGULAR);
+	res->undoList = createMovesList();
 	res->currMode = INIT_MODE;
 
 	return res;
@@ -36,9 +37,8 @@ game* createGame(int seed){
 void destroyGame(game* game){
     destroyBoard(game->board);
     destroyBoard(game->boardSol);
-    free(game->boardTypes);
-	/*free(game->board); *//*destroyboard?*//*
-	free(game->boardSol);*/
+    destroyBoard(game->boardTypes);
+    destroyMovesList(game->undoList);
 	free(game);
 }
 int initializeGame(int seed, game **newGame) {
@@ -105,16 +105,20 @@ int executeNumSolutions(board* b){
 
 
 }
-ERROR executeAutofill(game* g){
+ERROR executeAutofill(game* g,moveNode* move){
 	if(erroneousBoard(g->boardTypes)){
 		return AUTOFILL_ERRONEOUS_BOARD;
 	}
-	return autofillBoard(g->board,g->boardTypes);
+	return autofillBoard(g->board,g->boardTypes,move);
 
 }
 ERROR executeCommand(command* pCommand, game* pGame){
     ERROR error;
+    moveNode *move;
     int res;
+    if(commandIsAMove(pCommand)){
+    	move = createMoveNode(pCommand);
+    }
     error = checkLegalParam(pCommand, pGame);
     if (error != NO_ERROR)
         return error;
@@ -124,7 +128,7 @@ ERROR executeCommand(command* pCommand, game* pGame){
             error= executeSolveCommand(pCommand,pGame,error);
             break;
         case EDIT:
-        	/*Roee: need to be tested!*/
+        	/*@Omer: TODO: change the if condition to fit your functions*/
         	if(pCommand->param1!=NULL){
         		error= executeSolveCommand(pCommand,pGame,error);
         	}
@@ -168,7 +172,7 @@ ERROR executeCommand(command* pCommand, game* pGame){
             error = NO_ERROR;
             break;
         case AUTOFILL:
-           error = executeAutofill(pGame);
+           error = executeAutofill(pGame,move);
             break;
         case RESET:
             /*error = fullResetBoard(pGame); TODO: @Roee implement this TODO: uncomment this*/
@@ -191,9 +195,14 @@ ERROR executeCommand(command* pCommand, game* pGame){
             error = UNKNOWN_ERROR;
             break;
     }
+    if(commandIsAMove(pCommand)&&error==NO_ERROR){
+    	addMove(pGame->undoList,move);
+    	promoteCurrPointer(pGame->undoList);
+    }
     if(pGame->board->emptyCellsCounter==0){
     	/*@Omer: TODO: there is a special treatment for that case*/
     	}
+
     return error;
 }
 
