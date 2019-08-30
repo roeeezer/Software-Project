@@ -22,9 +22,9 @@
  * squareSideSize = rows*columns - saved for readability and convenience
  * */
 /*cell Types in boardTypes of the game */
-#define REGULAR 0
-#define FIXED 1
-#define ERRONEOUS 2
+#define REGULAR_CELL 0
+#define FIXED_CELL 1
+#define ERRONEOUS_CELL 2
 typedef struct{
 	int* boardArr;
 	int rows;
@@ -91,4 +91,5 @@ void setCellMarkErroneousUpdateMove(board* b,board* bTypes,moveNode* move,int i,
 void setCellUpdateMove(board* b,moveNode* move,int i,int j,int val);
 int boardContainsFixedErroneousCells(board *b,board *bTypes);
 void markAllErroneousCellsInBoard(board* b,board* bt);
+void clearCell(board* pBoard, int i, int j);
 #endif /* BOARD_H_ */

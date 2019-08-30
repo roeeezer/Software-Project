@@ -46,7 +46,7 @@ void saveGameTester(){
 	resetBoard(Pgame->board,0);
 	resetBoard(Pgame->boardSol,0);
 	buildBoardRandom(35,Pgame);
-	resetBoard(Pgame->boardTypes,REGULAR);
+	resetBoard(Pgame->boardTypes, REGULAR_CELL);
 	printBoard(Pgame->board,Pgame->boardTypes);
 	copyBoard(Pgame->boardSol,Pgame->board);
 	saveGame(Pgame->board,Pgame->boardTypes,"board.txt",2);
@@ -84,6 +84,7 @@ int finalMain(int argc, char *argv[]){
 			/*restartInd=(PcurrCommand->name==RESTART);*/
             executeCommandDEPRECATED(PcurrCommand, Pgame);
 			destroyCommand(PcurrCommand);
+			/*TODO: check if executionError (returns from executeCommand) is BOARD_SOLVED_CORRECTLY and act*/
 		}
 		destroyGame(Pgame);
 	}
@@ -100,16 +101,16 @@ void loaderTester(){
 	bt = Pgame->boardTypes;*/
 	buildBoardRandom(45,Pgame);
 	/*resetBoard(Pgame->boardSol,0);
-	resetBoard(bt,REGULAR);
+	resetBoard(bt,REGULAR_CELL);
 
 
 	printBoard(b,bt);
 	saveGame(b,bt,"board1.txt",SOLVE);*/
 	printBoard(Pgame->board,Pgame->boardTypes);
-	printf("before load b val=%d\n",b);
+	printf("before load b val=%d\n",b==NULL);
 
 	loadGame(&b,&bt,"board1.txt",&n,&m);
-	printf("after load b val=%d\n",b);
+	printf("after load b val=%d\n",b==NULL);
 
 	printBoard(b,bt);
 
@@ -122,7 +123,7 @@ void executeCommandTester(){
 	c = createCommand();
 	Pgame=createGame(700);
 	buildBoardRandom(28,Pgame);
-	resetBoard(Pgame->boardTypes,REGULAR);
+	resetBoard(Pgame->boardTypes, REGULAR_CELL);
 
 
 	Pgame->currMode=SOLVE_MODE;
@@ -146,7 +147,7 @@ void erroneousCheckTester(){
 	int i=4,j=2,v=2;
 	Pgame=createGame(5);
 	buildBoardRandom(45,Pgame);
-	resetBoard(Pgame->boardTypes,FIXED);
+	resetBoard(Pgame->boardTypes, FIXED_CELL);
 	printBoard(Pgame->board,Pgame->boardTypes);
 	printf("i=%d,j=%d,val=%d,erroneous=%d\n",i,j,v,setCausesErroneousCell(Pgame->board,Pgame->boardTypes,i,j,v,2));
 	printBoard(Pgame->board,Pgame->boardTypes);
@@ -161,7 +162,7 @@ void autofillTester(){
 	c->name = SAVE;
 	c->param1 = "tmpBoard.txt";
 	buildBoardRandom(55,Pgame);
-	resetBoard(Pgame->boardTypes,REGULAR);
+	resetBoard(Pgame->boardTypes, REGULAR_CELL);
 
 	printBoard(Pgame->board,Pgame->boardTypes);
 	executeCommand(c,Pgame);

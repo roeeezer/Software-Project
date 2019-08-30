@@ -10,7 +10,11 @@
 #include "game.h"
 
 
+ERROR executeSetCommand(game *game, int x, int y, int z);
 
+ERROR executeGenerateCommand(game *game, int x, int y);
+
+ERROR executeGuessCommand(game *game, double thresh);
 
 /*n is the number of rows in each board block
  *m is the number of columns in each board block
@@ -27,8 +31,8 @@ game* createGame(int seed){
 	res->board = createBoard(blockRows,blockColumns);
 	res->boardSol = createBoard(blockRows,blockColumns);
 	res->boardTypes = createBoard(blockRows,blockColumns);
-	resetBoard(res->boardTypes,REGULAR);
 	res->undoList = createMovesList();
+	resetBoard(res->boardTypes, REGULAR_CELL);
 	res->currMode = INIT_MODE;
 
 	return res;
@@ -148,10 +152,10 @@ ERROR executeCommand(command* pCommand, game* pGame){
             error = NO_ERROR;
             break;
         case GUESS:
-            /*error = guess(pGame, atof(pCommand->param1));*/
+            error = executeGuessCommand(pGame, atof(pCommand->param1));
             break;
         case GENERATE:
-            /*error = generate(pGame, atoi(pCommand->param1), atoi(pCommand->param2)); TODO: uncomment this*/
+            error = executeGenerateCommand(pGame, atoi(pCommand->param1), atoi(pCommand->param2));
             break;
         case UNDO:
             /* error = undo_move(pGame); TODO: @Roee implement TODO: uncomment this*/
@@ -178,7 +182,7 @@ ERROR executeCommand(command* pCommand, game* pGame){
             /*error = fullResetBoard(pGame); TODO: @Roee implement this TODO: uncomment this*/
             break;
         case SET:
-            /*executeSetCommand(pGame, atoi(pCommand->param1), atoi(pCommand->param2), atoi(pCommand->param3));*/
+            executeSetCommand(pGame, atoi(pCommand->param1), atoi(pCommand->param2), atoi(pCommand->param3));
             /*TODO: @Omer implement TODO: uncomment this
              * Comment from Roee: remember that you cannot set a fixed cell to the value 0*/
             break;
@@ -206,6 +210,82 @@ ERROR executeCommand(command* pCommand, game* pGame){
     	}
 
     return error;
+}
+
+ERROR executeGuessCommand(game *game, double thresh) {
+    ERROR error;
+    if (erroneousBoard(game->boardTypes))
+        return GUESS_ERRONEOUS_BOARD;
+    error = solveLPWithThreshold(game->board, thresh);
+    return error;
+}
+
+/**
+ * Generates a board on a copy of current board, and then copies back all correct values to original board if possible.
+ * Does NOT maintain fixedCell/regularCell notation (deemed unnecessary as this command is available in EDIT mode only)
+ * @param game
+ * @param x number of random cells to fill before solving
+ * @param y number of cells to clear after solving
+ * @return appropriate error
+ */
+ERROR executeGenerateCommand(game *game, int x, int y) {
+    board* origBoard, *cpBoard;
+    int i, success;
+    ERROR error;
+    success=0;
+    origBoard = game->board;
+    if (origBoard->emptyCellsCounter < x)
+        return GENERATE_NOT_ENOUGH_CELLS;
+    cpBoard = createBoard(origBoard->rows, origBoard->columns);
+    copyBoard(cpBoard, origBoard);
+    for (i = 0; i < 1000; i++) {
+        success = fillXRandomCells(cpBoard, x);
+        if (success){
+            error = solveILP(cpBoard);
+            if (error == NO_ERROR)
+                break;
+            else
+                copyBoard(cpBoard, origBoard);
+        }
+        else
+            copyBoard(cpBoard, origBoard);
+    }
+    if (!success){
+        destroyBoard(cpBoard);
+        return FAILED_TO_GENERATE;
+    }
+    for (i = 0; i < y; i++) {
+        clearRandomCell(cpBoard);
+    }
+    copyBoard(origBoard, cpBoard);
+    destroyBoard(cpBoard);
+    return NO_ERROR;
+}
+
+/**
+ * Executes the set command
+ * @param game
+ * @param x
+ * @param y
+ * @param z
+ * @return NO_ERROR if set sucessfully,FIXED_CELL_ERROR if trying to set fixed cell in SOLVE
+ * BOARD_SOLVED_ERRONEOUS if board solved incorrectly, or BOARD_SOLVED_CORRECTLY if board solved correctly.
+ */
+ERROR executeSetCommand(game *game, int x, int y, int z) {
+    int type, currMode, i, j;
+    currMode = game->currMode;
+    i = y - 1;
+    j = x - 1;
+    type = getCell(game->boardTypes, i, j);
+    if (currMode == SOLVE && type == FIXED_CELL)
+        return FIXED_CELL_ERROR;
+    setCellAndMarkErroneous(game->board, game->boardTypes, i,j, z);
+    if (currMode == SOLVE && game->board->emptyCellsCounter == 0){
+           if (erroneousBoard(game->boardTypes))
+               return BOARD_SOLVED_ERRONEOUS;
+           return BOARD_SOLVED_CORRECTLY;
+    }
+    return NO_ERROR;
 }
 
 

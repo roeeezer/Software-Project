@@ -179,16 +179,16 @@ void printCellValue(board* b,int i,int j,board* bTypes){
 	if(val==0){
 			printf("  ");
 		}
-	else if(type==REGULAR){
+	else if(type == REGULAR_CELL){
 		printf(" %d",val);
 	}
 
-	else if(type==FIXED){
+	else if(type == FIXED_CELL){
 		printf("%d.",val);
 
 		}
 
-	else if(type==ERRONEOUS){
+	else if(type == ERRONEOUS_CELL){
 		printf("%d*",val);
 
 			}
@@ -197,14 +197,16 @@ void printCellValue(board* b,int i,int j,board* bTypes){
 }
 int boardHasASolution(board* b){
 	/*TODO: Omer return true if it has a solution*/
-	printf("",b);
+	if (!b)
+	    return -1;
+	printf("\n");
 	return 1;
 }
 int erroneousBoard(board* bTypes){
 	int i,j,s = bTypes->squareSideSize;
 	for(i=0;i<s;i++){
 		for(j=0;j<s;j++){
-			if(getCell(bTypes,i,j)==ERRONEOUS){
+			if(getCell(bTypes,i,j) == ERRONEOUS_CELL){
 				return 1;
 			}
 		}
@@ -216,7 +218,7 @@ int setCausesErroneousCellInRow(board* b,board* bTypes,int i,int v,int ind){
 	boardColumns = b->squareSideSize;
 	for(k=0;k<boardColumns;k++){
 		if(getCell(b,i,k)==v){
-			if(ind==2&&getCell(bTypes,i,k)==FIXED){
+			if(ind==2&& getCell(bTypes,i,k) == FIXED_CELL){
 				return 1;
 			}
 			if(ind==0){
@@ -224,7 +226,7 @@ int setCausesErroneousCellInRow(board* b,board* bTypes,int i,int v,int ind){
 			}
 			if(ind==1){
 				res=1;
-				setCell(bTypes,i,k,ERRONEOUS);}
+				setCell(bTypes, i, k, ERRONEOUS_CELL);}
 
 		}
 	}
@@ -236,7 +238,7 @@ int setCausesErroneousCellInColumn(board* b,board* bTypes,int j,int v,int ind){
 	boardRows = b->squareSideSize;
 		for(k=0;k<boardRows;k++){
 			if(getCell(b,k,j)==v){
-				if(ind==2&&getCell(bTypes,k,j)==FIXED){
+				if(ind==2&& getCell(bTypes,k,j) == FIXED_CELL){
 					return 1;
 				}
 				if(ind==0){
@@ -244,7 +246,7 @@ int setCausesErroneousCellInColumn(board* b,board* bTypes,int j,int v,int ind){
 				}
 				if(ind==1){
 					res=1;
-					setCell(bTypes,k,j,ERRONEOUS);}
+					setCell(bTypes, k, j, ERRONEOUS_CELL);}
 			}
 		}
 		return res;
@@ -258,7 +260,7 @@ int setCausesErroneousCellInBlock(board* b,board* bTypes,int i,int j,int v,int i
 	for(k=blockIndices[0]*b->rows;k<(blockIndices[0]+1)*b->rows;k++){
 		for(r=blockIndices[1]*b->columns;r<(blockIndices[1]+1)*b->columns;r++){
 			if(getCell(b,k,r)==v){
-				if(ind==2&&getCell(bTypes,k,r)==FIXED){
+				if(ind==2&& getCell(bTypes,k,r) == FIXED_CELL){
 					return 1;
 				}
 				if(ind==0){
@@ -266,7 +268,7 @@ int setCausesErroneousCellInBlock(board* b,board* bTypes,int i,int j,int v,int i
 				}
 				if(ind==1){
 					res=1;
-					setCell(bTypes,k,r,ERRONEOUS);}
+					setCell(bTypes, k, r, ERRONEOUS_CELL);}
 					}
 		}
 	}
@@ -306,7 +308,7 @@ void setCellAndMarkErroneous(board* b,board* bTypes,int i,int j,int val){
 	erroneous=setCausesErroneousCell( b,bTypes,i,j,val,1);
 	setCell(b,i,j,val);
 	if(erroneous){
-		setCell(bTypes,i,j,ERRONEOUS);
+		setCell(bTypes, i, j, ERRONEOUS_CELL);
 	}
 }
 void setCellUpdateMove(board* b,moveNode* move,int i,int j,int val){
@@ -319,7 +321,7 @@ void setCellMarkErroneousUpdateMove(board* b,board* bTypes,moveNode* move,int i,
 	erroneous=setCausesErroneousCell( b,bTypes,i,j,val,1);
 	setCellUpdateMove(b,move,i,j,val);
 	if(erroneous){
-		setCell(bTypes,i,j,ERRONEOUS);
+		setCell(bTypes,i,j,ERRONEOUS_CELL);
 	}
 }
 
@@ -328,7 +330,7 @@ int boardContainsFixedErroneousCells(board *b,board *bTypes){
 	N = b->squareSideSize;
 	for(i=0;i<N;i++){
 		for(j=0;j<N;j++){
-			if(getCell(bTypes,i,j)==FIXED){
+			if(getCell(bTypes,i,j) == FIXED_CELL){
 				v=getCell(b,i,j);
 				setCell(b,i,j,0);
 				if(setCausesErroneousCell(b,bTypes, i, j, v, 2)){
@@ -346,17 +348,19 @@ void markAllErroneousCellsInBoard(board* b,board* bt){
 	int i,j,v,erroneous,N=b->squareSideSize;
 	for(i=0;i<N;i++){
 		for(j=0;j<N;j++){
-			if(getCell(bt,i,j)==REGULAR){
+			if(getCell(bt,i,j) == REGULAR_CELL){
 				v = getCell(b,i,j);
 				setCell(b,i,j,0);
 				erroneous=setCausesErroneousCell( b,bt,i,j,v,1);
 				setCell(b,i,j,v);
 				if(erroneous){
-					setCell(bt,i,j,ERRONEOUS);
+					setCell(bt, i, j, ERRONEOUS_CELL);
 				}
 			}
 
 		}}
 }
 
-
+void clearCell(board* pBoard, int i, int j){
+    setCell(pBoard, i, j, 0);
+}

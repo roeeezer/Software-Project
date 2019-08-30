@@ -238,3 +238,68 @@ int findRandomSolution(board* Pboard,board* PboardSol){
 	return RandomBackTracingRec(Pboard,PboardSol,firstEmptyCell);
 }
 
+ERROR solveILP(board* b){
+    if (b)
+        return UNKNOWN_ERROR; /*TODO: implement this*/
+    return NO_ERROR;
+}
+
+/**
+ * finds LP solution, while only considering result values above a certain threshold.
+ * Writes solution to the board
+ * @param pBoard the board to solve
+ * @param threshold double between 0 and 1 for which values to keep
+ * @return
+ */
+ERROR solveLPWithThreshold(board *pBoard, double threshold){
+    if (pBoard || threshold)
+        return UNKNOWN_ERROR; /*TODO: implement this*/
+    return NO_ERROR;
+}
+
+/**
+ * Fills X empty cells in board with valid values. Assumes there ARE at least x empty cells
+ * @param pBoard the board
+ * @param x how many cells to fill
+ * @return 1 if succeeded, 0 if at any point a cell had no valid options
+ */
+int fillXRandomCells(board* pBoard, int x){
+    int i, j, counter, N, numValuesForCell, chosenValue;
+    int* valuesList;
+    N = pBoard->squareSideSize;
+    valuesList = (int *) malloc(N * sizeof(int));
+    if (valuesList == NULL){
+        printf("Error: malloc has failed!\n");
+        exit(-42);
+    }
+    for (counter = 0; counter < x;) {
+        i = rand() % N;
+        j = rand() % N;
+        while (!emptyCell(pBoard, i, j)){
+            i = rand() % N;
+            j = rand() % N;
+        }
+        numValuesForCell = createValidValuesList(valuesList, pBoard,i, j);
+        if (numValuesForCell == 0){
+            free(valuesList);
+            return 0;
+        }
+        chosenValue = valuesList[rand() % numValuesForCell];
+        setCell(pBoard, i, j, chosenValue);
+        counter++;
+    }
+    return 1;
+}
+
+void clearRandomCell(board* pBoard){
+    int i, j, N;
+    N = pBoard->squareSideSize;
+    while(1){
+        i = rand() % N;
+        j = rand() % N;
+        if (getCell(pBoard, i, j)){
+            clearCell(pBoard, i, j);
+            return;
+        }
+    }
+}

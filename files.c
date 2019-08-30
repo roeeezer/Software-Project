@@ -31,7 +31,7 @@ ERROR saveGame(board* b,board* bTypes,char* path,int gameMode){
 			if(fprintf(fo,"%d",getCell(b,i,j))<0){
 				return FPRINTF_ERROR;
 			}
-			if((getCell(bTypes,i,j)==FIXED||gameMode==EDIT_MODE)&&getCell(b,i,j)!=0){
+			if((getCell(bTypes,i,j) == FIXED_CELL || gameMode == EDIT_MODE) && getCell(b, i, j) != 0){
 				fprintf(fo,".");
 			}
 			if(j!=s-1){
@@ -84,7 +84,7 @@ ERROR loadGame(board** b,board** bTypes,char* path,int *n,int *m){
 	}
 	*b = createBoard(*n,*m);
 	*bTypes = createBoard(*n,*m);
-	resetBoard(*bTypes,REGULAR);
+	resetBoard(*bTypes, REGULAR_CELL);
 	for(i=0;i<N;i++){
 		for(j=0;j<N;j++){
 			if(fscanf(f,"%d",&val)<=0){
@@ -102,7 +102,7 @@ ERROR loadGame(board** b,board** bTypes,char* path,int *n,int *m){
 				return INVALID_FILE_FORMAT;
 			}
 			if(ch=='.'){
-				setCell(*bTypes,i,j,FIXED);}
+				setCell(*bTypes, i, j, FIXED_CELL);}
 			/*printf("i=%d, j=%d, val=%d, ch=%c, chVal=%d\n",i,j,val,ch,ch);*/
 		}
 

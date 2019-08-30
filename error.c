@@ -84,6 +84,18 @@ void printErrorMessage(ERROR error, command *pCommand){
         case TMP_ERROR:
             printf("Error: temporary error!\n");
             break;
+        case FIXED_CELL_ERROR: /*TODO: implement all these*/
+            break;
+        case BOARD_SOLVED_ERRONEOUS:
+            break;
+        case BOARD_SOLVED_CORRECTLY:
+            break;
+        case GENERATE_NOT_ENOUGH_CELLS:
+            break;
+        case FAILED_TO_GENERATE:
+            break;
+        case GUESS_ERRONEOUS_BOARD:
+            break;
     }
 }
 

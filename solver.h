@@ -42,5 +42,9 @@ int exhaustiveBackTracingRec(board* b,board* bSol,int startInd);
 /*@pre bSol is a copy of the board*/
 int exhaustiveBackTracingWithStack(board* b,board* bSol);
 ERROR autofillBoard(board* b,board* bt,moveNode* move);
+ERROR solveILP(board *b);
+ERROR solveLPWithThreshold(board *pBoard, double threshold);
+int fillXRandomCells(board* pBoard, int x);
+void clearRandomCell(board* pBoard);
 
 #endif /* SOLVER_H_ */
