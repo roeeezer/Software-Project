@@ -131,11 +131,13 @@ void executeCommandTester(){
 	err=executeCommand(c,Pgame);
 	printBoard(Pgame->board,Pgame->boardTypes);
 
-	c->name = SOLVE;
-	c->param1 = "invalidBoard.txt";
+	c->name = EDIT;
+	c->param1 = NULL;
 
 	err=executeCommand(c,Pgame);
 	if(err==NO_ERROR){
+		printf("mode:%d\n",Pgame->currMode);
+		buildBoardRandom(28,Pgame);
 		printBoard(Pgame->board,Pgame->boardTypes);}
 
 }
@@ -172,7 +174,7 @@ void autofillTester(){
 
 }
 int main(){
-	autofillTester();
+	executeCommandTester();
 	return 1;
 }
 
