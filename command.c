@@ -10,9 +10,9 @@
 command* createCommand(){
     char* param1, *param2,*param3;
     command* res;
-    param1 = (char *) (malloc(sizeof(char) * MAX_INPUT_SIZE));
-    param2 = (char *) (malloc(sizeof(char) * MAX_INPUT_SIZE));
-    param3 = (char *) (malloc(sizeof(char) * MAX_INPUT_SIZE));
+    param1 = (char *) (calloc(MAX_INPUT_SIZE, sizeof(char))); /*Calloc to make sure all chars are '\0' */
+    param2 = (char *) (calloc(MAX_INPUT_SIZE, sizeof(char)));
+    param3 = (char *) (calloc(MAX_INPUT_SIZE, sizeof(char)));
 	res = (command*) malloc(sizeof(command));
 	if (res == NULL || param1 == NULL || param2 == NULL || param3 == NULL){
         printf("Error: malloc has failed\n");
