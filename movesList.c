@@ -54,3 +54,11 @@ void demoteCurrPointer(movesList *l){
 	}
 	l->curr = l->curr->prev;
 }
+void printMovesList(movesList *l){
+	moveNode *currMove= l->first;
+	while(currMove!=NULL){
+		printCommandName(currMove->command);
+		printf("\t");
+		currMove=currMove->next;
+	}
+}

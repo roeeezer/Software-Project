@@ -190,34 +190,23 @@ void undoListTester(){
 	printBoard(Pgame->board,Pgame->boardTypes);
 
 	c->name = SET;
-	c->param1 = "2";
-	c->param2 = "4";
-	c->param3 = "1";
+	c->param1 = "1";
+	c->param2 = "1";
+	c->param3 = "5";
 	printf("Execute SET\n");
 	err=executeCommand(c,Pgame);
 	printErrorMessage( err, c);
 	printBoard(Pgame->board,Pgame->boardTypes);
 
 	c->name = SET;
-	c->param1 = "2";
-	c->param2 = "4";
-	c->param3 = "2";
+	c->param1 = "1";
+	c->param2 = "1";
+	c->param3 = "6";
 	printf("Execute SET\n");
 	err=executeCommand(c,Pgame);
 	printErrorMessage( err, c);
 	printBoard(Pgame->board,Pgame->boardTypes);
 
-	/*printf("Execute SET\n");
-	c->name = SET;
-	err=executeCommand(c,Pgame);
-	printErrorMessage( err, c);
-	printBoard(Pgame->board,Pgame->boardTypes);
-
-	printf("Execute SET\n");
-	c->name = SET;
-	err=executeCommand(c,Pgame);
-	printErrorMessage( err, c);
-	printBoard(Pgame->board,Pgame->boardTypes);*/
 
 	printf("Execute UNDO\n");
 	c->name = UNDO;
@@ -229,6 +218,33 @@ void undoListTester(){
 	err=executeCommand(c,Pgame);
 	printErrorMessage( err, c);
 	printBoard(Pgame->board,Pgame->boardTypes);
+/*
+	c->name = REDO;
+	printf("Execute REDO\n");
+	err=executeCommand(c,Pgame);
+	printErrorMessage( err, c);
+	printBoard(Pgame->board,Pgame->boardTypes);*/
+
+	printf("Execute UNDO\n");
+	c->name = UNDO;
+	err=executeCommand(c,Pgame);
+	printErrorMessage( err, c);
+	printBoard(Pgame->board,Pgame->boardTypes);
+
+	printMovesList(Pgame->undoList);
+/*
+	c->name = REDO;
+	printf("Execute REDO\n");
+	err=executeCommand(c,Pgame);
+	printErrorMessage( err, c);
+	printBoard(Pgame->board,Pgame->boardTypes);
+
+	c->name = REDO;
+	printf("Execute REDO\n");
+	err=executeCommand(c,Pgame);
+	printErrorMessage( err, c);
+	printBoard(Pgame->board,Pgame->boardTypes);
+*/
 
 	destroyGame(Pgame);
 }

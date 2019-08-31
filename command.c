@@ -63,6 +63,66 @@ int numberOfParams(commandName name) {
     return -1;
 
 }
+void printCommandName(command *c) {
+    switch (c->name) {
+        case EDIT:
+        	printf("EDIT\n");
+        	break;
+        case PRINT_BOARD:
+        	printf("PRINT_BOARD\n");
+        	break;
+        case VALIDATE:
+        	printf("PRINT_BOARD\n");
+        	break;
+        case UNDO:
+        	printf("PRINT_BOARD\n");
+        	break;
+        case REDO:
+        	printf("PRINT_BOARD\n");
+        	break;
+        case NUM_SOLUTIONS:
+        	printf("PRINT_BOARD\n");
+        	break;
+        case AUTOFILL:
+        	printf("PRINT_BOARD\n");
+        	break;
+        case RESET:
+        	printf("PRINT_BOARD\n");
+        	break;
+        case EXIT:
+        	printf("PRINT_BOARD\n");
+        	break;
+        case SOLVE:
+        	printf("PRINT_BOARD\n");
+        	break;
+        case MARK_ERRORS:
+        	printf("PRINT_BOARD\n");
+        	break;
+        case GUESS:
+        	printf("PRINT_BOARD\n");
+        	break;
+        case SAVE:
+        	printf("PRINT_BOARD\n");
+        	break;
+        case GENERATE:
+        	printf("PRINT_BOARD\n");
+        	break;
+        case HINT:
+        	printf("PRINT_BOARD\n");
+        	break;
+        case GUESS_HINT:
+        	printf("PRINT_BOARD\n");
+        	break;
+        case SET:
+        	printf("PRINT_BOARD\n");
+        	break;
+        case NONE:
+        	printf("PRINT_BOARD\n");
+        	break;
+    }
+
+
+}
 int commandIsAMove(command* c){
 	commandName name = c->name;
 	if(name==SET||name==AUTOFILL||name==GENERATE||name==GUESS){

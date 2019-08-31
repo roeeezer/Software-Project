@@ -38,6 +38,7 @@ typedef enum {
 	FAILED_TO_GENERATE,
     GUESS_ERRONEOUS_BOARD,
 	NO_MOVES_TO_UNDO_ERROR,
+	NO_MOVES_TO_REDO_ERROR,
 	TMP_ERROR,/*just for compilation reasons*/
     GUROBI_ERROR,
     UNKNOWN_ERROR /*An unknown error occurred. For checking if we reached unexpected situations*/

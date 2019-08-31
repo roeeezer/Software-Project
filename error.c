@@ -84,6 +84,9 @@ void printErrorMessage(ERROR error, command *pCommand){
         case NO_MOVES_TO_UNDO_ERROR:
             printf("Error: no moves to undo!\n");
         	break;
+        case NO_MOVES_TO_REDO_ERROR:
+            printf("Error: no moves to redo!\n");
+        	break;
         case TMP_ERROR:
             printf("Error: temporary error!\n");
             break;

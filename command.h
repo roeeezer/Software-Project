@@ -24,4 +24,5 @@ void destroyCommand(command* PcurrCommand);
 int numberOfParams(commandName name);
 /*follows the definition of "move" in page 3*/
 int commandIsAMove(command* c);
+void printCommandName(command *c);
 #endif /* COMMAND_H_ */

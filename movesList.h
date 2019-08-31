@@ -9,12 +9,17 @@
 #include "moveNode.h"
 #define STANDART_STATE 0
 #define NO_MOVES_TO_UNDO_STATE 1
+/*NO_MOVES_TO_UNDO_STATE is need because in the way that the curr pointer and demoteCurrPointer()
+ * are operating, if list->curr==list->first we need a way to determine whether or not the move
+ *  list->first was already undone  */
 #define NO_MOVES_TO_REDO_STATE 2
 #define EMPTY_LIST_STATE 3
 
 typedef struct{
 	moveNode *first;
 	moveNode *curr;
+	/*curr points to the move we want to undo in the next undo command
+	 * curr->next if exist is the move we will redo in the next redo command*/
 	moveNode *last;
 	int currPointerState;
 }movesList;
@@ -29,4 +34,5 @@ void promoteCurrPointer(movesList *l);
 /*important! if the curr node is the first node in the list then the function does not
  * changes the curr pointer - but changes currPointerState */
 void demoteCurrPointer(movesList *l);
+void printMovesList(movesList *l);
 #endif /* COMMANDLIST_H_ */

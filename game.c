@@ -146,6 +146,20 @@ ERROR executeUndo(game* g){
 	return NO_ERROR;
 
 }
+ERROR executeRedo(game* g){
+	moveNode* moveToRedo;
+	ERROR error;
+	if(emptyMovesList(g->undoList)||g->undoList->curr->next==NULL){
+		return NO_MOVES_TO_REDO_ERROR;
+	}
+	moveToRedo=g->undoList->curr->next;
+	printf("Before executing the command that needs to be redone\n");
+	printf("this command is REDO=%d\n",moveToRedo->command->name==REDO);
+	error= executeCommand(moveToRedo->command,g);
+	promoteCurrPointer(g->undoList);
+	return error;
+
+}
 ERROR executeCommand(command* pCommand, game* pGame){
     ERROR error;
     moveNode *move;
@@ -193,7 +207,7 @@ ERROR executeCommand(command* pCommand, game* pGame){
         	error = executeUndo(pGame);
             break;
         case REDO:
-            /*error = redo_move(pGame); TODO: @Roee implement TODO: uncomment this*/
+        	error = executeRedo(pGame);
             break;
         case SAVE:
             error = saveGame(pGame->board,pGame->boardTypes, pCommand->param1,pGame->currMode);
