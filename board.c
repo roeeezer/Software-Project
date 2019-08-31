@@ -331,7 +331,7 @@ int validAsignment(board* b,int v,int i,int j){
 	return !setCausesErroneousCell( b,NULL,i, j, v, 0);
 
 }
-void setCellAndMarkErroneous(board* b,board* bTypes,int i,int j,int val){
+void setCellAndUpdateErroneous(board* b,board* bTypes,int i,int j,int val){
 	int erroneous;
 	if(getCell(b,i,j)==val){
 		return ;
@@ -350,12 +350,15 @@ void setCellUpdateMove(board* b,moveNode* move,int i,int j,int val){
 	setCell(b,i,j,val);
 	InsertFirst(move->changes,change);
 }
-void setCellMarkErroneousUpdateMove(board* b,board* bTypes,moveNode* move,int i,int j,int val){
+void setCellUpdateErroneousAndMove(board* b,board* bTypes,moveNode* move,int i,int j,int val){
 	int erroneous;
 	erroneous=setCausesErroneousCell( b,bTypes,i,j,val,1);
 	setCellUpdateMove(b,move,i,j,val);
-	if(erroneous){
-		setCell(bTypes,i,j,ERRONEOUS_CELL);
+	if(erroneous&&getCell(bTypes, i, j)!=FIXED_CELL){
+		setCell(bTypes, i, j, ERRONEOUS_CELL);
+	}
+	if(!erroneous&&getCell(bTypes, i, j)==ERRONEOUS_CELL){
+		setCell(bTypes, i, j, REGULAR_CELL);
 	}
 }
 

@@ -154,7 +154,7 @@ ERROR autofillBoard(board* b,board* bt,moveNode* move){
 		for(j=0;j<N;j++){
 			v=getCell(cellsToFillBoard,i,j);
 			if(v!=0){
-				setCellMarkErroneousUpdateMove(b,bt,move, i, j,v);
+				setCellUpdateErroneousAndMove(b,bt,move, i, j,v);
 			}
 		}}
 	free(valuesList);

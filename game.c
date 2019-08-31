@@ -117,7 +117,7 @@ ERROR executeAutofill(game* g,moveNode* move){
 
 }
 void undoChange(game* g,changeNode* change){
-	setCellAndMarkErroneous(g->board,g->boardTypes,change->i,change->j,change->prevVal);
+	setCellAndUpdateErroneous(g->board,g->boardTypes,change->i,change->j,change->prevVal);
 }
 void undoChangesListStartingFrom(game* g,changeNode* start){
 	if(start->next==NULL){
@@ -308,7 +308,7 @@ ERROR executeSetCommand(game *game,moveNode *move, int x, int y, int z) {
     type = getCell(game->boardTypes, i, j);
     if (currMode == SOLVE && type == FIXED_CELL)
         return FIXED_CELL_ERROR;
-    setCellMarkErroneousUpdateMove(game->board, game->boardTypes,move, i,j, z);
+    setCellUpdateErroneousAndMove(game->board, game->boardTypes,move, i,j, z);
     if (currMode == SOLVE && game->board->emptyCellsCounter == 0){
            if (erroneousBoard(game->boardTypes))
                return BOARD_SOLVED_ERRONEOUS;

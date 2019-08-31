@@ -86,16 +86,17 @@ int boardHasASolution(board* b);
 int erroneousBoard(board* bTypes);
 
 /*ind=0 for checking if this set command causes erroneous cells
- * ind=1 for checking if this set command causes erroneous cells and marking the erroneous cells in bTypes
+ * ind=1 for checking if this set command causes erroneous cells and updating
+ * the erroneous cells in bTypes (adding of removing erroneous flags according to the value in th set)
  * ind=2 if we want to set a fixed cell to (i,j) and to check if the set will cause a collision with
  * other fixed cells - used in function boardContainsFixedErroneousCells
  * getCell(i,j) current value does not affect this function!
  * @POST: $RET=1 iff the answer to the question determined by ind is YES*/
 
 int setCausesErroneousCell(board* b,board* bTypes,int i,int j,int v,int markErroneousCells);
-void setCellAndMarkErroneous(board* b,board* bTypes,int i,int j,int val);
+void setCellAndUpdateErroneous(board* b,board* bTypes,int i,int j,int val);
 /*set the cell in board b, mark erroneous cells in bTypes and update the changes in move*/
-void setCellMarkErroneousUpdateMove(board* b,board* bTypes,moveNode* move,int i,int j,int val);
+void setCellUpdateErroneousAndMove(board* b,board* bTypes,moveNode* move,int i,int j,int val);
 void setCellUpdateMove(board* b,moveNode* move,int i,int j,int val);
 int boardContainsFixedErroneousCells(board *b,board *bTypes);
 void markAllErroneousCellsInBoard(board* b,board* bt);

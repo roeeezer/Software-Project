@@ -149,10 +149,10 @@ void erroneousCheckTester(){
 	buildBoardRandom(45,Pgame);
 	resetBoard(Pgame->boardTypes, REGULAR_CELL);
 	printBoard(Pgame->board,Pgame->boardTypes);
-	setCellAndMarkErroneous(Pgame->board,Pgame->boardTypes, i, j, v);
+	setCellAndUpdateErroneous(Pgame->board,Pgame->boardTypes, i, j, v);
 	printBoard(Pgame->board,Pgame->boardTypes);
 	v=9;
-	setCellAndMarkErroneous(Pgame->board,Pgame->boardTypes, i, j, v);
+	setCellAndUpdateErroneous(Pgame->board,Pgame->boardTypes, i, j, v);
 	printBoard(Pgame->board,Pgame->boardTypes);
 }
 void autofillTester(){
@@ -199,11 +199,10 @@ void undoListTester(){
 	printBoard(Pgame->board,Pgame->boardTypes);
 
 }
-void psi(){
 
-}
+
 int main(){
-	psi();
+	erroneousCheckTester();
 	return 1;
 }
 
