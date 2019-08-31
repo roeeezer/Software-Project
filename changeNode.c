@@ -26,7 +26,7 @@ void destroyAllChangeNodesStartingFrom(changeNode* start){
 	destroyChangeNode(start);
 }
 void printChange(changeNode* change){
-	printf("Cell (%d,%d) value changed back to %d\n",change->j+1,change->i+1,change->prevVal);
+	printf("Cell (%d,%d) value was changed back to %d\n",change->j+1,change->i+1,change->prevVal);
 }
 void printChangesStartingFrom(changeNode* start){
 	if(start->next==NULL){

@@ -189,20 +189,22 @@ void undoListTester(){
 	resetBoard(Pgame->boardTypes, REGULAR_CELL);
 	printBoard(Pgame->board,Pgame->boardTypes);
 
-	c->name = SET;
+	c->name = AUTOFILL;
 	c->param1 = "2";
 	c->param2 = "1";
 	c->param3 = "6";
 	err=executeCommand(c,Pgame);
 	printErrorMessage( err, c);
-	printChangesList(Pgame->undoList->first->changes);
 	printBoard(Pgame->board,Pgame->boardTypes);
-
+	c->name = UNDO;
+	err=executeCommand(c,Pgame);
+	printErrorMessage( err, c);
+	printBoard(Pgame->board,Pgame->boardTypes);
 }
 
 
 int main(){
-	erroneousCheckTester();
+	undoListTester();
 	return 1;
 }
 
