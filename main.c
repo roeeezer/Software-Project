@@ -18,6 +18,24 @@
 #include <time.h>
 
 
+void testReadCommand(){
+    game* pGame;
+    command* pCommand;
+    ERROR error;
+    pGame = createGame(5);
+    pCommand = createCommand();
+    error = readCommand(pCommand, pGame);
+    printf("DONE READING \n");
+    printErrorMessage(error, pCommand);
+    printf("Setting game mode to solve and trying again\n");
+    pGame->currMode = SOLVE_MODE;
+    destroyCommand(pCommand);
+    pCommand = createCommand();
+    error = readCommand(pCommand, pGame);
+    printf("DONE READING \n");
+    printErrorMessage(error, pCommand);
+}
+
 void exhaustiveBackTrackingTester(){
 	clock_t start, end;
 	double cpu_time_used;
@@ -204,7 +222,8 @@ void undoListTester(){
 
 
 int main(){
-	undoListTester();
+    testReadCommand();
 	return 1;
+    undoListTester();
 }
 

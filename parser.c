@@ -21,13 +21,13 @@ int checkValidFloat(char* );
 
 ERROR checkMarkErrorsParam(char *param1);
 
-ERROR checkSetParams(char *param1, char *param2, char *param3);
+ERROR checkSetParams(char *param1, char *param2, char *param3, int i);
 
 ERROR checkGuessParam(char *param);
 
 ERROR checkCommandValidForMode(commandName name, int mode);
 
-ERROR checkSetParam(char *param1, SETPARAMS paramOrder);
+ERROR checkSetParam(char *param1, int N);
 
 
 int getInitializationInput(){
@@ -108,7 +108,7 @@ ERROR matchCommandName(const char *token, commandName *name) {
 
 ERROR checkLegalParam(command* pCommand, game* pGame) {
     char * param1, *param2, *param3;
-    printf("",pGame);
+    printf("%d",pGame->seed);
     param1 = pCommand->param1;
     param2 = pCommand->param2;
     param3 = pCommand->param3;
@@ -130,11 +130,11 @@ ERROR checkLegalParam(command* pCommand, game* pGame) {
         case MARK_ERRORS:
             return checkMarkErrorsParam(param1);
         case SET:
-            return checkSetParams(param1, param2, param3);
+            return checkSetParams(param1, param2, param3, pGame->board->squareSideSize);
         case GUESS:
             return checkGuessParam(param1);
         case GENERATE:
-            /*return checkGenerateParams(param1, param2);TODO: uncomment this*/
+            /*return checkGenerateParams(param1, param2);*/
         case GUESS_HINT:
             /*return checkGuessHintParams(param1, param2);TODO: uncomment this*/
         case HINT:
@@ -155,22 +155,29 @@ ERROR checkGuessParam(char *param) {
     return PARAM_OUT_OF_RANGE;
 }
 
-ERROR checkSetParams(char *param1, char *param2, char *param3) {
+ERROR checkSetParams(char *param1, char *param2, char *param3, int N) {
     ERROR error1, error2, error3;
-    error1 = checkSetParam(param1, X);
-    error2 = checkSetParam(param2, Y);
-    error3 = checkSetParam(param3, Z);
-    if (error1 != NO_ERROR)
-        return error1;
-    if (error2) return NO_ERROR; /*TODO: changeme*/
-    if (error3) return NO_ERROR; /*TODO: changme*/
+    error1 = checkSetParam(param1, N);
+    error2 = checkSetParam(param2, N);
+    error3 = checkSetParam(param3, N);
+    if (error1 != NO_ERROR) return error1;
+    if (error2 != NO_ERROR) return error2;
+    if (error3 != NO_ERROR) return error3;
     return NO_ERROR;
 }
 
-ERROR checkSetParam(char *param1, SETPARAMS paramOrder) {
-    if (!param1 || !paramOrder) return UNKNOWN_ERROR;
-    return NO_ERROR;
-} /*TODO: uncomment this*/
+int isValidInteger(char* param){
+    int i;
+    for (i=0; i < (int)strlen(param); i++)
+        if (param[i] < 48 || param[i] > 57) return 0;
+    return 1;
+}
+
+ERROR checkSetParam(char *param, int N) {
+    if (isValidInteger(param) && atoi(param) <= N && atoi(param) >=0)
+        return NO_ERROR;
+    return PARAM_OUT_OF_RANGE;
+}
 
 ERROR checkMarkErrorsParam(char *param1) {
 
@@ -217,6 +224,7 @@ ERROR readCommand(command *pCommand, game* pGame) {
         return NO_ERROR;
     }
     returnCode = matchCommandName(token, &name);
+    pCommand->name = name;
     if (returnCode != NO_ERROR) {
         return returnCode;
     }
@@ -230,10 +238,12 @@ ERROR readCommand(command *pCommand, game* pGame) {
     numberOfParams += (param1 != NULL) + (param2 != NULL) + (param3 != NULL) + (param4 != NULL);
     if (!correctNumberOfParams(name, numberOfParams))
         return INCORRECT_NUMBER_OF_PARAMS;
-    pCommand->name = name;
-    strcpy(pCommand->param1, param1);
-    strcpy(pCommand->param2, param2);
-    strcpy(pCommand->param3, param3);
+    if (param1)
+        strcpy(pCommand->param1, param1);
+    if (param2)
+        strcpy(pCommand->param2, param2);
+    if (param3)
+        strcpy(pCommand->param3, param3);
     return NO_ERROR;
 }
 
