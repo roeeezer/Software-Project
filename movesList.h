@@ -2,10 +2,11 @@
  *
  *      Author: roee
  */
-#include "moveNode.h"
+
 #ifndef COMMANDLIST_H_
 #define COMMANDLIST_H_
 
+#include "moveNode.h"
 #define STANDART_STATE 0
 #define NO_MOVES_TO_UNDO_STATE 1
 #define NO_MOVES_TO_REDO_STATE 2

@@ -42,6 +42,7 @@ void destroyGame(game* game){
     destroyBoard(game->board);
     destroyBoard(game->boardSol);
     destroyBoard(game->boardTypes);
+
     destroyMovesList(game->undoList);
 	free(game);
 }

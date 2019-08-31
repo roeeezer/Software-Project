@@ -206,9 +206,8 @@ void undoListTester(){
 	err=executeCommand(c,Pgame);
 	printErrorMessage( err, c);
 	printBoard(Pgame->board,Pgame->boardTypes);
-	printf("Empty cells:%d\n",Pgame->board->emptyCellsCounter);
 
-	printf("Execute SET\n");
+	/*printf("Execute SET\n");
 	c->name = SET;
 	err=executeCommand(c,Pgame);
 	printErrorMessage( err, c);
@@ -218,7 +217,7 @@ void undoListTester(){
 	c->name = SET;
 	err=executeCommand(c,Pgame);
 	printErrorMessage( err, c);
-	printBoard(Pgame->board,Pgame->boardTypes);
+	printBoard(Pgame->board,Pgame->boardTypes);*/
 
 	printf("Execute UNDO\n");
 	c->name = UNDO;
@@ -230,7 +229,7 @@ void undoListTester(){
 	err=executeCommand(c,Pgame);
 	printErrorMessage( err, c);
 	printBoard(Pgame->board,Pgame->boardTypes);
-	printf("Empty cells:%d\n",Pgame->board->emptyCellsCounter);
+
 	destroyGame(Pgame);
 }
 void destroyTester(){
