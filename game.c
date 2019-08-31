@@ -135,8 +135,8 @@ void undoChangesList(game* g,changesList* list){
 }
 ERROR executeUndo(game* g){
 	moveNode* currMove;
-	if(emptyMovesList(g->undoList)){
-		return NO_CHANGES_TO_UNDO;
+	if(emptyMovesList(g->undoList)||g->undoList->currPointerState==NO_MOVES_TO_UNDO_STATE){
+		return NO_MOVES_TO_UNDO_ERROR;
 	}
 	currMove=g->undoList->curr;
 	undoChangesList(g,currMove->changes);
@@ -189,8 +189,7 @@ ERROR executeCommand(command* pCommand, game* pGame){
             error = executeGenerateCommand(pGame, atoi(pCommand->param1), atoi(pCommand->param2));
             break;
         case UNDO:
-            executeUndo(pGame);
-
+        	error = executeUndo(pGame);
             break;
         case REDO:
             /*error = redo_move(pGame); TODO: @Roee implement TODO: uncomment this*/

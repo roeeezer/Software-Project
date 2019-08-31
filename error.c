@@ -81,7 +81,7 @@ void printErrorMessage(ERROR error, command *pCommand){
         case AUTOFILL_ERRONEOUS_BOARD:
             printf("Error: cannot autofill a board with erroneous cells!\n");
         	break;
-        case NO_CHANGES_TO_UNDO:
+        case NO_MOVES_TO_UNDO_ERROR:
             printf("Error: no moves to undo!\n");
         	break;
         case TMP_ERROR:

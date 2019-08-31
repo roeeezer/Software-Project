@@ -19,4 +19,5 @@ void destroyChangeNode(changeNode* change);
 void destroyAllChangeNodesStartingFrom(changeNode* start);
 void printChangesStartingFrom(changeNode *start);
 
+
 #endif /* CHANGENODE_H_ */

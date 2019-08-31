@@ -189,17 +189,49 @@ void undoListTester(){
 	resetBoard(Pgame->boardTypes, REGULAR_CELL);
 	printBoard(Pgame->board,Pgame->boardTypes);
 
-	c->name = AUTOFILL;
+	c->name = SET;
 	c->param1 = "2";
-	c->param2 = "1";
-	c->param3 = "6";
+	c->param2 = "4";
+	c->param3 = "1";
+	printf("Execute SET\n");
 	err=executeCommand(c,Pgame);
 	printErrorMessage( err, c);
 	printBoard(Pgame->board,Pgame->boardTypes);
+
+	c->name = SET;
+	c->param1 = "2";
+	c->param2 = "4";
+	c->param3 = "2";
+	printf("Execute SET\n");
+	err=executeCommand(c,Pgame);
+	printErrorMessage( err, c);
+	printBoard(Pgame->board,Pgame->boardTypes);
+	printf("Empty cells:%d\n",Pgame->board->emptyCellsCounter);
+
+	printf("Execute AUTOFILL\n");
+	c->name = AUTOFILL;
+	err=executeCommand(c,Pgame);
+	printErrorMessage( err, c);
+	printBoard(Pgame->board,Pgame->boardTypes);
+
+	printf("Execute AUTOFILL\n");
+	c->name = AUTOFILL;
+	err=executeCommand(c,Pgame);
+	printErrorMessage( err, c);
+	printBoard(Pgame->board,Pgame->boardTypes);
+
+	printf("Execute UNDO\n");
 	c->name = UNDO;
 	err=executeCommand(c,Pgame);
 	printErrorMessage( err, c);
 	printBoard(Pgame->board,Pgame->boardTypes);
+
+	printf("Execute UNDO\n");
+	err=executeCommand(c,Pgame);
+	printErrorMessage( err, c);
+	printBoard(Pgame->board,Pgame->boardTypes);
+	printf("Empty cells:%d\n",Pgame->board->emptyCellsCounter);
+	/*destroyGame(Pgame);*/
 }
 
 
