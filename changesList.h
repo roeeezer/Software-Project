@@ -12,6 +12,7 @@ typedef struct{
 }changesList;
 
 changesList* createChangesList();
+int emptyChangesList(changesList* list);
 void destroyChangesList(changesList* l);
 void InsertFirst(changesList* list,changeNode* change);
 void printChangesList(changesList* list);

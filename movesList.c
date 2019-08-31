@@ -35,5 +35,14 @@ void addMove(movesList *l,moveNode *m){
 
 }
 void promoteCurrPointer(movesList *l){
+	if(l->curr->next==NULL){
+		return;
+	}
 	l->curr = l->curr->next;
+}
+void demoteCurrPointer(movesList *l){
+	if(l->curr->prev==NULL){
+		return;
+	}
+	l->curr = l->curr->prev;
 }

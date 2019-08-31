@@ -10,7 +10,7 @@
 #include "game.h"
 
 
-ERROR executeSetCommand(game *game, int x, int y, int z);
+ERROR executeSetCommand(game *game,moveNode *move, int x, int y, int z);
 
 ERROR executeGenerateCommand(game *game, int x, int y);
 
@@ -116,6 +116,35 @@ ERROR executeAutofill(game* g,moveNode* move){
 	return autofillBoard(g->board,g->boardTypes,move);
 
 }
+void undoChange(game* g,changeNode* change){
+	setCellAndMarkErroneous(g->board,g->boardTypes,change->i,change->j,change->prevVal);
+}
+void undoChangesListStartingFrom(game* g,changeNode* start){
+	if(start->next==NULL){
+		undoChange(g,start);
+		return;
+	}
+	undoChangesListStartingFrom(g,start->next);
+	undoChange(g,start);
+}
+void undoChangesList(game* g,changesList* list){
+	if(emptyChangesList(list)){
+		return;
+	}
+	undoChangesListStartingFrom(g,list->first);
+}
+ERROR executeUndo(game* g){
+	moveNode* currMove;
+	if(emptyMovesList(g->undoList)){
+		return NO_CHANGES_TO_UNDO;
+	}
+	currMove=g->undoList->curr;
+	undoChangesList(g,currMove->changes);
+	printChangesList(currMove->changes);
+	demoteCurrPointer(g->undoList);
+	return NO_ERROR;
+
+}
 ERROR executeCommand(command* pCommand, game* pGame){
     ERROR error;
     moveNode *move;
@@ -124,6 +153,8 @@ ERROR executeCommand(command* pCommand, game* pGame){
     	move = createMoveNode(pCommand);
     }
     error = checkLegalParam(pCommand, pGame);
+    /*tmp Roee*/
+    error = NO_ERROR;
     if (error != NO_ERROR)
         return error;
     /*After this point, command is assumed legal for this game state.*/
@@ -158,7 +189,7 @@ ERROR executeCommand(command* pCommand, game* pGame){
             error = executeGenerateCommand(pGame, atoi(pCommand->param1), atoi(pCommand->param2));
             break;
         case UNDO:
-            /* error = undo_move(pGame); TODO: @Roee implement TODO: uncomment this*/
+            executeUndo(pGame);
 
             break;
         case REDO:
@@ -182,7 +213,7 @@ ERROR executeCommand(command* pCommand, game* pGame){
             /*error = fullResetBoard(pGame); TODO: @Roee implement this TODO: uncomment this*/
             break;
         case SET:
-            executeSetCommand(pGame, atoi(pCommand->param1), atoi(pCommand->param2), atoi(pCommand->param3));
+            executeSetCommand(pGame,move, atoi(pCommand->param1), atoi(pCommand->param2), atoi(pCommand->param3));
             /*TODO: @Omer implement TODO: uncomment this
              * Comment from Roee: remember that you cannot set a fixed cell to the value 0*/
             break;
@@ -200,8 +231,6 @@ ERROR executeCommand(command* pCommand, game* pGame){
             break;
     }
     if(commandIsAMove(pCommand)&&error==NO_ERROR){
-    	/*tmp printer*/
-    	printChangesList(move->changes);
     	addMove(pGame->undoList,move);
     	promoteCurrPointer(pGame->undoList);
     }
@@ -271,7 +300,7 @@ ERROR executeGenerateCommand(game *game, int x, int y) {
  * @return NO_ERROR if set sucessfully,FIXED_CELL_ERROR if trying to set fixed cell in SOLVE
  * BOARD_SOLVED_ERRONEOUS if board solved incorrectly, or BOARD_SOLVED_CORRECTLY if board solved correctly.
  */
-ERROR executeSetCommand(game *game, int x, int y, int z) {
+ERROR executeSetCommand(game *game,moveNode *move, int x, int y, int z) {
     int type, currMode, i, j;
     currMode = game->currMode;
     i = y - 1;
@@ -279,7 +308,7 @@ ERROR executeSetCommand(game *game, int x, int y, int z) {
     type = getCell(game->boardTypes, i, j);
     if (currMode == SOLVE && type == FIXED_CELL)
         return FIXED_CELL_ERROR;
-    setCellAndMarkErroneous(game->board, game->boardTypes, i,j, z);
+    setCellMarkErroneousUpdateMove(game->board, game->boardTypes,move, i,j, z);
     if (currMode == SOLVE && game->board->emptyCellsCounter == 0){
            if (erroneousBoard(game->boardTypes))
                return BOARD_SOLVED_ERRONEOUS;

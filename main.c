@@ -144,12 +144,15 @@ void executeCommandTester(){
 }
 void erroneousCheckTester(){
 	game* Pgame;
-	int i=4,j=2,v=2;
+	int i=0,j=2,v=1;
 	Pgame=createGame(5);
 	buildBoardRandom(45,Pgame);
-	resetBoard(Pgame->boardTypes, FIXED_CELL);
+	resetBoard(Pgame->boardTypes, REGULAR_CELL);
 	printBoard(Pgame->board,Pgame->boardTypes);
-	printf("i=%d,j=%d,val=%d,erroneous=%d\n",i,j,v,setCausesErroneousCell(Pgame->board,Pgame->boardTypes,i,j,v,2));
+	setCellAndMarkErroneous(Pgame->board,Pgame->boardTypes, i, j, v);
+	printBoard(Pgame->board,Pgame->boardTypes);
+	v=9;
+	setCellAndMarkErroneous(Pgame->board,Pgame->boardTypes, i, j, v);
 	printBoard(Pgame->board,Pgame->boardTypes);
 }
 void autofillTester(){
@@ -175,8 +178,32 @@ void autofillTester(){
 
 
 }
+void undoListTester(){
+	game* Pgame;
+	command *c;
+	ERROR err=NO_ERROR;
+	c = createCommand();
+	Pgame=createGame(5);
+	Pgame->currMode = SOLVE_MODE;
+	buildBoardRandom(55,Pgame);
+	resetBoard(Pgame->boardTypes, REGULAR_CELL);
+	printBoard(Pgame->board,Pgame->boardTypes);
+
+	c->name = SET;
+	c->param1 = "2";
+	c->param2 = "1";
+	c->param3 = "6";
+	err=executeCommand(c,Pgame);
+	printErrorMessage( err, c);
+	printChangesList(Pgame->undoList->first->changes);
+	printBoard(Pgame->board,Pgame->boardTypes);
+
+}
+void psi(){
+
+}
 int main(){
-	autofillTester();
+	psi();
 	return 1;
 }
 

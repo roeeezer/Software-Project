@@ -213,82 +213,110 @@ int erroneousBoard(board* bTypes){
 	}
 	return 0;
 }
-int setCausesErroneousCellInRow(board* b,board* bTypes,int i,int v,int ind){
-	int boardColumns,k,res=0;
+int setCausesErroneousCellInRow(board* b,board* bTypes,int i,int j,int v,int ind){
+	int boardColumns,k,oldV,res=0;
+	oldV = getCell(b,i,j);
 	boardColumns = b->squareSideSize;
 	for(k=0;k<boardColumns;k++){
-		if(getCell(b,i,k)==v){
-			if(ind==2&& getCell(bTypes,i,k) == FIXED_CELL){
-				return 1;
-			}
+		if(k!=j&&getCell(b,i,k)==v){
+
 			if(ind==0){
 				return 1;
 			}
-			if(ind==1){
+			if(ind==1&&getCell(bTypes,i,k) != FIXED_CELL){
+				/*Moshe explained in the moodle forum that fixed cells are never considered erroneous
+				 *here we mark the cells that became erroneous*/
 				res=1;
 				setCell(bTypes, i, k, ERRONEOUS_CELL);}
+			if(ind==2&& getCell(bTypes,i,k) == FIXED_CELL){
+				return 1;
+			}
 
+		}
+		if(ind==1&&getCell(b,i,k)==oldV&&getCell(bTypes,i,k)==ERRONEOUS_CELL){
+			/*updating cells that are not erroneous thanks to this set*/
+			setCell(b,i,j,v);
+			if(!setCausesErroneousCell(b,bTypes, i, k, getCell(b,i,k),0)){
+				setCell(bTypes,i,k,REGULAR_CELL);}
+			setCell(b,i,j,oldV);
 		}
 	}
 	return res;
 
 }
-int setCausesErroneousCellInColumn(board* b,board* bTypes,int j,int v,int ind){
-	int boardRows,k,res=0;
+int setCausesErroneousCellInColumn(board* b,board* bTypes,int i,int j,int v,int ind){
+	int boardRows,k,oldV,res=0;
+	oldV = getCell(b,i,j);
 	boardRows = b->squareSideSize;
 		for(k=0;k<boardRows;k++){
-			if(getCell(b,k,j)==v){
-				if(ind==2&& getCell(bTypes,k,j) == FIXED_CELL){
-					return 1;
-				}
+			if(k!=i&&getCell(b,k,j)==v){
+
 				if(ind==0){
 					return 1;
 				}
-				if(ind==1){
+				if(ind==1&&getCell(bTypes,k,j)!=FIXED_CELL){
+					/*Moshe explained in the moodle forum that fixed cells are never considered erroneous
+					 *here we mark the cells that became erroneous*/
 					res=1;
 					setCell(bTypes, k, j, ERRONEOUS_CELL);}
+				if(ind==2&& getCell(bTypes,k,j) == FIXED_CELL){
+					return 1;
+				}
+			}
+			if(ind==1&&getCell(b,k, j)==oldV&&getCell(bTypes,k, j)==ERRONEOUS_CELL){
+				/*updating cells that are not erroneous thanks to this set*/
+				setCell(b,i,j,v);
+				if(!setCausesErroneousCell(b,bTypes, k, j, getCell(b,k, j),0)){
+					setCell(bTypes,k, j,REGULAR_CELL);}
+				setCell(b,i,j,oldV);
 			}
 		}
 		return res;
 
 }
 int setCausesErroneousCellInBlock(board* b,board* bTypes,int i,int j,int v,int ind){
-	int blockIndices[2],k,r,res=0;
-
+	int blockIndices[2],k,r,oldV,res=0;
+	oldV = getCell(b,i,j);
 	findCellBlockIndices(b,i,j,blockIndices);
 
 	for(k=blockIndices[0]*b->rows;k<(blockIndices[0]+1)*b->rows;k++){
 		for(r=blockIndices[1]*b->columns;r<(blockIndices[1]+1)*b->columns;r++){
-			if(getCell(b,k,r)==v){
-				if(ind==2&& getCell(bTypes,k,r) == FIXED_CELL){
-					return 1;
-				}
+			if((r!=j||k!=i)&&getCell(b,k,r)==v){
+
 				if(ind==0){
 					return 1;
 				}
-				if(ind==1){
+				if(ind==1&&getCell(bTypes,k,r)!=FIXED_CELL){
+					/*Moshe explained in the moodle forum that fixed cells are never considered erroneous
+					 *here we mark the cells that became erroneous*/
 					res=1;
 					setCell(bTypes, k, r, ERRONEOUS_CELL);}
+				if(ind==2&& getCell(bTypes,k,r) == FIXED_CELL){
+					return 1;
+				}
 					}
+			if(ind==1&&getCell(b,k, r)==oldV&&getCell(bTypes,k, r)==ERRONEOUS_CELL){
+				/*updating cells that are not erroneous thanks to this set*/
+				setCell(b,i,j,v);
+				if(!setCausesErroneousCell(b,bTypes,k, r, getCell(b,k, r),0)){
+					setCell(bTypes,k, r,REGULAR_CELL);}
+				setCell(b,i,j,oldV);
+			}
 		}
 	}
 	return res;
 }
 
-/*ind=0 for checking if this set command causes erroneous cells
- * ind=1 for checking if this set command causes erroneous cells and marking the erroneous cells in bTypes
- * ind=2 if we want to set a fixed cell to (i,j) and to check if the set will cause a collision with
- * other fixed cells - used in function boardContainsFixedErroneousCells
- * @pre: cell(i,j) is empty, namely =0
- * @POST: $RET=1 iff the answer to the question determined by ind is YES*/
-
 int setCausesErroneousCell(board* b,board* bTypes,int i,int j,int v,int ind){
 	int b1,b2,b3,res;
-	b1 = setCausesErroneousCellInRow(b,bTypes,i,v,ind);
+	if(getCell(b,i,j)==v){
+		return 0;
+	}
+	b1 = setCausesErroneousCellInRow(b,bTypes,i,j,v,ind);
 	if(b1&&!ind){
 		return 1;
 	}
-	b2 = setCausesErroneousCellInColumn(b,bTypes,j,v,ind);
+	b2 = setCausesErroneousCellInColumn(b,bTypes,i,j,v,ind);
 	if(b2&&!ind){
 		return 1;
 	}
@@ -305,10 +333,16 @@ int validAsignment(board* b,int v,int i,int j){
 }
 void setCellAndMarkErroneous(board* b,board* bTypes,int i,int j,int val){
 	int erroneous;
+	if(getCell(b,i,j)==val){
+		return ;
+	}
 	erroneous=setCausesErroneousCell( b,bTypes,i,j,val,1);
 	setCell(b,i,j,val);
-	if(erroneous){
+	if(erroneous&&getCell(bTypes, i, j)!=FIXED_CELL){
 		setCell(bTypes, i, j, ERRONEOUS_CELL);
+	}
+	if(!erroneous&&getCell(bTypes, i, j)==ERRONEOUS_CELL){
+		setCell(bTypes, i, j, REGULAR_CELL);
 	}
 }
 void setCellUpdateMove(board* b,moveNode* move,int i,int j,int val){

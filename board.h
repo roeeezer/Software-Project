@@ -84,6 +84,14 @@ void copyBoard(board* copy,board* orig);
 int boardHasASolution(board* b);
 /*$ret==1 iff the bTypes contains and erroneous cell*/
 int erroneousBoard(board* bTypes);
+
+/*ind=0 for checking if this set command causes erroneous cells
+ * ind=1 for checking if this set command causes erroneous cells and marking the erroneous cells in bTypes
+ * ind=2 if we want to set a fixed cell to (i,j) and to check if the set will cause a collision with
+ * other fixed cells - used in function boardContainsFixedErroneousCells
+ * getCell(i,j) current value does not affect this function!
+ * @POST: $RET=1 iff the answer to the question determined by ind is YES*/
+
 int setCausesErroneousCell(board* b,board* bTypes,int i,int j,int v,int markErroneousCells);
 void setCellAndMarkErroneous(board* b,board* bTypes,int i,int j,int val);
 /*set the cell in board b, mark erroneous cells in bTypes and update the changes in move*/

@@ -37,6 +37,7 @@ typedef enum {
 	GENERATE_NOT_ENOUGH_CELLS,
 	FAILED_TO_GENERATE,
     GUESS_ERRONEOUS_BOARD,
+	NO_CHANGES_TO_UNDO,
 	TMP_ERROR,/*just for compilation reasons*/
     GUROBI_ERROR,
     UNKNOWN_ERROR /*An unknown error occurred. For checking if we reached unexpected situations*/
