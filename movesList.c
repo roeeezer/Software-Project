@@ -22,7 +22,8 @@ int emptyMovesList(movesList *l){
 }
 void destroyMovesList(movesList* l){
 	if(!emptyMovesList(l)){
-		destroyAllMoveNodesStartingFrom(l->first);}
+		destroyAllMoveNodesStartingFrom(l->first);
+	}
 	free(l);
 }
 void addMove(movesList *l,moveNode *m){

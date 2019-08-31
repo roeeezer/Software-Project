@@ -208,14 +208,14 @@ void undoListTester(){
 	printBoard(Pgame->board,Pgame->boardTypes);
 	printf("Empty cells:%d\n",Pgame->board->emptyCellsCounter);
 
-	printf("Execute AUTOFILL\n");
-	c->name = AUTOFILL;
+	printf("Execute SET\n");
+	c->name = SET;
 	err=executeCommand(c,Pgame);
 	printErrorMessage( err, c);
 	printBoard(Pgame->board,Pgame->boardTypes);
 
-	printf("Execute AUTOFILL\n");
-	c->name = AUTOFILL;
+	printf("Execute SET\n");
+	c->name = SET;
 	err=executeCommand(c,Pgame);
 	printErrorMessage( err, c);
 	printBoard(Pgame->board,Pgame->boardTypes);
@@ -231,9 +231,17 @@ void undoListTester(){
 	printErrorMessage( err, c);
 	printBoard(Pgame->board,Pgame->boardTypes);
 	printf("Empty cells:%d\n",Pgame->board->emptyCellsCounter);
-	/*destroyGame(Pgame);*/
+	destroyGame(Pgame);
 }
-
+void destroyTester(){
+	game* Pgame;
+	Pgame=createGame(5);
+	Pgame->currMode = SOLVE_MODE;
+	buildBoardRandom(55,Pgame);
+	resetBoard(Pgame->boardTypes, REGULAR_CELL);
+	printBoard(Pgame->board,Pgame->boardTypes);
+	destroyGame(Pgame);
+}
 
 int main(){
 	undoListTester();

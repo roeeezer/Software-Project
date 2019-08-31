@@ -25,6 +25,10 @@ void destroyMoveNode(moveNode* m){
 	free(m);
 }
 void destroyAllMoveNodesStartingFrom(moveNode* start){
+	printf("Enters destroyAllMoveNodesStartingFrom\n");
+	if(start==NULL){
+		return;
+	}
 	if(start->next==NULL){
 		destroyMoveNode(start);
 	}
