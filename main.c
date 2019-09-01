@@ -70,17 +70,20 @@ void saveGameTester(){
 	saveGame(Pgame->board,Pgame->boardTypes,"board.txt",2);
 
 }
-
-int finalMain(int argc, char *argv[]){
+/*
+void newFinalmain(){
+	int seed=1;
+	ERROR commandError;
+	game* g;
+	g= createGame(seed);
+}*/
+int finalMain(){
 	int exitInd,restartInd,seed;
 	command* PcurrCommand;
 	ERROR commandError;
-
 	 /* ERROR commandError;*/
 	game* Pgame; /*need to use createGame?*/
-
-	seed = argc;
-	seed = atoi(argv[1]);
+	seed=1;
     srand(seed);
 	exitInd=0;
 	while(!exitInd){
@@ -88,29 +91,25 @@ int finalMain(int argc, char *argv[]){
 		exitInd = initializeGame(seed, &Pgame);
 		if(exitInd){
             printf("Exiting...\n");
-            return 0;
-		}
+            return 0;}
 			printBoard(Pgame->board,Pgame->boardTypes);
 		while(!exitInd&&!restartInd){
-
 			PcurrCommand=createCommand();
 			/*check malloc success*/
-
              commandError = readCommand(PcurrCommand, Pgame);
-
 			exitInd=(PcurrCommand->name == EXIT);
 			/*restartInd=(PcurrCommand->name==RESTART);*/
             executeCommandDEPRECATED(PcurrCommand, Pgame);
 			destroyCommand(PcurrCommand);
 			/*TODO: check if executionError (returns from executeCommand) is BOARD_SOLVED_CORRECTLY and act*/
 		}
-		destroyGame(Pgame);
-	}
+		destroyGame(Pgame);}
 	printf("Exiting...\n");
 	/*Roee: just for compilation:*/
 	printf("%d",commandError);
 	return 0;
 }
+
 void loaderTester(){
 	int n=0,m=0;
 	board *b,*bt;
@@ -147,13 +146,13 @@ void executeCommandTester(){
 	Pgame->currMode=SOLVE_MODE;
 	c->name=SAVE;
 	c->param1 = "board2.txt";
-	err=executeCommand(c,Pgame);
+	err=executeCommand(c,Pgame,UPDATE_MOVES_LIST_IND);
 	printBoard(Pgame->board,Pgame->boardTypes);
 
 	c->name = EDIT;
 	c->param1 = NULL;
 
-	err=executeCommand(c,Pgame);
+	err=executeCommand(c,Pgame,UPDATE_MOVES_LIST_IND);
 	if(err==NO_ERROR){
 		printf("mode:%d\n",Pgame->currMode);
 		buildBoardRandom(28,Pgame);
@@ -186,9 +185,9 @@ void autofillTester(){
 	resetBoard(Pgame->boardTypes, REGULAR_CELL);
 
 	printBoard(Pgame->board,Pgame->boardTypes);
-	executeCommand(c,Pgame);
+	executeCommand(c,Pgame,UPDATE_MOVES_LIST_IND);
 	c->name = AUTOFILL;
-	executeCommand(c,Pgame);
+	executeCommand(c,Pgame,UPDATE_MOVES_LIST_IND);
 	printErrorMessage( err, c);
 	if(err==NO_ERROR){
 		printBoard(Pgame->board,Pgame->boardTypes);
@@ -196,34 +195,114 @@ void autofillTester(){
 
 
 }
+void executeCommandAndPrintData(game* g,command* c){
+	ERROR err=NO_ERROR;
+	printf("Execute ");
+	printCommandName(c);printf("\n");
+	err=executeCommand(c,g,UPDATE_MOVES_LIST_IND);
+	printErrorMessage( err, c);
+	printBoard(g->board,g->boardTypes);
+	printf("movesList after execution: ");
+	printMovesList(g->undoList);
+	printf("\n\n");
+
+	if(!commandIsAMove(c)){
+		destroyCommand(c);
+	}
+
+
+}
 void undoListTester(){
 	game* Pgame;
 	command *c;
-	ERROR err=NO_ERROR;
-	c = createCommand();
+
 	Pgame=createGame(5);
 	Pgame->currMode = SOLVE_MODE;
 	buildBoardRandom(55,Pgame);
 	resetBoard(Pgame->boardTypes, REGULAR_CELL);
 	printBoard(Pgame->board,Pgame->boardTypes);
 
-	c->name = AUTOFILL;
-	c->param1 = "2";
-	c->param2 = "1";
-	c->param3 = "6";
-	err=executeCommand(c,Pgame);
-	printErrorMessage( err, c);
-	printBoard(Pgame->board,Pgame->boardTypes);
-	c->name = UNDO;
-	err=executeCommand(c,Pgame);
-	printErrorMessage( err, c);
-	printBoard(Pgame->board,Pgame->boardTypes);
-}
+	c = createCommand();
+	c->name = SET;
+	c->param1 = "1";c->param2 = "1";c->param3 = "5";
+	executeCommandAndPrintData(Pgame,c);
 
+
+
+
+	c = createCommand();
+	c->name = SET;
+	c->param1 = "1";c->param2 = "1";c->param3 = "6";
+	executeCommandAndPrintData(Pgame,c);
+
+	c = createCommand();
+	c->name = AUTOFILL;
+	executeCommandAndPrintData(Pgame,c);
+
+	c = createCommand();
+	c->name = NUM_SOLUTIONS;
+	executeCommandAndPrintData(Pgame,c);
+
+
+	c = createCommand();
+	c->name = SOLVE;
+	c->param1 = "board1.txt";
+	executeCommandAndPrintData(Pgame,c);
+
+
+
+	c = createCommand();
+	c->name = UNDO;
+	executeCommandAndPrintData(Pgame,c);
+
+
+	c = createCommand();
+	c->name = UNDO;
+	executeCommandAndPrintData(Pgame,c);
+
+
+	c = createCommand();
+	c->name = UNDO;
+	executeCommandAndPrintData(Pgame,c);
+
+
+	c = createCommand();
+	c->name = UNDO;
+	executeCommandAndPrintData(Pgame,c);
+
+
+	c = createCommand();
+	c->name = REDO;
+	executeCommandAndPrintData(Pgame,c);
+
+	c = createCommand();
+	c->name = SET;
+	c->param1 = "1";c->param2 = "4";c->param3 = "6";
+	executeCommandAndPrintData(Pgame,c);
+
+	c = createCommand();
+	c->name = SET;
+	c->param1 = "1";c->param2 = "1";c->param3 = "0";
+	executeCommandAndPrintData(Pgame,c);
+
+	c = createCommand();
+	c->name = AUTOFILL;
+	executeCommandAndPrintData(Pgame,c);
+
+	destroyGame(Pgame);
+}
+void destroyTester(){
+	game* Pgame;
+	Pgame=createGame(5);
+	Pgame->currMode = SOLVE_MODE;
+	buildBoardRandom(55,Pgame);
+	resetBoard(Pgame->boardTypes, REGULAR_CELL);
+	printBoard(Pgame->board,Pgame->boardTypes);
+	destroyGame(Pgame);
+}
 
 int main(){
     testReadCommand();
 	return 1;
-    undoListTester();
 }
 

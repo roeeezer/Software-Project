@@ -25,11 +25,16 @@ void destroyMoveNode(moveNode* m){
 	free(m);
 }
 void destroyAllMoveNodesStartingFrom(moveNode* start){
+	if(start==NULL){
+		return;
+	}
 	if(start->next==NULL){
 		destroyMoveNode(start);
+		return;
 	}
 	destroyAllMoveNodesStartingFrom(start->next);
 	destroyMoveNode(start);
 }
+
 
 

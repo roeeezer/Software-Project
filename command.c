@@ -63,6 +63,67 @@ int numberOfParams(commandName name) {
     return -1;
 
 }
+void printCommandName(command *c) {
+
+    switch (c->name) {
+        case EDIT:
+        	printf("EDIT\n");
+        	break;
+        case PRINT_BOARD:
+        	printf("PRINT_BOARD");
+        	break;
+        case VALIDATE:
+        	printf("VALIDATE");
+        	break;
+        case UNDO:
+        	printf("UNDO");
+        	break;
+        case REDO:
+        	printf("REDO");
+        	break;
+        case NUM_SOLUTIONS:
+        	printf("NUM_SOLUTIONS");
+        	break;
+        case AUTOFILL:
+        	printf("AUTOFILL");
+        	break;
+        case RESET:
+        	printf("RESET");
+        	break;
+        case EXIT:
+        	printf("EXIT");
+        	break;
+        case SOLVE:
+        	printf("SOLVE");
+        	break;
+        case MARK_ERRORS:
+        	printf("MARK_ERRORS");
+        	break;
+        case GUESS:
+        	printf("GUESS");
+        	break;
+        case SAVE:
+        	printf("SAVE");
+        	break;
+        case GENERATE:
+        	printf("GENERATE");
+        	break;
+        case HINT:
+        	printf("HINT");
+        	break;
+        case GUESS_HINT:
+        	printf("GUESS_HINT");
+        	break;
+        case SET:
+        	printf("SET cell(%d,%d)=%d",atoi(c->param1), atoi(c->param2), atoi(c->param3));
+        	break;
+        case NONE:
+        	printf("NONE");
+        	break;
+    }
+
+
+}
 int commandIsAMove(command* c){
 	commandName name = c->name;
 	if(name==SET||name==AUTOFILL||name==GENERATE||name==GUESS){

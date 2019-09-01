@@ -18,5 +18,6 @@ changeNode* createChangeNode(int i,int j,int prevVal);
 void destroyChangeNode(changeNode* change);
 void destroyAllChangeNodesStartingFrom(changeNode* start);
 void printChangesStartingFrom(changeNode *start);
+void printChange(changeNode* change);
 
 #endif /* CHANGENODE_H_ */

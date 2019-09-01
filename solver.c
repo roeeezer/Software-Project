@@ -125,7 +125,7 @@ void deleteIndexFromList(int* valuesList,int ind,int size){
 
 
 }
-ERROR autofillBoard(board* b,board* bt,moveNode* move){
+ERROR autofillBoard(board* b,board* bt,moveNode* move,int ind){
 	int* valuesList;
 	int i,j,size,v,N=b->squareSideSize;
 	board* cellsToFillBoard;
@@ -154,7 +154,11 @@ ERROR autofillBoard(board* b,board* bt,moveNode* move){
 		for(j=0;j<N;j++){
 			v=getCell(cellsToFillBoard,i,j);
 			if(v!=0){
-				setCellUpdateErroneousAndMove(b,bt,move, i, j,v);
+				if(ind==1){
+					setCellUpdateErroneousAndMove(b,bt,move, i, j,v);}
+				else{
+					setCellAndUpdateErroneous(b,bt, i, j,v);
+				}
 			}
 		}}
 	free(valuesList);

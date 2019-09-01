@@ -14,6 +14,9 @@ int emptyChangesList(changesList* list){
 	return list->first==NULL;
 }
 void destroyChangesList(changesList* l){
+	if(l==NULL){
+		return;
+	}
 	if(!emptyChangesList(l)){
 		destroyAllChangeNodesStartingFrom(l->first);}
 	free(l);

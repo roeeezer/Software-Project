@@ -19,8 +19,12 @@ void destroyChangeNode(changeNode* change){
 
 }
 void destroyAllChangeNodesStartingFrom(changeNode* start){
+	if(start==NULL){
+		return;
+	}
 	if(start->next==NULL){
 		destroyChangeNode(start);
+		return;
 	}
 	destroyAllChangeNodesStartingFrom(start->next);
 	destroyChangeNode(start);

@@ -19,5 +19,4 @@ typedef struct MoveNode{
 moveNode* createMoveNode(command* c);
 void destroyMoveNode(moveNode* m);
 void destroyAllMoveNodesStartingFrom(moveNode* start);
-
 #endif /* MOVENODE_H_ */
