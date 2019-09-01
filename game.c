@@ -154,7 +154,7 @@ ERROR executeCommand(command* pCommand, game* pGame){
     }
     error = checkLegalParam(pCommand, pGame);
     /*tmp Roee*/
-    error = NO_ERROR;
+    error = NO_ERROR;  /*TODO: remove this after finishing checkLegalParam*/
     if (error != NO_ERROR)
         return error;
     /*After this point, command is assumed legal for this game state.*/
@@ -259,10 +259,11 @@ ERROR executeGuessCommand(game *game, double thresh) {
  */
 ERROR executeGenerateCommand(game *game, int x, int y) {
     board* origBoard, *cpBoard;
-    int i, success;
+    int i, success, N;
     ERROR error;
     success=0;
     origBoard = game->board;
+    N = origBoard->squareSideSize;
     if (origBoard->emptyCellsCounter < x)
         return GENERATE_NOT_ENOUGH_CELLS;
     cpBoard = createBoard(origBoard->rows, origBoard->columns);
@@ -283,7 +284,7 @@ ERROR executeGenerateCommand(game *game, int x, int y) {
         destroyBoard(cpBoard);
         return FAILED_TO_GENERATE;
     }
-    for (i = 0; i < y; i++) {
+    for (i = 0; i < (N*N)-y; i++) {
         clearRandomCell(cpBoard);
     }
     copyBoard(origBoard, cpBoard);
