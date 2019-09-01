@@ -64,60 +64,61 @@ int numberOfParams(commandName name) {
 
 }
 void printCommandName(command *c) {
+
     switch (c->name) {
         case EDIT:
         	printf("EDIT\n");
         	break;
         case PRINT_BOARD:
-        	printf("PRINT_BOARD\n");
+        	printf("PRINT_BOARD");
         	break;
         case VALIDATE:
-        	printf("PRINT_BOARD\n");
+        	printf("VALIDATE");
         	break;
         case UNDO:
-        	printf("PRINT_BOARD\n");
+        	printf("UNDO");
         	break;
         case REDO:
-        	printf("PRINT_BOARD\n");
+        	printf("REDO");
         	break;
         case NUM_SOLUTIONS:
-        	printf("PRINT_BOARD\n");
+        	printf("NUM_SOLUTIONS");
         	break;
         case AUTOFILL:
-        	printf("PRINT_BOARD\n");
+        	printf("AUTOFILL");
         	break;
         case RESET:
-        	printf("PRINT_BOARD\n");
+        	printf("RESET");
         	break;
         case EXIT:
-        	printf("PRINT_BOARD\n");
+        	printf("EXIT");
         	break;
         case SOLVE:
-        	printf("PRINT_BOARD\n");
+        	printf("SOLVE");
         	break;
         case MARK_ERRORS:
-        	printf("PRINT_BOARD\n");
+        	printf("MARK_ERRORS");
         	break;
         case GUESS:
-        	printf("PRINT_BOARD\n");
+        	printf("GUESS");
         	break;
         case SAVE:
-        	printf("PRINT_BOARD\n");
+        	printf("SAVE");
         	break;
         case GENERATE:
-        	printf("PRINT_BOARD\n");
+        	printf("GENERATE");
         	break;
         case HINT:
-        	printf("PRINT_BOARD\n");
+        	printf("HINT");
         	break;
         case GUESS_HINT:
-        	printf("PRINT_BOARD\n");
+        	printf("GUESS_HINT");
         	break;
         case SET:
-        	printf("PRINT_BOARD\n");
+        	printf("SET cell(%d,%d)=%d",atoi(c->param1), atoi(c->param2), atoi(c->param3));
         	break;
         case NONE:
-        	printf("PRINT_BOARD\n");
+        	printf("NONE");
         	break;
     }
 

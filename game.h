@@ -24,10 +24,13 @@ typedef struct{
 	board* board;
 	board* boardSol;
 	board* boardTypes;
-	movesList* undoList;
 	/*0 - for regular cell
 	* 1 - for fixed cell
 	* 2 - for error cell*/
+	movesList* undoList;
+	/*while using the undoList we must be careful with our commands object:
+	 *NEVER override a command point object
+	 *NEVER destroy a move command unless it's through destroyMovesList */
 	int currMode;
 	int mark_errors;
 

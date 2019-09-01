@@ -139,6 +139,7 @@ ERROR executeUndo(game* g){
 	if(emptyMovesList(g->undoList)||g->undoList->currPointerState==NO_MOVES_TO_UNDO_STATE){
 		return NO_MOVES_TO_UNDO_ERROR;
 	}
+
 	currMove=g->undoList->curr;
 	undoChangesList(g,currMove->changes);
 	printChangesList(currMove->changes);
@@ -152,9 +153,15 @@ ERROR executeRedo(game* g){
 	if(emptyMovesList(g->undoList)||g->undoList->curr->next==NULL){
 		return NO_MOVES_TO_REDO_ERROR;
 	}
-	moveToRedo=g->undoList->curr->next;
-	printf("Before executing the command that needs to be redone\n");
-	printf("this command is REDO=%d\n",moveToRedo->command->name==REDO);
+	if(g->undoList->curr==g->undoList->first&&g->undoList->currPointerState==NO_MOVES_TO_UNDO_STATE){
+		/*In this case we can image the curr pointer as if its pointing to and empty sentinel
+		 * before undoList->first therefore we need to redo the undoList->first move*/
+		moveToRedo=g->undoList->first;
+		g->undoList->currPointerState=STANDART_STATE;
+
+	}
+	else{
+		moveToRedo=g->undoList->curr->next;}
 	error= executeCommand(moveToRedo->command,g);
 	promoteCurrPointer(g->undoList);
 	return error;
@@ -168,10 +175,10 @@ ERROR executeCommand(command* pCommand, game* pGame){
     	move = createMoveNode(pCommand);
     }
     error = checkLegalParam(pCommand, pGame);
-    /*tmp Roee*/
-    error = NO_ERROR;
-    if (error != NO_ERROR)
-        return error;
+
+    error = NO_ERROR;    /*tmp Roee*/
+    if (error != NO_ERROR){
+        return error;}
     /*After this point, command is assumed legal for this game state.*/
     switch(pCommand->name) {
         case SOLVE:
