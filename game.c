@@ -151,7 +151,7 @@ ERROR executeUndo(game* g){
 ERROR executeRedo(game* g){
 	moveNode* moveToRedo;
 	ERROR error;
-	if(emptyMovesList(g->undoList)||nodeIsEndSentinel(g->undoList,g->undoList->curr)){
+	if(emptyMovesList(g->undoList)||g->undoList->curr->next==NULL){
 		return NO_MOVES_TO_REDO_ERROR;
 	}
 	if(nodeIsStartSentinel(g->undoList,g->undoList->curr)){
@@ -160,11 +160,7 @@ ERROR executeRedo(game* g){
 		moveToRedo=g->undoList->curr;
 	}
 	else{
-		if(g->undoList->curr==g->undoList->last){
-			/*at this point curr and be EndSentinel*/
-			moveToRedo=g->undoList->curr;
-		}
-		else{moveToRedo=g->undoList->curr->next;}
+		moveToRedo=g->undoList->curr->next;
 	}
 	error= executeCommand(moveToRedo->command,g,DONT_UPDATE_MOVES_LIST_IND);
 	promoteCurrPointer(g->undoList);
@@ -260,11 +256,8 @@ ERROR executeCommand(command* pCommand, game* pGame,int ind){
             break;
     }
     if(commandIsAMove(pCommand)&&error==NO_ERROR&&ind==UPDATE_MOVES_LIST_IND){
+    	makeMoveTheLastInTheList(pGame->undoList,pGame->undoList->curr);
     	addMove(pGame->undoList,move);
-    	promoteCurrPointer(pGame->undoList);
-    }
-    if(ind==DONT_UPDATE_MOVES_LIST_IND){
-    	/*in this case we are inside a redo operation*/
     	promoteCurrPointer(pGame->undoList);
     }
     if(pGame->board->emptyCellsCounter==0){

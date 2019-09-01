@@ -211,13 +211,15 @@ void undoListTester(){
 	executeCommandAndPrintData(Pgame,c);
 
 
-	c = createCommand();
-	c->name = AUTOFILL;
-	executeCommandAndPrintData(Pgame,c);
+
 
 	c = createCommand();
 	c->name = SET;
-	c->param1 = "2";c->param2 = "2";c->param3 = "3";
+	c->param1 = "1";c->param2 = "1";c->param3 = "6";
+	executeCommandAndPrintData(Pgame,c);
+
+	c = createCommand();
+	c->name = AUTOFILL;
 	executeCommandAndPrintData(Pgame,c);
 
 	c = createCommand();
@@ -227,7 +229,7 @@ void undoListTester(){
 
 	c = createCommand();
 	c->name = SAVE;
-	c->param1 = "board.txt";
+	c->param1 = "board1.txt";
 	executeCommandAndPrintData(Pgame,c);
 
 
@@ -244,6 +246,16 @@ void undoListTester(){
 
 	c = createCommand();
 	c->name = UNDO;
+	executeCommandAndPrintData(Pgame,c);
+
+
+	c = createCommand();
+	c->name = UNDO;
+	executeCommandAndPrintData(Pgame,c);
+
+
+	c = createCommand();
+	c->name = REDO;
 	executeCommandAndPrintData(Pgame,c);
 
 	c = createCommand();
