@@ -78,8 +78,8 @@ void printErrorMessage(ERROR error, command *pCommand){
         case FIXED_ERRONEOUS_CELLS_IN_FILE:
             printf("Error: cannot load a board with fixed erroneous cells!\n");
         	break;
-        case AUTOFILL_ERRONEOUS_BOARD:
-            printf("Error: cannot autofill a board with erroneous cells!\n");
+        case COMMAND_UNAVAILABLE_WITH_ERRONEOUS_BOARD:
+            printf("Error: this command is unavailable with erroneous board!\n");
         	break;
         case NO_MOVES_TO_UNDO_ERROR:
             printf("Error: no moves to undo!\n");

@@ -129,13 +129,13 @@ void executeCommandTester(){
 	Pgame->currMode=SOLVE_MODE;
 	c->name=SAVE;
 	c->param1 = "board2.txt";
-	err=executeCommand(c,Pgame);
+	err=executeCommand(c,Pgame,UPDATE_MOVES_LIST_IND);
 	printBoard(Pgame->board,Pgame->boardTypes);
 
 	c->name = EDIT;
 	c->param1 = NULL;
 
-	err=executeCommand(c,Pgame);
+	err=executeCommand(c,Pgame,UPDATE_MOVES_LIST_IND);
 	if(err==NO_ERROR){
 		printf("mode:%d\n",Pgame->currMode);
 		buildBoardRandom(28,Pgame);
@@ -168,9 +168,9 @@ void autofillTester(){
 	resetBoard(Pgame->boardTypes, REGULAR_CELL);
 
 	printBoard(Pgame->board,Pgame->boardTypes);
-	executeCommand(c,Pgame);
+	executeCommand(c,Pgame,UPDATE_MOVES_LIST_IND);
 	c->name = AUTOFILL;
-	executeCommand(c,Pgame);
+	executeCommand(c,Pgame,UPDATE_MOVES_LIST_IND);
 	printErrorMessage( err, c);
 	if(err==NO_ERROR){
 		printBoard(Pgame->board,Pgame->boardTypes);
@@ -178,10 +178,26 @@ void autofillTester(){
 
 
 }
+void executeCommandAndPrintData(game* g,command* c){
+	ERROR err=NO_ERROR;
+	printf("Execute ");
+	printCommandName(c);printf("\n");
+	err=executeCommand(c,g,UPDATE_MOVES_LIST_IND);
+	printErrorMessage( err, c);
+	printBoard(g->board,g->boardTypes);
+	printf("movesList after execution: ");
+	printMovesList(g->undoList);
+	printf("\n\n");
+
+	if(!commandIsAMove(c)){
+		destroyCommand(c);
+	}
+
+
+}
 void undoListTester(){
 	game* Pgame;
 	command *c;
-	ERROR err=NO_ERROR;
 
 	Pgame=createGame(5);
 	Pgame->currMode = SOLVE_MODE;
@@ -191,94 +207,57 @@ void undoListTester(){
 
 	c = createCommand();
 	c->name = SET;
-	c->param1 = "1";
-	c->param2 = "1";
-	c->param3 = "5";
-	printf("Execute ");
-	printCommandName(c);printf("\n");
-	err=executeCommand(c,Pgame);
-	printErrorMessage( err, c);
-	printBoard(Pgame->board,Pgame->boardTypes);
-	printf("movesList after execution: ");
-	printMovesList(Pgame->undoList);
-	printf("\n");
+	c->param1 = "1";c->param2 = "1";c->param3 = "5";
+	executeCommandAndPrintData(Pgame,c);
+
+
+	c = createCommand();
+	c->name = AUTOFILL;
+	executeCommandAndPrintData(Pgame,c);
 
 	c = createCommand();
 	c->name = SET;
-	c->param1 = "1";
-	c->param2 = "1";
-	c->param3 = "6";
-	printf("Execute ");
-	printCommandName(c);printf("\n");
-	err=executeCommand(c,Pgame);
-	printErrorMessage( err, c);
-	printBoard(Pgame->board,Pgame->boardTypes);
-	printf("movesList after execution: ");
-	printMovesList(Pgame->undoList);
-	printf("\n");
+	c->param1 = "2";c->param2 = "2";c->param3 = "3";
+	executeCommandAndPrintData(Pgame,c);
+
+	c = createCommand();
+	c->name = NUM_SOLUTIONS;
+	executeCommandAndPrintData(Pgame,c);
+
+
+	c = createCommand();
+	c->name = SAVE;
+	c->param1 = "board.txt";
+	executeCommandAndPrintData(Pgame,c);
+
 
 
 	c = createCommand();
 	c->name = UNDO;
-	printf("Execute ");
-	printCommandName(c);printf("\n");
-	err=executeCommand(c,Pgame);
-	printErrorMessage( err, c);
-	printBoard(Pgame->board,Pgame->boardTypes);
-	printf("movesList after execution: ");
-	printMovesList(Pgame->undoList);
-	printf("\n");
-	destroyCommand(c);
+	executeCommandAndPrintData(Pgame,c);
 
 
 	c = createCommand();
 	c->name = UNDO;
-	printf("Execute ");
-	printCommandName(c);printf("\n");
-	err=executeCommand(c,Pgame);
-	printErrorMessage( err, c);
-	printBoard(Pgame->board,Pgame->boardTypes);
-	printf("movesList after execution: ");
-	printMovesList(Pgame->undoList);
-	printf("\n");
-	destroyCommand(c);
+	executeCommandAndPrintData(Pgame,c);
 
 
 	c = createCommand();
 	c->name = UNDO;
-	printf("Execute ");
-	printCommandName(c);printf("\n");
-	err=executeCommand(c,Pgame);
-	printErrorMessage( err, c);
-	printBoard(Pgame->board,Pgame->boardTypes);
-	printf("movesList after execution: ");
-	printMovesList(Pgame->undoList);
-	printf("\n");
-	destroyCommand(c);
+	executeCommandAndPrintData(Pgame,c);
 
 	c = createCommand();
 	c->name = REDO;
-	printf("Execute ");
-	printCommandName(c);printf("\n");
-	err=executeCommand(c,Pgame);
-	printErrorMessage( err, c);
-	printBoard(Pgame->board,Pgame->boardTypes);
-	printf("movesList after execution: ");
-	printMovesList(Pgame->undoList);
-	printf("\n");
-	destroyCommand(c);
+	executeCommandAndPrintData(Pgame,c);
 
 	c = createCommand();
 	c->name = REDO;
-	printf("Execute ");
-	printCommandName(c);printf("\n");
-	err=executeCommand(c,Pgame);
-	printErrorMessage( err, c);
-	printBoard(Pgame->board,Pgame->boardTypes);
-	printf("movesList after execution: ");
-	printMovesList(Pgame->undoList);
-	printf("\n");
-	destroyCommand(c);
+	executeCommandAndPrintData(Pgame,c);
+
+	c = createCommand();
+	c->name = REDO;
+	executeCommandAndPrintData(Pgame,c);
+
 
 	destroyGame(Pgame);
 }

@@ -20,6 +20,9 @@ movesList* createMovesList(){
 int emptyMovesList(movesList *l){
 	return l->first==NULL;
 }
+int singleNodeList(movesList *l){
+	return l->first==l->last;
+}
 void destroyMovesList(movesList* l){
 	if(!emptyMovesList(l)){
 		destroyAllMoveNodesStartingFrom(l->first);
@@ -31,7 +34,7 @@ void addMove(movesList *l,moveNode *m){
 		l->first = m;
 		l->curr = m;
 		l->last = m;
-		l->currPointerState=STANDART_STATE;
+		l->currPointerState=NO_MOVES_TO_REDO_STATE;
 		return;
 	}
 	m->prev=l->last;
@@ -39,21 +42,46 @@ void addMove(movesList *l,moveNode *m){
 	l->last= m;
 
 }
+int nodeIsStartSentinel(movesList *l,moveNode* node){
+	return node==l->first&&l->currPointerState==NO_MOVES_TO_UNDO_STATE;
+}
+int nodeIsEndSentinel(movesList *l,moveNode* node){
+	return node==l->last&&l->currPointerState==NO_MOVES_TO_REDO_STATE;
+}
 void promoteCurrPointer(movesList *l){
-	if(l->curr==l->first&&l->currPointerState==NO_MOVES_TO_UNDO_STATE){
+	if(nodeIsStartSentinel(l,l->curr)){
 		/*In this case we can image the curr pointer as if its pointing to and empty sentinel
 		 * before undoList->first therefore we need to redo the undoList->first move*/
-		l->currPointerState=STANDART_STATE;
+		if(singleNodeList(l)){
+			l->currPointerState=NO_MOVES_TO_REDO_STATE;
+			return;
+		}
+		else{
+			l->currPointerState=STANDART_STATE;
 		return;
+		}
 
 	}
 	if(l->curr==l->last){
+		l->currPointerState=NO_MOVES_TO_REDO_STATE;
 		return;
 	}
 
 	l->curr = l->curr->next;
 }
 void demoteCurrPointer(movesList *l){
+	if(nodeIsEndSentinel(l,l->curr)){
+		if(singleNodeList(l)){
+			l->currPointerState=NO_MOVES_TO_UNDO_STATE;
+			return;
+		}
+		else{
+			l->currPointerState=STANDART_STATE;
+			l->curr = l->curr->prev;
+			return;
+
+		}
+	}
 	if(l->curr==l->first){
 		l->currPointerState=NO_MOVES_TO_UNDO_STATE;
 		return;
@@ -73,7 +101,8 @@ void printMovesList(movesList *l){
 		if(currMove==l->last){
 			printf("(last)");
 		}
-		printf("		");
+		if(currMove!=l->last){
+		printf("--");}
 		currMove=currMove->next;
 	}
 }

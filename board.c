@@ -218,7 +218,7 @@ int setCausesErroneousCellInRow(board* b,board* bTypes,int i,int j,int v,int ind
 	oldV = getCell(b,i,j);
 	boardColumns = b->squareSideSize;
 	for(k=0;k<boardColumns;k++){
-		if(k!=j&&getCell(b,i,k)==v){
+		if(k!=j&&getCell(b,i,k)==v&&v!=0){/*collision*/
 
 			if(ind==0){
 				return 1;
@@ -249,7 +249,7 @@ int setCausesErroneousCellInColumn(board* b,board* bTypes,int i,int j,int v,int 
 	oldV = getCell(b,i,j);
 	boardRows = b->squareSideSize;
 		for(k=0;k<boardRows;k++){
-			if(k!=i&&getCell(b,k,j)==v){
+			if(k!=i&&getCell(b,k,j)==v&&v!=0){/*collision*/
 
 				if(ind==0){
 					return 1;
@@ -281,7 +281,7 @@ int setCausesErroneousCellInBlock(board* b,board* bTypes,int i,int j,int v,int i
 
 	for(k=blockIndices[0]*b->rows;k<(blockIndices[0]+1)*b->rows;k++){
 		for(r=blockIndices[1]*b->columns;r<(blockIndices[1]+1)*b->columns;r++){
-			if((r!=j||k!=i)&&getCell(b,k,r)==v){
+			if((r!=j||k!=i)&&getCell(b,k,r)==v&&v!=0){/*collision*/
 
 				if(ind==0){
 					return 1;
@@ -310,6 +310,9 @@ int setCausesErroneousCellInBlock(board* b,board* bTypes,int i,int j,int v,int i
 int setCausesErroneousCell(board* b,board* bTypes,int i,int j,int v,int ind){
 	int b1,b2,b3,res;
 	if(getCell(b,i,j)==v){
+		return 0;
+	}
+	if(v==0&&(ind==0||ind==2)){
 		return 0;
 	}
 	b1 = setCausesErroneousCellInRow(b,bTypes,i,j,v,ind);

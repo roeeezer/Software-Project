@@ -10,7 +10,7 @@
 #include "game.h"
 
 
-ERROR executeSetCommand(game *game,moveNode *move, int x, int y, int z);
+ERROR executeSetCommand(game *game,moveNode *move, int x, int y, int z,int ind);
 
 ERROR executeGenerateCommand(game *game, int x, int y);
 
@@ -102,6 +102,7 @@ ERROR executeSolveCommand(command* pCommand,game* pGame,ERROR error){
 int executeNumSolutions(board* b){
 	board* tmpCopy;
 	int res;
+
 	tmpCopy= createBoard(b->rows,b->columns);
 	copyBoard(tmpCopy,b);
 	res = exhaustiveBackTracingWithStack(b,tmpCopy);
@@ -110,11 +111,11 @@ int executeNumSolutions(board* b){
 
 
 }
-ERROR executeAutofill(game* g,moveNode* move){
+ERROR executeAutofill(game* g,moveNode* move,int ind){
 	if(erroneousBoard(g->boardTypes)){
-		return AUTOFILL_ERRONEOUS_BOARD;
+		return COMMAND_UNAVAILABLE_WITH_ERRONEOUS_BOARD;
 	}
-	return autofillBoard(g->board,g->boardTypes,move);
+	return autofillBoard(g->board,g->boardTypes,move,ind);
 
 }
 void undoChange(game* g,changeNode* change){
@@ -136,7 +137,7 @@ void undoChangesList(game* g,changesList* list){
 }
 ERROR executeUndo(game* g){
 	moveNode* currMove;
-	if(emptyMovesList(g->undoList)||g->undoList->currPointerState==NO_MOVES_TO_UNDO_STATE){
+	if(emptyMovesList(g->undoList)||nodeIsStartSentinel(g->undoList,g->undoList->curr)){
 		return NO_MOVES_TO_UNDO_ERROR;
 	}
 
@@ -150,28 +151,31 @@ ERROR executeUndo(game* g){
 ERROR executeRedo(game* g){
 	moveNode* moveToRedo;
 	ERROR error;
-	if(emptyMovesList(g->undoList)||g->undoList->curr->next==NULL){
+	if(emptyMovesList(g->undoList)||nodeIsEndSentinel(g->undoList,g->undoList->curr)){
 		return NO_MOVES_TO_REDO_ERROR;
 	}
-	if(g->undoList->curr==g->undoList->first&&g->undoList->currPointerState==NO_MOVES_TO_UNDO_STATE){
+	if(nodeIsStartSentinel(g->undoList,g->undoList->curr)){
 		/*In this case we can image the curr pointer as if its pointing to and empty sentinel
 		 * before undoList->first therefore we need to redo the undoList->first move*/
-		moveToRedo=g->undoList->first;
-		g->undoList->currPointerState=STANDART_STATE;
-
+		moveToRedo=g->undoList->curr;
 	}
 	else{
-		moveToRedo=g->undoList->curr->next;}
-	error= executeCommand(moveToRedo->command,g);
+		if(g->undoList->curr==g->undoList->last){
+			/*at this point curr and be EndSentinel*/
+			moveToRedo=g->undoList->curr;
+		}
+		else{moveToRedo=g->undoList->curr->next;}
+	}
+	error= executeCommand(moveToRedo->command,g,DONT_UPDATE_MOVES_LIST_IND);
 	promoteCurrPointer(g->undoList);
 	return error;
 
 }
-ERROR executeCommand(command* pCommand, game* pGame){
+ERROR executeCommand(command* pCommand, game* pGame,int ind){
     ERROR error;
     moveNode *move;
     int res;
-    if(commandIsAMove(pCommand)){
+    if(commandIsAMove(pCommand)&&ind==UPDATE_MOVES_LIST_IND){
     	move = createMoveNode(pCommand);
     }
     error = checkLegalParam(pCommand, pGame);
@@ -223,18 +227,22 @@ ERROR executeCommand(command* pCommand, game* pGame){
             /* error = guessHint(pGame, atoi(pCommand->param1), atoi(pCommand->param2)); TODO: uncomment this*/
             break;
         case NUM_SOLUTIONS:
-        	res = executeNumSolutions(pGame->board);
-        	printf("Number of solutions is:%d\n",res);
-            error = NO_ERROR;
+        	if(erroneousBoard(pGame->boardTypes)){
+        		error= COMMAND_UNAVAILABLE_WITH_ERRONEOUS_BOARD;
+        	}
+        	else{
+				res = executeNumSolutions(pGame->board);
+				printf("Number of solutions is:%d\n",res);
+				error = NO_ERROR;}
             break;
         case AUTOFILL:
-           error = executeAutofill(pGame,move);
+           error = executeAutofill(pGame,move,ind);
             break;
         case RESET:
             /*error = fullResetBoard(pGame); TODO: @Roee implement this TODO: uncomment this*/
             break;
         case SET:
-            executeSetCommand(pGame,move, atoi(pCommand->param1), atoi(pCommand->param2), atoi(pCommand->param3));
+            executeSetCommand(pGame,move, atoi(pCommand->param1), atoi(pCommand->param2), atoi(pCommand->param3),ind);
             /*TODO: @Omer implement TODO: uncomment this
              * Comment from Roee: remember that you cannot set a fixed cell to the value 0*/
             break;
@@ -251,8 +259,12 @@ ERROR executeCommand(command* pCommand, game* pGame){
             error = UNKNOWN_ERROR;
             break;
     }
-    if(commandIsAMove(pCommand)&&error==NO_ERROR){
+    if(commandIsAMove(pCommand)&&error==NO_ERROR&&ind==UPDATE_MOVES_LIST_IND){
     	addMove(pGame->undoList,move);
+    	promoteCurrPointer(pGame->undoList);
+    }
+    if(ind==DONT_UPDATE_MOVES_LIST_IND){
+    	/*in this case we are inside a redo operation*/
     	promoteCurrPointer(pGame->undoList);
     }
     if(pGame->board->emptyCellsCounter==0){
@@ -321,7 +333,7 @@ ERROR executeGenerateCommand(game *game, int x, int y) {
  * @return NO_ERROR if set sucessfully,FIXED_CELL_ERROR if trying to set fixed cell in SOLVE
  * BOARD_SOLVED_ERRONEOUS if board solved incorrectly, or BOARD_SOLVED_CORRECTLY if board solved correctly.
  */
-ERROR executeSetCommand(game *game,moveNode *move, int x, int y, int z) {
+ERROR executeSetCommand(game *game,moveNode *move, int x, int y, int z,int ind) {
     int type, currMode, i, j;
     currMode = game->currMode;
     i = y - 1;
@@ -329,7 +341,13 @@ ERROR executeSetCommand(game *game,moveNode *move, int x, int y, int z) {
     type = getCell(game->boardTypes, i, j);
     if (currMode == SOLVE && type == FIXED_CELL)
         return FIXED_CELL_ERROR;
-    setCellUpdateErroneousAndMove(game->board, game->boardTypes,move, i,j, z);
+    if(ind==UPDATE_MOVES_LIST_IND){
+    	setCellUpdateErroneousAndMove(game->board, game->boardTypes,move, i,j, z);
+    }
+    else{
+    	setCellAndUpdateErroneous(game->board, game->boardTypes, i,j, z);
+    }
+
     if (currMode == SOLVE && game->board->emptyCellsCounter == 0){
            if (erroneousBoard(game->boardTypes))
                return BOARD_SOLVED_ERRONEOUS;

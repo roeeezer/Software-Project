@@ -88,7 +88,7 @@ int erroneousBoard(board* bTypes);
 /*ind=0 for checking if this set command causes erroneous cells
  * ind=1 for checking if this set command causes erroneous cells and updating
  * the erroneous cells in bTypes (adding of removing erroneous flags according to the value in th set)
- * ind=2 if we want to set a fixed cell to (i,j) and to check if the set will cause a collision with
+ * ind=2 if we want to set a fixed cell (i,j) and to check if the set will cause a collision with
  * other fixed cells - used in function boardContainsFixedErroneousCells
  * getCell(i,j) current value does not affect this function!
  * @POST: $RET=1 iff the answer to the question determined by ind is YES*/
