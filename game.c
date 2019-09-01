@@ -85,9 +85,11 @@ ERROR executeSolveCommand(command* pCommand,game* pGame,ERROR error){
     	destroyBoard(pGame->board);
     	destroyBoard(pGame->boardTypes);
     	destroyBoard(pGame->boardSol);
+    	destroyMovesList(pGame->undoList);
     	pGame->board = newBoard;
     	pGame->boardTypes = newBoardTypes;
     	pGame->boardSol = createBoard(n,m);
+    	pGame->undoList = createMovesList();
         pGame->currMode = SOLVE_MODE;
         return error;
     }

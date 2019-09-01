@@ -91,13 +91,14 @@ void printMovesList(movesList *l){
 	}
 }
 void makeMoveTheLastInTheList(movesList* list,moveNode* node){
-	/*moveNode* startDeletingFrom;
-	TODO
+	moveNode* startDeletingFrom;
+
 	if(node==list->last){
-		list->currPointerState=STANDART_STATE;
 		return;
 	}
-	list->last=node;*/
-	printf("",list,node);
+	startDeletingFrom=node->next;
+	node->next=NULL;
+	destroyAllMoveNodesStartingFrom(startDeletingFrom);
+	list->last=node;
 
 }
