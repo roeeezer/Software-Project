@@ -44,7 +44,7 @@ void exhaustiveBackTrackingTester(){
 	resetBoard(Pgame->boardSol,0);
 	resetBoard(Pgame->boardTypes,0);
 	buildBoardRandom(35,Pgame);
-	printBoard(Pgame->board,Pgame->boardTypes);
+	printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
 	copyBoard(Pgame->boardSol,Pgame->board);
 
      start = clock();
@@ -66,7 +66,7 @@ void saveGameTester(){
 	printf("Before build random\n");
 	buildBoardRandom(60,Pgame);
 	resetBoard(Pgame->boardTypes, REGULAR_CELL);
-	printBoard(Pgame->board,Pgame->boardTypes);
+	printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
 	copyBoard(Pgame->boardSol,Pgame->board);
 	printf("Before save\n");
 	saveGame(Pgame->board,Pgame->boardTypes,"bigBoard.txt",2);
@@ -90,8 +90,8 @@ int newFinalMain(){
 		}
 		if(e==NO_ERROR){
 			if(commandMightHaveChangedBoard(c)){
-				printBoard(g->board,g->boardTypes);
-				/*printMovesList(g->undoList);*/
+				printBoard(g->board,g->boardTypes,g->currMode,g->mark_errors);
+				printMovesList(g->undoList);printf("\n");
 				if(!commandIsAMove(c)){
 						destroyCommand(c);
 						}
@@ -125,7 +125,7 @@ int finalMain(){
 		if(exitInd){
             printf("Exiting...\n");
             return 0;}
-			printBoard(Pgame->board,Pgame->boardTypes);
+			printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
 		while(!exitInd&&!restartInd){
 			PcurrCommand=createCommand();
 			/*check malloc success*/
@@ -154,15 +154,15 @@ void loaderTester(){
 	resetBoard(bt,REGULAR_CELL);
 
 
-	printBoard(b,bt);
+	printBoard(b,bt,Pgame->currMode,Pgame->mark_errors);
 	saveGame(b,bt,"board1.txt",SOLVE);
-	printBoard(Pgame->board,Pgame->boardTypes);
+	printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
 	printf("before load b val=%d\n",b==NULL);
 
 	loadGame(&b,&bt,"board1.txt",&n,&m);
 	printf("after load b val=%d\n",b==NULL);
 
-	printBoard(b,bt);
+	printBoard(b,bt,Pgame->currMode,Pgame->mark_errors);
 
 
 }
@@ -179,11 +179,11 @@ void executeCommandTester(){
 	c->name=SOLVE;
 	c->param1 = "board1.txt";
 	err=executeCommand(c,Pgame,UPDATE_MOVES_LIST_IND);
-	printBoard(Pgame->board,Pgame->boardTypes);
+	printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
 
 	if(err==NO_ERROR){
 		printf("mode:%d\n",Pgame->currMode);
-		printBoard(Pgame->board,Pgame->boardTypes);}
+		printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);}
 	else{
 		printErrorMessage(err,c);
 	}
@@ -195,12 +195,12 @@ void erroneousCheckTester(){
 	Pgame=createGame(5);
 	buildBoardRandom(45,Pgame);
 	resetBoard(Pgame->boardTypes, REGULAR_CELL);
-	printBoard(Pgame->board,Pgame->boardTypes);
+	printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
 	setCellAndUpdateErroneous(Pgame->board,Pgame->boardTypes, i, j, v);
-	printBoard(Pgame->board,Pgame->boardTypes);
+	printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
 	v=9;
 	setCellAndUpdateErroneous(Pgame->board,Pgame->boardTypes, i, j, v);
-	printBoard(Pgame->board,Pgame->boardTypes);
+	printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
 }
 void autofillTester(){
 	game* Pgame;
@@ -214,13 +214,13 @@ void autofillTester(){
 	buildBoardRandom(55,Pgame);
 	resetBoard(Pgame->boardTypes, REGULAR_CELL);
 
-	printBoard(Pgame->board,Pgame->boardTypes);
+	printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
 	executeCommand(c,Pgame,UPDATE_MOVES_LIST_IND);
 	c->name = AUTOFILL;
 	executeCommand(c,Pgame,UPDATE_MOVES_LIST_IND);
 	printErrorMessage( err, c);
 	if(err==NO_ERROR){
-		printBoard(Pgame->board,Pgame->boardTypes);
+		printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
 	}
 
 
@@ -231,7 +231,7 @@ void executeCommandAndPrintData(game* g,command* c){
 	printCommandName(c);printf("\n");
 	err=executeCommand(c,g,UPDATE_MOVES_LIST_IND);
 	printErrorMessage( err, c);
-	printBoard(g->board,g->boardTypes);
+	printBoard(g->board,g->boardTypes,g->currMode,g->mark_errors);
 	printf("movesList after execution: ");
 	printMovesList(g->undoList);
 	printf("\n\n");
@@ -249,7 +249,7 @@ void undoListTester(){
 	Pgame->currMode = SOLVE_MODE;
 	buildBoardRandom(55,Pgame);
 	resetBoard(Pgame->boardTypes, REGULAR_CELL);
-	printBoard(Pgame->board,Pgame->boardTypes);
+	printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
 
 	c = createCommand();
 	c->name = SET;
@@ -323,7 +323,7 @@ void destroyTester(){
 	Pgame->currMode = SOLVE_MODE;
 	buildBoardRandom(55,Pgame);
 	resetBoard(Pgame->boardTypes, REGULAR_CELL);
-	printBoard(Pgame->board,Pgame->boardTypes);
+	printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
 	destroyGame(Pgame);
 }
 

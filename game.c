@@ -34,6 +34,7 @@ game* createGame(int seed){
 	res->undoList = createMovesList();
 	resetBoard(res->boardTypes, REGULAR_CELL);
 	res->currMode = INIT_MODE;
+	res->mark_errors=1;
 
 	return res;
 }
@@ -215,7 +216,7 @@ ERROR executeCommand(command* pCommand, game* pGame,int ind){
             error = NO_ERROR;
             break;
         case PRINT_BOARD:
-            printBoard(pGame->board, pGame->boardTypes);
+            printBoard(pGame->board, pGame->boardTypes,pGame->currMode,pGame->mark_errors);
             error = NO_ERROR;
             break;
         case GUESS:
@@ -388,7 +389,7 @@ void executeCommandDEPRECATED(command* PcurrCommand, game* Pgame){
 	            printf("Error: value is invalid\n"); /*TODO: This is allowed, need to confirm printing*/
         else{ /*No error, should set cell value*/
 	        setCell(Pgame->board, i, j, z);
-	        printBoard(Pgame->board,Pgame->boardTypes);
+	        printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
 	        if (boardSolved(Pgame->board)){
 	            printf("Puzzle solved successfully\n");
 	        }

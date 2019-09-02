@@ -8,6 +8,9 @@
 #define BOARD_H_
 #include <stdio.h>
 #include "moveNode.h"
+#define INIT_MODE 0
+#define EDIT_MODE 1
+#define SOLVE_MODE 2
 /*Board Structure:
  * the board structure was necessary because the modules game and solver need to
  * exchange game boards among them in a way that is not depended on the data structure
@@ -49,24 +52,25 @@ void resetBoard(board* b,int v);
 /*returns 1 if cell is empty*/
 int emptyCell(board* Pboard,int i,int j);
 /*prints the board according the format described in the instructions*/
-int printBoard(board* b,board* bTypes);
+int printBoard(board* b,board* bTypes,int gameMode,int markErrors);
 /*prints row of blocks number blockRow in the board
  * @pre: 0<=blockRow<#rowsOfBlocks=board.columns*/
-void printRowOfBlocks(board* b,int blockRow,board* bTypes);
+void printRowOfBlocks(board* b,int blockRow,board* bTypes,int gameMode,int markErrors);
 /*prints cell row number rowInBlocksRow in the row of blocks number blocksRow
  * @pre: 0<=blockRow<#rowsOfBlocks=board.columns
  * @pre: 0<=rowInBlocksRow<#(number of cell rows in one block)=board.rows*/
-void printOneRowInRowsOfBlocks(board* b,int blocksRow,int rowInBlocksRow,board* bTypes);
+void printOneRowInRowsOfBlocks(board* b,int blocksRow,int boardRow,board* bTypes,int gameMode,int markErrors);
 /*
  * @pre: 0<=blockRow<#rowsOfBlocks=board.columns
  * @pre: 0<=rowInBlocksRow<#(number of cell rows in one block)=board.rows
  * @pre: 0<=blockComlumnInSingleRow<#(columns of blocks in board)=b.rows*/
-void printSingleRowInSingleBlock(board* b,int blocksRow,int rowInBlocksRow,int blockComlumnInSingleRow,board* bTypes);
+void printSingleRowInSingleBlock(board* b,int blocksRow,int boardRow,
+		int blockComlumnInSingleRow,board* bTypes,int gameMode,int markErrors);
 /*@ret == 1 if and only if all cells in board are filled.*/
 int boardSolved(board * pBoard);
 /*prints a single cell according to the described format.
  * negative values represent fixed cell and zero values represent empty cells*/
-void printCellValue(board* b,int i,int j,board* bTypes);
+void printCellValue(board* b,int i,int j,board* bTypes,int gameMode,int markErrors);
 /*@ret>1 if and only if the assignment of value v in the (i,j) cell follows the soduko rules*/
 int validAsignment(board* b,int v,int i,int j);
 /*returns the next empty cell index in the board s.t $result and fromInd is 1D index

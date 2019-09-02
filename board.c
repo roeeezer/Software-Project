@@ -129,37 +129,37 @@ void printDashRow(board* b){
 	printf("\n");
 
 }
-int printBoard(board* b,board* bTypes){
+int printBoard(board* b,board* bTypes,int gameMode,int markErrors){
 	int blockRow,rowsOfBlocksInTheBoard;
 	rowsOfBlocksInTheBoard=b->columns;
 	printDashRow(b);
 	for(blockRow=0;blockRow<rowsOfBlocksInTheBoard;blockRow++){
-		printRowOfBlocks(b,blockRow,bTypes);
+		printRowOfBlocks(b,blockRow,bTypes, gameMode, markErrors);
 		printDashRow(b);
 	}
 	return 1;
 }
-void printRowOfBlocks(board* b,int blockRow,board* bTypes){
+void printRowOfBlocks(board* b,int blockRow,board* bTypes,int gameMode,int markErrors){
 	int boardRow;
 	for(boardRow=0;boardRow<b->rows;boardRow++){
-		printOneRowInRowsOfBlocks(b,blockRow,boardRow,bTypes);
+		printOneRowInRowsOfBlocks(b,blockRow,boardRow,bTypes,gameMode, markErrors);
 	}
 
 
 }
-void printOneRowInRowsOfBlocks(board* b,int blocksRow,int boardRow,board* bTypes){
+void printOneRowInRowsOfBlocks(board* b,int blocksRow,int boardRow,board* bTypes,int gameMode,int markErrors){
 	int blockComlumnInSingleRow,columnsOfBlocksInBoard;
 	columnsOfBlocksInBoard=b->rows;
 	printf("|");
 	for(blockComlumnInSingleRow=0;blockComlumnInSingleRow<columnsOfBlocksInBoard;blockComlumnInSingleRow++){
-		printSingleRowInSingleBlock(b,blocksRow,boardRow,blockComlumnInSingleRow,bTypes);
+		printSingleRowInSingleBlock(b,blocksRow,boardRow,blockComlumnInSingleRow,bTypes, gameMode, markErrors);
 		/*printf(" |");*/
 		printf("|");
 	}
 	printf("\n");
 }
 void printSingleRowInSingleBlock(board* b,int blocksRow,int boardRow,
-		int blockComlumnInSingleRow,board* bTypes){
+		int blockComlumnInSingleRow,board* bTypes,int gameMode,int markErrors){
 	int i,j,blockRowLength,blockColumnLength,firstColumn;
 	blockRowLength = b->rows;
 	blockColumnLength = b->columns;
@@ -167,11 +167,11 @@ void printSingleRowInSingleBlock(board* b,int blocksRow,int boardRow,
 	firstColumn=blockComlumnInSingleRow*blockColumnLength;
 	for(j=firstColumn;j<firstColumn+b->columns;j++){
 		/*printf(" ");*/
-		printCellValue(b,i,j,bTypes);
+		printCellValue(b,i,j,bTypes, gameMode, markErrors);
 	}
 
 }
-void printCellValue(board* b,int i,int j,board* bTypes){
+void printCellValue(board* b,int i,int j,board* bTypes,int gameMode,int markErrors){
 	int val,type;
 	val = getCell(b,i,j);
 	type = getCell(bTypes,i,j);
@@ -179,19 +179,21 @@ void printCellValue(board* b,int i,int j,board* bTypes){
 	if(val==0){
 			printf("  ");
 		}
-	else if(type == REGULAR_CELL){
-		printf(" %d",val);
-	}
 
-	else if(type == FIXED_CELL){
+
+	else if(type == FIXED_CELL&& gameMode!=EDIT_MODE){
 		printf("%d.",val);
 
 		}
 
-	else if(type == ERRONEOUS_CELL){
+	else if(type == ERRONEOUS_CELL&&(gameMode==EDIT_MODE||markErrors)){
 		printf("%d*",val);
 
 			}
+	else{
+		printf(" %d",val);
+	}
+
 	if(val<10){
 		printf(" ");}
 }
