@@ -102,6 +102,9 @@ ERROR loadGame(board** b,board** bTypes,char* path,int *n,int *m){
 				return INVALID_FILE_FORMAT;
 			}
 			if(ch=='.'){
+				if(val==0){/*fixed cells with value 0*/
+					return INVALID_FILE_FORMAT;
+				}
 				setCell(*bTypes, i, j, FIXED_CELL);}
 			/*printf("i=%d, j=%d, val=%d, ch=%c, chVal=%d\n",i,j,val,ch,ch);*/
 		}

@@ -46,6 +46,9 @@ void destroyGame(game* game){
     destroyMovesList(game->undoList);
 	free(game);
 }
+void printWelcomeMessage(){
+	printf("-- Welcome to Roee and Omer's Sudoko game! --\n");
+}
 int initializeGame(int seed, game **newGame) {
     /* function was changed to return int for result status instead of board*/
     game* res;
@@ -93,7 +96,6 @@ ERROR executeSolveCommand(command* pCommand,game* pGame,ERROR error){
         pGame->currMode = SOLVE_MODE;
         return error;
     }
-    printErrorMessage(error, pCommand);
     if(error==FCLOSE_ERROR){/*all the errors that occur after the new boards are created*/
     	destroyBoard(newBoard);
     	destroyBoard(newBoardTypes);
@@ -137,7 +139,7 @@ void undoChangesList(game* g,changesList* list){
 	}
 	undoChangesListStartingFrom(g,list->first);
 }
-ERROR executeUndo(game* g){
+ERROR executeUndo(game* g,int printChanges){
 	moveNode* currMove;
 	if(emptyMovesList(g->undoList)||nodeIsStartSentinel(g->undoList,g->undoList->curr)){
 		return NO_MOVES_TO_UNDO_ERROR;
@@ -145,15 +147,24 @@ ERROR executeUndo(game* g){
 
 	currMove=g->undoList->curr;
 	undoChangesList(g,currMove->changes);
-	printChangesList(currMove->changes);
+	if(printChanges){
+		printChangesList(currMove->changes);}
 	demoteCurrPointer(g->undoList);
 	return NO_ERROR;
 
 }
+ERROR executeReset(game* g){
+	ERROR e = NO_ERROR;
+
+	while(e!=NO_MOVES_TO_UNDO_ERROR){
+		e=executeUndo(g,0);
+	}
+	return NO_ERROR;
+}
 ERROR executeRedo(game* g){
 	moveNode* moveToRedo;
 	ERROR error;
-	if(emptyMovesList(g->undoList)||g->undoList->curr->next==NULL){
+	if(emptyMovesList(g->undoList)||(g->undoList->curr->next==NULL&&!nodeIsStartSentinel(g->undoList,g->undoList->curr))){
 		return NO_MOVES_TO_REDO_ERROR;
 	}
 	if(nodeIsStartSentinel(g->undoList,g->undoList->curr)){
@@ -214,7 +225,7 @@ ERROR executeCommand(command* pCommand, game* pGame,int ind){
             error = executeGenerateCommand(pGame, atoi(pCommand->param1), atoi(pCommand->param2));
             break;
         case UNDO:
-        	error = executeUndo(pGame);
+        	error = executeUndo(pGame,1);
             break;
         case REDO:
         	error = executeRedo(pGame);
@@ -238,10 +249,10 @@ ERROR executeCommand(command* pCommand, game* pGame,int ind){
            error = executeAutofill(pGame,move,ind);
             break;
         case RESET:
-            /*error = fullResetBoard(pGame); TODO: @Roee implement this TODO: uncomment this*/
+            error = executeReset(pGame);
             break;
         case SET:
-            executeSetCommand(pGame,move, atoi(pCommand->param1), atoi(pCommand->param2), atoi(pCommand->param3),ind);
+            error = executeSetCommand(pGame,move, atoi(pCommand->param1), atoi(pCommand->param2), atoi(pCommand->param3),ind);
             /*TODO: @Omer implement TODO: uncomment this
              * Comment from Roee: remember that you cannot set a fixed cell to the value 0*/
             break;
@@ -336,8 +347,8 @@ ERROR executeSetCommand(game *game,moveNode *move, int x, int y, int z,int ind) 
     i = y - 1;
     j = x - 1;
     type = getCell(game->boardTypes, i, j);
-    if (currMode == SOLVE && type == FIXED_CELL)
-        return FIXED_CELL_ERROR;
+    if (currMode == SOLVE_MODE && type == FIXED_CELL){
+        	return FIXED_CELL_ERROR;}
     if(ind==UPDATE_MOVES_LIST_IND){
     	setCellUpdateErroneousAndMove(game->board, game->boardTypes,move, i,j, z);
     }
@@ -397,6 +408,27 @@ void executeCommandDEPRECATED(command* PcurrCommand, game* Pgame){
 		}
 
 			}
+}
+int commandMightHaveChangedBoard(command* c){
+	commandName name = c->name;
+	return name==EDIT||name==SOLVE||name==SET||name==AUTOFILL||name==UNDO||name==REDO||name==GENERATE||name==GUESS||name==RESET;
+}
+void printGameMode(game* g){
+	switch(g->currMode){
+	case 0:
+		printf("Init");
+		break;
+	case 1:
+		printf("Edit");
+		break;
+	case 2:
+		printf("Solve");
+		break;
+	}
+}
+void askForCommand(game* g){
+	printf("Game Mode = ");printGameMode(g);printf("\n");
+	printf("Please enter you command:\n");
 }
 
 

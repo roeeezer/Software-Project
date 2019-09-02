@@ -41,7 +41,7 @@ void printErrorMessage(ERROR error, command *pCommand){
             printf("An unknown error occurred. This shouldn't happen\n");
             break;
         case EXIT_MESSAGE:
-            printf("Thanks for playing Roee and Omer's sudoku! We hope to see you again!\n");
+            printf("Thanks for playing Roee and Omer's Sudoku! We hope to see you again!\n");
             break;
         case INVALID_GAME_MODE_SOLVE_EDIT:
             printf("Error: This command is only available in Solve or Edit modes.\n");
@@ -91,6 +91,7 @@ void printErrorMessage(ERROR error, command *pCommand){
             printf("Error: temporary error!\n");
             break;
         case FIXED_CELL_ERROR: /*TODO: implement all these*/
+        	printf("Error: you cannot set a fixed cell in solve mode!\n");
             break;
         case BOARD_SOLVED_ERRONEOUS:
             break;
