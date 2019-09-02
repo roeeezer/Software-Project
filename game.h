@@ -14,8 +14,8 @@
 #include "error.h"
 #include "files.h"
 #include "movesList.h"
-#define blockRows 4
-#define blockColumns 4
+#define blockRows 3
+#define blockColumns 3
 #define DONT_UPDATE_MOVES_LIST_IND 0 /*In case the command is executed as a part of REDO operation*/
 #define UPDATE_MOVES_LIST_IND 1
 

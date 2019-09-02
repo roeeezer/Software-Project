@@ -92,11 +92,17 @@ void printMovesList(movesList *l){
 }
 void makeMoveTheLastInTheList(movesList* list,moveNode* node){
 	moveNode* startDeletingFrom;
-
-	if(node==list->last){
+	if(node==list->last&&!nodeIsStartSentinel(list,node)){
 		return;
 	}
-	startDeletingFrom=node->next;
+	if(nodeIsStartSentinel(list,node)){
+		startDeletingFrom=node;
+		list->first=NULL;
+		list->curr=NULL;
+		list->last=NULL;
+	}
+	else{
+		startDeletingFrom=node->next;}
 	node->next=NULL;
 	destroyAllMoveNodesStartingFrom(startDeletingFrom);
 	list->last=node;

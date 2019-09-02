@@ -258,7 +258,11 @@ void undoListTester(){
 
 	c = createCommand();
 	c->name = SET;
-	c->param1 = "1";c->param2 = "1";c->param3 = "6";
+	c->param1 = "6";c->param2 = "7";c->param3 = "3";
+	executeCommandAndPrintData(Pgame,c);
+
+	c = createCommand();
+	c->name = RESET;
 	executeCommandAndPrintData(Pgame,c);
 
 	c = createCommand();
@@ -266,54 +270,11 @@ void undoListTester(){
 	executeCommandAndPrintData(Pgame,c);
 
 	c = createCommand();
-	c->name = NUM_SOLUTIONS;
-	executeCommandAndPrintData(Pgame,c);
-
-
-	c = createCommand();
-	c->name = SOLVE;
-	c->param1 = "board1.txt";
-	executeCommandAndPrintData(Pgame,c);
-
-
-
-	c = createCommand();
-	c->name = UNDO;
-	executeCommandAndPrintData(Pgame,c);
-
-
-	c = createCommand();
-	c->name = UNDO;
-	executeCommandAndPrintData(Pgame,c);
-
-
-	c = createCommand();
-	c->name = UNDO;
-	executeCommandAndPrintData(Pgame,c);
-
-
-	c = createCommand();
-	c->name = UNDO;
-	executeCommandAndPrintData(Pgame,c);
-
-
-	c = createCommand();
-	c->name = REDO;
-	executeCommandAndPrintData(Pgame,c);
-
-	c = createCommand();
-	c->name = SET;
-	c->param1 = "1";c->param2 = "4";c->param3 = "6";
-	executeCommandAndPrintData(Pgame,c);
-
-	c = createCommand();
-	c->name = SET;
-	c->param1 = "1";c->param2 = "1";c->param3 = "0";
-	executeCommandAndPrintData(Pgame,c);
-
-	c = createCommand();
 	c->name = AUTOFILL;
 	executeCommandAndPrintData(Pgame,c);
+
+
+
 
 	destroyGame(Pgame);
 }
