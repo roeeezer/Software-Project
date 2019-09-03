@@ -215,7 +215,7 @@ int erroneousBoard(board* bTypes){
 	}
 	return 0;
 }
-int setCausesErroneousCellInRow(board* b,board* bTypes,int i,int j,int v,int ind){
+int setCausesErroneousCellInRow(board* b,board* bTypes,int i,int j,int v,int ind,int gameMode){
 	int boardColumns,k,oldV,res=0;
 	oldV = getCell(b,i,j);
 	boardColumns = b->squareSideSize;
@@ -225,9 +225,9 @@ int setCausesErroneousCellInRow(board* b,board* bTypes,int i,int j,int v,int ind
 			if(ind==0){
 				return 1;
 			}
-			if(ind==1&&getCell(bTypes,i,k) != FIXED_CELL){
+			if(ind==1&&(getCell(bTypes,i,k) != FIXED_CELL||gameMode==EDIT_MODE)){
 				/*Moshe explained in the moodle forum that fixed cells are never considered erroneous
-				 *here we mark the cells that became erroneous*/
+				 *but in EDIT_MODE we do need to mark the fixed erroneous cells*/
 				res=1;
 				setCell(bTypes, i, k, ERRONEOUS_CELL);}
 			if(ind==2&& getCell(bTypes,i,k) == FIXED_CELL){
@@ -238,7 +238,7 @@ int setCausesErroneousCellInRow(board* b,board* bTypes,int i,int j,int v,int ind
 		if(ind==1&&getCell(b,i,k)==oldV&&getCell(bTypes,i,k)==ERRONEOUS_CELL){
 			/*updating cells that are not erroneous thanks to this set*/
 			setCell(b,i,j,v);
-			if(!setCausesErroneousCell(b,bTypes, i, k, getCell(b,i,k),0)){
+			if(!setCausesErroneousCell(b,bTypes, i, k, getCell(b,i,k),0,gameMode)){
 				setCell(bTypes,i,k,REGULAR_CELL);}
 			setCell(b,i,j,oldV);
 		}
@@ -246,7 +246,7 @@ int setCausesErroneousCellInRow(board* b,board* bTypes,int i,int j,int v,int ind
 	return res;
 
 }
-int setCausesErroneousCellInColumn(board* b,board* bTypes,int i,int j,int v,int ind){
+int setCausesErroneousCellInColumn(board* b,board* bTypes,int i,int j,int v,int ind,int gameMode){
 	int boardRows,k,oldV,res=0;
 	oldV = getCell(b,i,j);
 	boardRows = b->squareSideSize;
@@ -256,7 +256,7 @@ int setCausesErroneousCellInColumn(board* b,board* bTypes,int i,int j,int v,int 
 				if(ind==0){
 					return 1;
 				}
-				if(ind==1&&getCell(bTypes,k,j)!=FIXED_CELL){
+				if(ind==1&&(getCell(bTypes,k,j)!=FIXED_CELL||gameMode==EDIT_MODE)){
 					/*Moshe explained in the moodle forum that fixed cells are never considered erroneous
 					 *here we mark the cells that became erroneous*/
 					res=1;
@@ -268,7 +268,7 @@ int setCausesErroneousCellInColumn(board* b,board* bTypes,int i,int j,int v,int 
 			if(ind==1&&getCell(b,k, j)==oldV&&getCell(bTypes,k, j)==ERRONEOUS_CELL){
 				/*updating cells that are not erroneous thanks to this set*/
 				setCell(b,i,j,v);
-				if(!setCausesErroneousCell(b,bTypes, k, j, getCell(b,k, j),0)){
+				if(!setCausesErroneousCell(b,bTypes, k, j, getCell(b,k, j),0,gameMode)){
 					setCell(bTypes,k, j,REGULAR_CELL);}
 				setCell(b,i,j,oldV);
 			}
@@ -276,7 +276,7 @@ int setCausesErroneousCellInColumn(board* b,board* bTypes,int i,int j,int v,int 
 		return res;
 
 }
-int setCausesErroneousCellInBlock(board* b,board* bTypes,int i,int j,int v,int ind){
+int setCausesErroneousCellInBlock(board* b,board* bTypes,int i,int j,int v,int ind,int gameMode){
 	int blockIndices[2],k,r,oldV,res=0;
 	oldV = getCell(b,i,j);
 	findCellBlockIndices(b,i,j,blockIndices);
@@ -288,7 +288,7 @@ int setCausesErroneousCellInBlock(board* b,board* bTypes,int i,int j,int v,int i
 				if(ind==0){
 					return 1;
 				}
-				if(ind==1&&getCell(bTypes,k,r)!=FIXED_CELL){
+				if(ind==1&&(getCell(bTypes,k,r)!=FIXED_CELL||gameMode==EDIT_MODE)){
 					/*Moshe explained in the moodle forum that fixed cells are never considered erroneous
 					 *here we mark the cells that became erroneous*/
 					res=1;
@@ -300,7 +300,7 @@ int setCausesErroneousCellInBlock(board* b,board* bTypes,int i,int j,int v,int i
 			if(ind==1&&getCell(b,k, r)==oldV&&getCell(bTypes,k, r)==ERRONEOUS_CELL){
 				/*updating cells that are not erroneous thanks to this set*/
 				setCell(b,i,j,v);
-				if(!setCausesErroneousCell(b,bTypes,k, r, getCell(b,k, r),0)){
+				if(!setCausesErroneousCell(b,bTypes,k, r, getCell(b,k, r),0,gameMode)){
 					setCell(bTypes,k, r,REGULAR_CELL);}
 				setCell(b,i,j,oldV);
 			}
@@ -309,7 +309,7 @@ int setCausesErroneousCellInBlock(board* b,board* bTypes,int i,int j,int v,int i
 	return res;
 }
 
-int setCausesErroneousCell(board* b,board* bTypes,int i,int j,int v,int ind){
+int setCausesErroneousCell(board* b,board* bTypes,int i,int j,int v,int ind,int gameMode){
 	int b1,b2,b3,res;
 	if(getCell(b,i,j)==v){
 		return 0;
@@ -317,15 +317,15 @@ int setCausesErroneousCell(board* b,board* bTypes,int i,int j,int v,int ind){
 	if(v==0&&(ind==0||ind==2)){
 		return 0;
 	}
-	b1 = setCausesErroneousCellInRow(b,bTypes,i,j,v,ind);
+	b1 = setCausesErroneousCellInRow(b,bTypes,i,j,v,ind, gameMode);
 	if(b1&&!ind){
 		return 1;
 	}
-	b2 = setCausesErroneousCellInColumn(b,bTypes,i,j,v,ind);
+	b2 = setCausesErroneousCellInColumn(b,bTypes,i,j,v,ind,gameMode);
 	if(b2&&!ind){
 		return 1;
 	}
-	b3 = setCausesErroneousCellInBlock(b,bTypes,i,j,v,ind);
+	b3 = setCausesErroneousCellInBlock(b,bTypes,i,j,v,ind,gameMode);
 	if(b3&&!ind){
 		return 1;
 	}
@@ -333,15 +333,15 @@ int setCausesErroneousCell(board* b,board* bTypes,int i,int j,int v,int ind){
 	return res;
 }
 int validAsignment(board* b,int v,int i,int j){
-	return !setCausesErroneousCell( b,NULL,i, j, v, 0);
+	return !setCausesErroneousCell( b,NULL,i, j, v, 0,7);/*7 is arbitrary, if ind==0 then the value of gameMode doesnt matter*/
 
 }
-void setCellAndUpdateErroneous(board* b,board* bTypes,int i,int j,int val){
+void setCellAndUpdateErroneous(board* b,board* bTypes,int i,int j,int val,int gameMode){
 	int erroneous;
 	if(getCell(b,i,j)==val){
 		return ;
 	}
-	erroneous=setCausesErroneousCell( b,bTypes,i,j,val,1);
+	erroneous=setCausesErroneousCell( b,bTypes,i,j,val,1,gameMode);/*update all the cell's neighbors cell types*/
 	setCell(b,i,j,val);
 	if(erroneous&&getCell(bTypes, i, j)!=FIXED_CELL){
 		setCell(bTypes, i, j, ERRONEOUS_CELL);
@@ -355,9 +355,9 @@ void setCellUpdateMove(board* b,moveNode* move,int i,int j,int val){
 	setCell(b,i,j,val);
 	InsertFirst(move->changes,change);
 }
-void setCellUpdateErroneousAndMove(board* b,board* bTypes,moveNode* move,int i,int j,int val){
+void setCellUpdateErroneousAndMove(board* b,board* bTypes,moveNode* move,int i,int j,int val,int gameMode){
 	int erroneous;
-	erroneous=setCausesErroneousCell( b,bTypes,i,j,val,1);
+	erroneous=setCausesErroneousCell( b,bTypes,i,j,val,1,gameMode);
 	setCellUpdateMove(b,move,i,j,val);
 	if(erroneous&&getCell(bTypes, i, j)!=FIXED_CELL){
 		setCell(bTypes, i, j, ERRONEOUS_CELL);
@@ -375,7 +375,7 @@ int boardContainsFixedErroneousCells(board *b,board *bTypes){
 			if(getCell(bTypes,i,j) == FIXED_CELL){
 				v=getCell(b,i,j);
 				setCell(b,i,j,0);
-				if(setCausesErroneousCell(b,bTypes, i, j, v, 2)){
+				if(setCausesErroneousCell(b,bTypes, i, j, v, 2,7)){/*7 is arbitrary, if ind==0 then the value of gameMode doesnt matter*/
 					return 1;
 				}
 				setCell(b,i,j,v);
@@ -386,14 +386,14 @@ int boardContainsFixedErroneousCells(board *b,board *bTypes){
 
 	return 0;
 }
-void markAllErroneousCellsInBoard(board* b,board* bt){
+void markAllErroneousCellsInBoard(board* b,board* bt,int gameMode){
 	int i,j,v,erroneous,N=b->squareSideSize;
 	for(i=0;i<N;i++){
 		for(j=0;j<N;j++){
 			if(getCell(bt,i,j) == REGULAR_CELL){
 				v = getCell(b,i,j);
 				setCell(b,i,j,0);
-				erroneous=setCausesErroneousCell( b,bt,i,j,v,1);
+				erroneous=setCausesErroneousCell( b,bt,i,j,v,1,gameMode);
 				setCell(b,i,j,v);
 				if(erroneous){
 					setCell(bt, i, j, ERRONEOUS_CELL);

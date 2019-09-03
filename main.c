@@ -69,7 +69,7 @@ void saveGameTester(){
 	printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
 	copyBoard(Pgame->boardSol,Pgame->board);
 	printf("Before save\n");
-	saveGame(Pgame->board,Pgame->boardTypes,"bigBoard.txt",2);
+	saveGame(Pgame->board,Pgame->boardTypes,"savedBoard",2);
 
 }
 
@@ -91,7 +91,6 @@ int newFinalMain(){
 		if(e==NO_ERROR){
 			if(commandMightHaveChangedBoard(c)){
 				printBoard(g->board,g->boardTypes,g->currMode,g->mark_errors);
-				printMovesList(g->undoList);printf("\n");
 				if(!commandIsAMove(c)){
 						destroyCommand(c);
 						}
@@ -159,7 +158,7 @@ void loaderTester(){
 	printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
 	printf("before load b val=%d\n",b==NULL);
 
-	loadGame(&b,&bt,"board1.txt",&n,&m);
+	loadGame(&b,&bt,"board1.txt",&n,&m,Pgame->currMode);
 	printf("after load b val=%d\n",b==NULL);
 
 	printBoard(b,bt,Pgame->currMode,Pgame->mark_errors);
@@ -193,14 +192,13 @@ void erroneousCheckTester(){
 	game* Pgame;
 	int i=0,j=2,v=1;
 	Pgame=createGame(5);
+	Pgame->currMode = EDIT_MODE;
 	buildBoardRandom(45,Pgame);
-	resetBoard(Pgame->boardTypes, REGULAR_CELL);
+	resetBoard(Pgame->boardTypes, FIXED_CELL);
 	printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
-	setCellAndUpdateErroneous(Pgame->board,Pgame->boardTypes, i, j, v);
+	setCellAndUpdateErroneous(Pgame->board,Pgame->boardTypes, i, j, v,Pgame->currMode);
 	printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
-	v=9;
-	setCellAndUpdateErroneous(Pgame->board,Pgame->boardTypes, i, j, v);
-	printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
+
 }
 void autofillTester(){
 	game* Pgame;
@@ -290,7 +288,7 @@ void destroyTester(){
 
 int main(){
 	SP_BUFF_SET();
-	newFinalMain();
+	erroneousCheckTester();
 	return 1;
 }
 

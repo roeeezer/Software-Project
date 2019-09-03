@@ -84,7 +84,7 @@ void buildBoardFromSolution(game*Pgame,int fixedCells){
 ERROR executeSolveCommand(command* pCommand,game* pGame,ERROR error){
     board *newBoard=NULL,*newBoardTypes=NULL;
     int n=0,m=0;
-    error = loadGame(&newBoard,&newBoardTypes,pCommand->param1,&n,&m);
+    error = loadGame(&newBoard,&newBoardTypes,pCommand->param1,&n,&m,pGame->currMode);
     if (error == NO_ERROR){
     	destroyBoard(pGame->board);
     	destroyBoard(pGame->boardTypes);
@@ -120,11 +120,11 @@ ERROR executeAutofill(game* g,moveNode* move,int ind){
 	if(erroneousBoard(g->boardTypes)){
 		return COMMAND_UNAVAILABLE_WITH_ERRONEOUS_BOARD;
 	}
-	return autofillBoard(g->board,g->boardTypes,move,ind);
+	return autofillBoard(g->board,g->boardTypes,move,ind,g->currMode);
 
 }
 void undoChange(game* g,changeNode* change){
-	setCellAndUpdateErroneous(g->board,g->boardTypes,change->i,change->j,change->prevVal);
+	setCellAndUpdateErroneous(g->board,g->boardTypes,change->i,change->j,change->prevVal,g->currMode);
 }
 void undoChangesListStartingFrom(game* g,changeNode* start){
 	if(start->next==NULL){
@@ -351,10 +351,10 @@ ERROR executeSetCommand(game *game,moveNode *move, int x, int y, int z,int ind) 
     if (currMode == SOLVE_MODE && type == FIXED_CELL){
         	return FIXED_CELL_ERROR;}
     if(ind==UPDATE_MOVES_LIST_IND){
-    	setCellUpdateErroneousAndMove(game->board, game->boardTypes,move, i,j, z);
+    	setCellUpdateErroneousAndMove(game->board, game->boardTypes,move, i,j, z,game->currMode);
     }
     else{
-    	setCellAndUpdateErroneous(game->board, game->boardTypes, i,j, z);
+    	setCellAndUpdateErroneous(game->board, game->boardTypes, i,j, z,game->currMode);
     }
 
     if (currMode == SOLVE && game->board->emptyCellsCounter == 0){

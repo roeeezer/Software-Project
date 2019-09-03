@@ -61,7 +61,7 @@ int validChar(char c){
 }
 /*b,bTypes should NOT be the real boards of the current game, they should be 2 new
  * empty board pointers so we can restore the old game in case the load command has failed*/
-ERROR loadGame(board** b,board** bTypes,char* path,int *n,int *m){
+ERROR loadGame(board** b,board** bTypes,char* path,int *n,int *m,int gameMode){
 	int N,i,j,val;
 	char ch;
 	FILE* f;
@@ -116,7 +116,7 @@ ERROR loadGame(board** b,board** bTypes,char* path,int *n,int *m){
 	if(boardContainsFixedErroneousCells(*b,*bTypes)){
 		return FIXED_ERRONEOUS_CELLS_IN_FILE;
 	}
-	markAllErroneousCellsInBoard( *b,*bTypes);
+	markAllErroneousCellsInBoard( *b,*bTypes,gameMode);
 	if(fclose(f)==-1){/*fclose returns EOF when it fails*/
 		return FCLOSE_ERROR;
 	}

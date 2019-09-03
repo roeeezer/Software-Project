@@ -108,7 +108,8 @@ ERROR matchCommandName(const char *token, commandName *name) {
 
 ERROR checkLegalParam(command* pCommand, game* pGame) {
     char * param1, *param2, *param3;
-    printf("",pGame->seed);/*tmp delete this*/
+    if(!pGame){/*tmp delete this*/
+    	printf("checkLegalParam Error\n");}
     param1 = pCommand->param1;
     param2 = pCommand->param2;
     param3 = pCommand->param3;

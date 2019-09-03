@@ -97,12 +97,13 @@ int erroneousBoard(board* bTypes);
  * getCell(i,j) current value does not affect this function!
  * @POST: $RET=1 iff the answer to the question determined by ind is YES*/
 
-int setCausesErroneousCell(board* b,board* bTypes,int i,int j,int v,int markErroneousCells);
-void setCellAndUpdateErroneous(board* b,board* bTypes,int i,int j,int val);
+int setCausesErroneousCell(board* b,board* bTypes,int i,int j,int v,int ind,int gameMode);
+
+void setCellAndUpdateErroneous(board* b,board* bTypes,int i,int j,int val,int gameMode);
 /*set the cell in board b, mark erroneous cells in bTypes and update the changes in move*/
-void setCellUpdateErroneousAndMove(board* b,board* bTypes,moveNode* move,int i,int j,int val);
+void setCellUpdateErroneousAndMove(board* b,board* bTypes,moveNode* move,int i,int j,int val,int gameMode);
 void setCellUpdateMove(board* b,moveNode* move,int i,int j,int val);
 int boardContainsFixedErroneousCells(board *b,board *bTypes);
-void markAllErroneousCellsInBoard(board* b,board* bt);
+void markAllErroneousCellsInBoard(board* b,board* bt,int gameMode);
 void clearCell(board* pBoard, int i, int j);
 #endif /* BOARD_H_ */

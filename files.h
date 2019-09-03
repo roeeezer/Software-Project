@@ -11,5 +11,5 @@
 
 
 ERROR saveGame(board* b,board* bTypes,char* path,int gameMode);
-ERROR loadGame(board **b,board **bTypes,char* path,int *n,int *m);
+ERROR loadGame(board** b,board** bTypes,char* path,int *n,int *m,int gameMode);
 #endif /* FILES_H_ */

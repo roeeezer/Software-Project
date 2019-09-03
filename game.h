@@ -27,7 +27,9 @@ typedef struct{
 	board* boardTypes;
 	/*0 - for regular cell
 	* 1 - for fixed cell
-	* 2 - for error cell*/
+	* 2 - for erroneous cell
+	* In EDIT_MODE there are only 2 categories: 2 - for erroneous 1\0 - for not erroneous since
+	* in EDIT_MODE all cells are considered fixed*/
 	movesList* undoList;
 	/*while using the undoList we must be careful with our commands object:
 	 *NEVER override a command point object
