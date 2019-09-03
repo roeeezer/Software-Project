@@ -57,6 +57,9 @@ int validChar(char c){
 	if(((int)c)==10){/*I think ch gets this value when the scan was invalid*/
 		return 1;
 	}
+	if(((int)c)==13){/*TMP check: when txt files are copied to the nova somehow they contain this char in the nova server*/
+		return 1;
+	}
 	return 0;
 }
 /*b,bTypes should NOT be the real boards of the current game, they should be 2 new
