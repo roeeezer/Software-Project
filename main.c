@@ -176,7 +176,7 @@ void executeCommandTester(){
 
 
 	c->name=SOLVE;
-	c->param1 = "board1.txt";
+	c->param1 = "board2.txt";
 	err=executeCommand(c,Pgame,UPDATE_MOVES_LIST_IND);
 	printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
 
@@ -245,22 +245,15 @@ void undoListTester(){
 	command *c;
 	Pgame=createGame(5);
 	Pgame->currMode = SOLVE_MODE;
+	/*
 	buildBoardRandom(55,Pgame);
 	resetBoard(Pgame->boardTypes, REGULAR_CELL);
 	printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
+*/
 
 	c = createCommand();
-	c->name = SET;
-	c->param1 = "1";c->param2 = "1";c->param3 = "5";
-	executeCommandAndPrintData(Pgame,c);
-
-	c = createCommand();
-	c->name = SET;
-	c->param1 = "6";c->param2 = "7";c->param3 = "3";
-	executeCommandAndPrintData(Pgame,c);
-
-	c = createCommand();
-	c->name = RESET;
+	c->name = SOLVE;
+	c->param1 = "board2.txt";
 	executeCommandAndPrintData(Pgame,c);
 
 	c = createCommand();
@@ -268,9 +261,39 @@ void undoListTester(){
 	executeCommandAndPrintData(Pgame,c);
 
 	c = createCommand();
-	c->name = AUTOFILL;
+	c->name = SET;
+	c->param1 = "1";c->param2 = "1";c->param3 = "1";
 	executeCommandAndPrintData(Pgame,c);
 
+	c = createCommand();
+	c->name = SET;
+	c->param1 = "1";c->param2 = "2";c->param3 = "3";
+	executeCommandAndPrintData(Pgame,c);
+
+	c = createCommand();
+	c->name = UNDO;
+	executeCommandAndPrintData(Pgame,c);
+
+	c = createCommand();
+	c->name = SET;
+	c->param1 = "1";c->param2 = "2";c->param3 = "5";
+	executeCommandAndPrintData(Pgame,c);
+
+	c = createCommand();
+	c->name = UNDO;
+	executeCommandAndPrintData(Pgame,c);
+
+	c = createCommand();
+	c->name = UNDO;
+	executeCommandAndPrintData(Pgame,c);
+
+	c = createCommand();
+	c->name = UNDO;
+	executeCommandAndPrintData(Pgame,c);
+
+	c = createCommand();
+	c->name = UNDO;
+	executeCommandAndPrintData(Pgame,c);
 
 
 

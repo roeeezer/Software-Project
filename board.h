@@ -85,6 +85,7 @@ void oneDto2Dindices(board* b,int* indices,int oneDind);
  * replace the values of the cells in the board copy to have the same values
  * of the cells in the board orig*/
 void copyBoard(board* copy,board* orig);
+void copyBoardAndUpdateMove(board* copy,board* orig,moveNode* move);
 int boardHasASolution(board* b);
 /*$ret==1 iff the bTypes contains and erroneous cell*/
 int erroneousBoard(board* bTypes);

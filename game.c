@@ -12,7 +12,7 @@
 
 ERROR executeSetCommand(game *game,moveNode *move, int x, int y, int z,int ind);
 
-ERROR executeGenerateCommand(game *game, int x, int y);
+ERROR executeGenerateCommand(game *game,moveNode* move, int x, int y);
 
 ERROR executeGuessCommand(game *game, double thresh);
 
@@ -223,7 +223,7 @@ ERROR executeCommand(command* pCommand, game* pGame,int ind){
             error = executeGuessCommand(pGame, atof(pCommand->param1));
             break;
         case GENERATE:
-            error = executeGenerateCommand(pGame, atoi(pCommand->param1), atoi(pCommand->param2));
+            error = executeGenerateCommand(pGame,move, atoi(pCommand->param1), atoi(pCommand->param2));
             break;
         case UNDO:
         	error = executeUndo(pGame,1);
@@ -298,7 +298,7 @@ ERROR executeGuessCommand(game *game, double thresh) {
  * @param y number of cells to clear after solving
  * @return appropriate error
  */
-ERROR executeGenerateCommand(game *game, int x, int y) {
+ERROR executeGenerateCommand(game *game,moveNode* move, int x, int y) {
     board* origBoard, *cpBoard;
     int i, success, N;
     ERROR error;
@@ -328,7 +328,7 @@ ERROR executeGenerateCommand(game *game, int x, int y) {
     for (i = 0; i < (N*N)-y; i++) {
         clearRandomCell(cpBoard);
     }
-    copyBoard(origBoard, cpBoard);
+    copyBoardAndUpdateMove(origBoard, cpBoard,move);
     destroyBoard(cpBoard);
     return NO_ERROR;
 }
@@ -345,7 +345,6 @@ ERROR executeGenerateCommand(game *game, int x, int y) {
 ERROR executeSetCommand(game *game,moveNode *move, int x, int y, int z,int ind) {
     int type, currMode, i, j;
     currMode = game->currMode;
-    printf("Inside executeSetCommand\n");
     i = y - 1;
     j = x - 1;
     type = getCell(game->boardTypes, i, j);

@@ -121,6 +121,20 @@ void copyBoard(board* copy,board* orig){
 	}
 
 }
+void copyBoardAndUpdateMove(board* copy,board* orig,moveNode* move){
+	int i,j,N,v;
+	if(copy->rows!=orig->rows||copy->columns!=orig->columns){
+		printf("unmatched boards in copyBoard(board* copy,board* orig)");
+		exit(0);
+	}
+	N=orig->squareSideSize;
+	for(i=0;i<N;i++){
+		for(j=0;j<N;j++){
+			v = getCell(orig,i,j);
+			setCellUpdateMove(copy, move, i, j, v);
+		}
+	}
+}
 void printDashRow(board* b){
 	int amount = 4*b->squareSideSize+b->rows+1,i;
 	for(i=0;i<amount;i++){
