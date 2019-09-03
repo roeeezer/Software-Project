@@ -16,8 +16,7 @@
 #include "movesList.h"
 #define blockRows 3
 #define blockColumns 3
-#define DONT_UPDATE_MOVES_LIST_IND 0 /*In case the command is executed as a part of REDO operation*/
-#define UPDATE_MOVES_LIST_IND 1
+
 
 
 typedef struct{
@@ -48,7 +47,7 @@ void destroyGame(game* game);
  * 1 if unable to initialize game (and now we have to quit)
  * 0 if game was initialized successfully */
 int initializeGame(int seed, game **newGame);
-void printWelcomeMessage();
+
 /*Finds a random solution,
  * then fills the board with fixedCells fixed cells*/
 int buildBoardRandom(int fixedCells,game* game);
@@ -66,12 +65,11 @@ void buildBoardFromSolution(game* Pgame,int fixedCells);
  * if the command is exit or restart, the main function handles the
  * flow of the game
  * ind==1 iff we wish to update the undolist. in every call ind should always be 1 except for a command
- * that is executed as part of a redo command
+ * that is executed as part of a redo command where ind should be 0
  */
 ERROR executeCommand(command* pCommand, game* pGame,int ind);
 void executeCommandDEPRECATED(command* PcurrCommand, game* Pgame);
 int commandMightHaveChangedBoard(command* c);
-void askForCommand(game* g);
 
 
 #endif /* GAME_H_ */

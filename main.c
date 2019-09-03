@@ -64,12 +64,12 @@ void saveGameTester(){
 	resetBoard(Pgame->board,0);
 	resetBoard(Pgame->boardSol,0);
 	printf("Before build random\n");
-	buildBoardRandom(60,Pgame);
+	buildBoardRandom(750,Pgame);
 	resetBoard(Pgame->boardTypes, REGULAR_CELL);
 	printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
 	copyBoard(Pgame->boardSol,Pgame->board);
 	printf("Before save\n");
-	saveGame(Pgame->board,Pgame->boardTypes,"savedBoard",2);
+	saveGame(Pgame->board,Pgame->boardTypes,"bigBoard",2);
 
 }
 
@@ -86,7 +86,7 @@ int newFinalMain(){
 		c = createCommand();
 		e=readCommand(c, g);
 		if(e==NO_ERROR){
-			e = executeCommand(c, g,1);
+			e = executeCommand(c, g,STANDART_COMMAND_IND);
 		}
 		if(e==NO_ERROR){
 			if(commandMightHaveChangedBoard(c)){
@@ -177,7 +177,7 @@ void executeCommandTester(){
 
 	c->name=SOLVE;
 	c->param1 = "board2.txt";
-	err=executeCommand(c,Pgame,UPDATE_MOVES_LIST_IND);
+	err=executeCommand(c,Pgame,STANDART_COMMAND_IND);
 	printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
 
 	if(err==NO_ERROR){
@@ -196,7 +196,7 @@ void erroneousCheckTester(){
 	buildBoardRandom(45,Pgame);
 	resetBoard(Pgame->boardTypes, FIXED_CELL);
 	printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
-	setCellAndUpdateErroneous(Pgame->board,Pgame->boardTypes, i, j, v,Pgame->currMode);
+	setCellAndUpdateErroneous(Pgame->board,Pgame->boardTypes, i, j, v,Pgame->currMode,STANDART_COMMAND_IND);
 	printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
 
 }
@@ -213,9 +213,9 @@ void autofillTester(){
 	resetBoard(Pgame->boardTypes, REGULAR_CELL);
 
 	printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
-	executeCommand(c,Pgame,UPDATE_MOVES_LIST_IND);
+	executeCommand(c,Pgame,STANDART_COMMAND_IND);
 	c->name = AUTOFILL;
-	executeCommand(c,Pgame,UPDATE_MOVES_LIST_IND);
+	executeCommand(c,Pgame,STANDART_COMMAND_IND);
 	printErrorMessage( err, c);
 	if(err==NO_ERROR){
 		printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
@@ -227,7 +227,7 @@ void executeCommandAndPrintData(game* g,command* c){
 	ERROR err=NO_ERROR;
 	printf("Execute ");
 	printCommandName(c);printf("\n");
-	err=executeCommand(c,g,UPDATE_MOVES_LIST_IND);
+	err=executeCommand(c,g,STANDART_COMMAND_IND);
 	printErrorMessage( err, c);
 	printBoard(g->board,g->boardTypes,g->currMode,g->mark_errors);
 	printf("movesList after execution: ");

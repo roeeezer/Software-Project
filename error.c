@@ -102,6 +102,7 @@ void printErrorMessage(ERROR error, command *pCommand){
         case FAILED_TO_GENERATE:
             break;
         case GUESS_ERRONEOUS_BOARD:
+        	/*@Omer perhaps you should delete this error and use COMMAND_UNAVAILABLE_WITH_ERRONEOUS_BOARD instead*/
             break;
     }
 }

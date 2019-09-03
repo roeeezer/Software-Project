@@ -122,7 +122,7 @@ void copyBoard(board* copy,board* orig){
 
 }
 void copyBoardAndUpdateMove(board* copy,board* orig,moveNode* move){
-	int i,j,N,v;
+	int i,j,N,v,oldV;
 	if(copy->rows!=orig->rows||copy->columns!=orig->columns){
 		printf("unmatched boards in copyBoard(board* copy,board* orig)");
 		exit(0);
@@ -131,7 +131,9 @@ void copyBoardAndUpdateMove(board* copy,board* orig,moveNode* move){
 	for(i=0;i<N;i++){
 		for(j=0;j<N;j++){
 			v = getCell(orig,i,j);
-			setCellUpdateMove(copy, move, i, j, v);
+			oldV = getCell(copy,i,j);
+			if(v!=oldV){
+				setCellUpdateMove(copy, move, i, j, v,0);}
 		}
 	}
 }
@@ -212,10 +214,9 @@ void printCellValue(board* b,int i,int j,board* bTypes,int gameMode,int markErro
 		printf(" ");}
 }
 int boardHasASolution(board* b){
-	/*TODO: Omer return true if it has a solution*/
+	/* @Omer TODO: return true if b has a solution*/
 	if (!b)
 	    return -1;
-	printf("\n");
 	return 1;
 }
 int erroneousBoard(board* bTypes){
@@ -350,13 +351,16 @@ int validAsignment(board* b,int v,int i,int j){
 	return !setCausesErroneousCell( b,NULL,i, j, v, 0,7);/*7 is arbitrary, if ind==0 then the value of gameMode doesnt matter*/
 
 }
-void setCellAndUpdateErroneous(board* b,board* bTypes,int i,int j,int val,int gameMode){
+void setCellAndUpdateErroneous(board* b,board* bTypes,int i,int j,int val,int gameMode,int redoInd){
 	int erroneous;
 	if(getCell(b,i,j)==val){
 		return ;
 	}
 	erroneous=setCausesErroneousCell( b,bTypes,i,j,val,1,gameMode);/*update all the cell's neighbors cell types*/
 	setCell(b,i,j,val);
+	if(redoInd==REDO_COMMAND_IND){
+		printf("Cell (%d,%d) value was set to %d\n",j+1,i+1,val);
+	}
 	if(erroneous&&(getCell(bTypes, i, j)!=FIXED_CELL||gameMode==EDIT_MODE)){
 		setCell(bTypes, i, j, ERRONEOUS_CELL);
 	}
@@ -364,15 +368,18 @@ void setCellAndUpdateErroneous(board* b,board* bTypes,int i,int j,int val,int ga
 		setCell(bTypes, i, j, REGULAR_CELL);
 	}
 }
-void setCellUpdateMove(board* b,moveNode* move,int i,int j,int val){
+void setCellUpdateMove(board* b,moveNode* move,int i,int j,int val,int printInd){
 	changeNode* change = createChangeNode(i,j,getCell(b,i,j));
 	setCell(b,i,j,val);
+	if(printInd){
+		printf("Cell (%d,%d) value was set to %d\n",j+1,i+1,val);
+	}
 	InsertFirst(move->changes,change);
 }
-void setCellUpdateErroneousAndMove(board* b,board* bTypes,moveNode* move,int i,int j,int val,int gameMode){
+void setCellUpdateErroneousAndMove(board* b,board* bTypes,moveNode* move,int i,int j,int val,int gameMode,int printInd){
 	int erroneous;
 	erroneous=setCausesErroneousCell( b,bTypes,i,j,val,1,gameMode);
-	setCellUpdateMove(b,move,i,j,val);
+	setCellUpdateMove(b,move,i,j,val,printInd);
 	if(erroneous&&(getCell(bTypes, i, j)!=FIXED_CELL||gameMode==EDIT_MODE)){
 		setCell(bTypes, i, j, ERRONEOUS_CELL);
 	}

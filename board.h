@@ -11,6 +11,11 @@
 #define INIT_MODE 0
 #define EDIT_MODE 1
 #define SOLVE_MODE 2
+/*this is for redoInd: if redoInd==REDO_COMMAND_IND we should print every change in the board
+ * and shouldn't track the changes in the undoList
+ * if printInd==1 we should print the changes in the board */
+#define STANDART_COMMAND_IND 0
+#define REDO_COMMAND_IND 1
 /*Board Structure:
  * the board structure was necessary because the modules game and solver need to
  * exchange game boards among them in a way that is not depended on the data structure
@@ -100,10 +105,10 @@ int erroneousBoard(board* bTypes);
 
 int setCausesErroneousCell(board* b,board* bTypes,int i,int j,int v,int ind,int gameMode);
 
-void setCellAndUpdateErroneous(board* b,board* bTypes,int i,int j,int val,int gameMode);
+void setCellAndUpdateErroneous(board* b,board* bTypes,int i,int j,int val,int gameMode,int redoInd);
 /*set the cell in board b, mark erroneous cells in bTypes and update the changes in move*/
-void setCellUpdateErroneousAndMove(board* b,board* bTypes,moveNode* move,int i,int j,int val,int gameMode);
-void setCellUpdateMove(board* b,moveNode* move,int i,int j,int val);
+void setCellUpdateErroneousAndMove(board* b,board* bTypes,moveNode* move,int i,int j,int val,int gameMode,int printInd);
+void setCellUpdateMove(board* b,moveNode* move,int i,int j,int val,int printInd);
 int boardContainsFixedErroneousCells(board *b,board *bTypes);
 void markAllErroneousCellsInBoard(board* b,board* bt,int gameMode);
 void clearCell(board* pBoard, int i, int j);

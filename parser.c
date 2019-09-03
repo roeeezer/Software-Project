@@ -345,4 +345,24 @@ int readInteger(char *token, int *pInt) {
     /*TODO: add checking to see if input is valid int*/
     return 1;
 }
+void printWelcomeMessage(){
+	printf("-- Welcome to Roee and Omer's Sudoko game! --\n");
+}
+void printGameMode(game* g){
+	switch(g->currMode){
+	case 0:
+		printf("Init");
+		break;
+	case 1:
+		printf("Edit");
+		break;
+	case 2:
+		printf("Solve");
+		break;
+	}
+}
+void askForCommand(game* g){
+	printf("Game Mode = ");printGameMode(g);printf("\n");
+	printf("Please enter you command:\n");
+}
 

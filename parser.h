@@ -27,6 +27,7 @@ ERROR checkLegalParam(command* pCommand, game* pGame);
  * returns a valid command if possible. Otherwise,
  * returns a command with name equal to NONE */
 ERROR readCommand(command *pCommand, game* pGame);
-
+void printWelcomeMessage();
+void askForCommand(game* g);
 
 #endif /* PARSER_H_ */
