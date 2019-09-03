@@ -345,6 +345,7 @@ ERROR executeGenerateCommand(game *game, int x, int y) {
 ERROR executeSetCommand(game *game,moveNode *move, int x, int y, int z,int ind) {
     int type, currMode, i, j;
     currMode = game->currMode;
+    printf("Inside executeSetCommand\n");
     i = y - 1;
     j = x - 1;
     type = getCell(game->boardTypes, i, j);

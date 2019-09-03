@@ -288,7 +288,7 @@ void destroyTester(){
 
 int main(){
 	SP_BUFF_SET();
-	erroneousCheckTester();
+	newFinalMain();
 	return 1;
 }
 

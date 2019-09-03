@@ -343,7 +343,7 @@ void setCellAndUpdateErroneous(board* b,board* bTypes,int i,int j,int val,int ga
 	}
 	erroneous=setCausesErroneousCell( b,bTypes,i,j,val,1,gameMode);/*update all the cell's neighbors cell types*/
 	setCell(b,i,j,val);
-	if(erroneous&&getCell(bTypes, i, j)!=FIXED_CELL){
+	if(erroneous&&(getCell(bTypes, i, j)!=FIXED_CELL||gameMode==EDIT_MODE)){
 		setCell(bTypes, i, j, ERRONEOUS_CELL);
 	}
 	if(!erroneous&&getCell(bTypes, i, j)==ERRONEOUS_CELL){
@@ -359,7 +359,7 @@ void setCellUpdateErroneousAndMove(board* b,board* bTypes,moveNode* move,int i,i
 	int erroneous;
 	erroneous=setCausesErroneousCell( b,bTypes,i,j,val,1,gameMode);
 	setCellUpdateMove(b,move,i,j,val);
-	if(erroneous&&getCell(bTypes, i, j)!=FIXED_CELL){
+	if(erroneous&&(getCell(bTypes, i, j)!=FIXED_CELL||gameMode==EDIT_MODE)){
 		setCell(bTypes, i, j, ERRONEOUS_CELL);
 	}
 	if(!erroneous&&getCell(bTypes, i, j)==ERRONEOUS_CELL){
