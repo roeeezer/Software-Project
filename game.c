@@ -82,8 +82,15 @@ void buildBoardFromSolution(game*Pgame,int fixedCells){
 }
 ERROR executeSolveCommand(command* pCommand,game* pGame,ERROR error){
     board *newBoard=NULL,*newBoardTypes=NULL;
-    int n=0,m=0;
-    error = loadGame(&newBoard,&newBoardTypes,pCommand->param1,&n,&m,pGame->currMode);
+    int n=0,m=0,newMode;
+    if(pCommand->name==SOLVE){/*the currentMode might not be updated (it could be init for example)
+    but we need the set and erroneous checks to fit the new (after command) mode*/
+    	newMode=SOLVE_MODE;
+    }
+    else{
+    	newMode=EDIT_MODE;
+    }
+    error = loadGame(&newBoard,&newBoardTypes,pCommand->param1,&n,&m,newMode);
     if (error == NO_ERROR){
     	destroyBoard(pGame->board);
     	destroyBoard(pGame->boardTypes);

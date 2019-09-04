@@ -236,19 +236,21 @@ int setCausesErroneousCellInRow(board* b,board* bTypes,int i,int j,int v,int ind
 	boardColumns = b->squareSideSize;
 	for(k=0;k<boardColumns;k++){
 		if(k!=j&&getCell(b,i,k)==v&&v!=0){/*collision*/
-
+			if(ind!=2){
+				res=1;
+			}
 			if(ind==0){
 				return 1;
 			}
 			if(ind==1&&(getCell(bTypes,i,k) != FIXED_CELL||gameMode==EDIT_MODE)){
 				/*Moshe explained in the moodle forum that fixed cells are never considered erroneous
 				 *but in EDIT_MODE we do need to mark the fixed erroneous cells*/
-				res=1;
-				setCell(bTypes, i, k, ERRONEOUS_CELL);}
-			if(ind==2&& getCell(bTypes,i,k) == FIXED_CELL){
+				setCell(bTypes, i, k, ERRONEOUS_CELL);
+
+			}
+			if(ind==2&& getCell(bTypes,i,k) == FIXED_CELL){/*collision with a fixed cell*/
 				return 1;
 			}
-
 		}
 		if(ind==1&&getCell(b,i,k)==oldV&&getCell(bTypes,i,k)==ERRONEOUS_CELL){
 			/*updating cells that are not erroneous thanks to this set*/
@@ -267,14 +269,15 @@ int setCausesErroneousCellInColumn(board* b,board* bTypes,int i,int j,int v,int 
 	boardRows = b->squareSideSize;
 		for(k=0;k<boardRows;k++){
 			if(k!=i&&getCell(b,k,j)==v&&v!=0){/*collision*/
-
+				if(ind!=2){
+					res=1;
+				}
 				if(ind==0){
 					return 1;
 				}
 				if(ind==1&&(getCell(bTypes,k,j)!=FIXED_CELL||gameMode==EDIT_MODE)){
 					/*Moshe explained in the moodle forum that fixed cells are never considered erroneous
 					 *here we mark the cells that became erroneous*/
-					res=1;
 					setCell(bTypes, k, j, ERRONEOUS_CELL);}
 				if(ind==2&& getCell(bTypes,k,j) == FIXED_CELL){
 					return 1;
@@ -299,14 +302,15 @@ int setCausesErroneousCellInBlock(board* b,board* bTypes,int i,int j,int v,int i
 	for(k=blockIndices[0]*b->rows;k<(blockIndices[0]+1)*b->rows;k++){
 		for(r=blockIndices[1]*b->columns;r<(blockIndices[1]+1)*b->columns;r++){
 			if((r!=j||k!=i)&&getCell(b,k,r)==v&&v!=0){/*collision*/
-
+				if(ind!=2){
+					res=1;
+				}
 				if(ind==0){
 					return 1;
 				}
 				if(ind==1&&(getCell(bTypes,k,r)!=FIXED_CELL||gameMode==EDIT_MODE)){
 					/*Moshe explained in the moodle forum that fixed cells are never considered erroneous
 					 *here we mark the cells that became erroneous*/
-					res=1;
 					setCell(bTypes, k, r, ERRONEOUS_CELL);}
 				if(ind==2&& getCell(bTypes,k,r) == FIXED_CELL){
 					return 1;
@@ -411,16 +415,15 @@ void markAllErroneousCellsInBoard(board* b,board* bt,int gameMode){
 	int i,j,v,erroneous,N=b->squareSideSize;
 	for(i=0;i<N;i++){
 		for(j=0;j<N;j++){
-			if(getCell(bt,i,j) == REGULAR_CELL){
+			if(getCell(bt,i,j) == REGULAR_CELL||gameMode==EDIT_MODE){
 				v = getCell(b,i,j);
 				setCell(b,i,j,0);
 				erroneous=setCausesErroneousCell( b,bt,i,j,v,1,gameMode);
 				setCell(b,i,j,v);
 				if(erroneous){
 					setCell(bt, i, j, ERRONEOUS_CELL);
-				}
-			}
-
+				}			}
+			/*printf("i=%d,j=%d,v=%d,erroneous=%d,gameMode=%d\n",i,j,v,erroneous,gameMode);*/
 		}}
 }
 

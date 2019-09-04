@@ -100,7 +100,6 @@ ERROR loadGame(board** b,board** bTypes,char* path,int *n,int *m,int gameMode){
 			fscanf(f,"%c",&ch);
 			/*if this scan could not scan a char (but a number) then the pointer in the file will not
 			 * progress so we won't have to change the process of the next iteration*/
-			/*printf("i=%d, j=%d, val=%d, ch=%c, chVal=%d\n",i,j,val,ch,ch);*/
 			if(!validChar(ch)){
 				return INVALID_FILE_FORMAT;
 			}
@@ -109,7 +108,6 @@ ERROR loadGame(board** b,board** bTypes,char* path,int *n,int *m,int gameMode){
 					return INVALID_FILE_FORMAT;
 				}
 				setCell(*bTypes, i, j, FIXED_CELL);}
-			/*printf("i=%d, j=%d, val=%d, ch=%c, chVal=%d\n",i,j,val,ch,ch);*/
 		}
 
 	}
@@ -119,9 +117,9 @@ ERROR loadGame(board** b,board** bTypes,char* path,int *n,int *m,int gameMode){
 	if(boardContainsFixedErroneousCells(*b,*bTypes)){
 		return FIXED_ERRONEOUS_CELLS_IN_FILE;
 	}
-	markAllErroneousCellsInBoard( *b,*bTypes,gameMode);
 	if(fclose(f)==-1){/*fclose returns EOF when it fails*/
 		return FCLOSE_ERROR;
 	}
+	markAllErroneousCellsInBoard( *b,*bTypes,gameMode);
 	return NO_ERROR;
 }

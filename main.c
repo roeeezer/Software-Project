@@ -244,7 +244,7 @@ void undoListTester(){
 	game* Pgame;
 	command *c;
 	Pgame=createGame(5);
-	Pgame->currMode = SOLVE_MODE;
+	Pgame->currMode = EDIT_MODE;
 	/*
 	buildBoardRandom(55,Pgame);
 	resetBoard(Pgame->boardTypes, REGULAR_CELL);
@@ -253,9 +253,11 @@ void undoListTester(){
 
 	c = createCommand();
 	c->name = SOLVE;
-	c->param1 = "board2.txt";
+	c->param1 = "board1.txt";
 	executeCommandAndPrintData(Pgame,c);
-
+	printf("erroneous=%d\n",setCausesErroneousCell(Pgame->board,Pgame->boardTypes,0,4,8,1,Pgame->currMode));
+	printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
+/*
 	c = createCommand();
 	c->name = AUTOFILL;
 	executeCommandAndPrintData(Pgame,c);
@@ -294,7 +296,7 @@ void undoListTester(){
 	c = createCommand();
 	c->name = UNDO;
 	executeCommandAndPrintData(Pgame,c);
-
+*/
 
 
 	destroyGame(Pgame);
