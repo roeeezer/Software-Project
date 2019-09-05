@@ -104,6 +104,7 @@ int finalMain(){
 			printBoard(g->board,g->boardTypes,g->currMode,g->mark_errors);
 			/*This is not a real ERROR therefore the board should be printed*/
 			g->currMode = INIT_MODE;
+			e = NO_ERROR;
 
 		}
 

@@ -186,7 +186,21 @@ ERROR executeRedo(game* g){
 	error= executeCommand(moveToRedo->command,g,REDO_COMMAND_IND);
 	promoteCurrPointer(g->undoList);
 	return error;
-
+}
+ERROR executeDefaultEdit(game* g){
+	int n,m;
+	n=blockRows;
+	m=blockColumns;
+	destroyBoard(g->board);
+	destroyBoard(g->boardTypes);
+	destroyBoard(g->boardSol);
+	destroyMovesList(g->undoList);
+	g->board = createBoard(n,m);
+	g->boardTypes = createBoard(n,m);
+	g->boardSol = createBoard(n,m);
+	g->undoList = createMovesList();
+    g->currMode = EDIT_MODE;
+    return NO_ERROR;/*the only possible error is malloc fatal error*/
 }
 ERROR executeCommand(command* pCommand, game* pGame,int redoInd){
     ERROR error;
@@ -212,8 +226,8 @@ ERROR executeCommand(command* pCommand, game* pGame,int redoInd){
         		error= executeSolveOrEditCommand(pCommand,pGame,error);
         	}
         	else{
-        		destroyGame(pGame);
-        		pGame = createGame(1);/*seed=1 is arbitrary and temporary (no need for a seed)*/
+        		error=executeDefaultEdit(pGame);
+
         	}
             if (error == NO_ERROR)
                 pGame->currMode = EDIT_MODE;
