@@ -356,7 +356,8 @@ int validAsignment(board* b,int v,int i,int j){
 
 }
 void setCellAndUpdateErroneous(board* b,board* bTypes,int i,int j,int val,int gameMode,int redoInd){
-	int erroneous;
+	int erroneous,trivialChange;
+	trivialChange= val==getCell(b,i,j);
 	if(redoInd==REDO_COMMAND_IND){
 		printf("Cell (%d,%d) value was set to %d\n",j+1,i+1,val);
 		/*according to the moodle forum we should print trivial changes too*/
@@ -369,7 +370,7 @@ void setCellAndUpdateErroneous(board* b,board* bTypes,int i,int j,int val,int ga
 	if(erroneous&&(getCell(bTypes, i, j)!=FIXED_CELL||gameMode==EDIT_MODE)){
 		setCell(bTypes, i, j, ERRONEOUS_CELL);
 	}
-	if(!erroneous&&getCell(bTypes, i, j)==ERRONEOUS_CELL){
+	if(!erroneous&&getCell(bTypes, i, j)==ERRONEOUS_CELL&&!trivialChange){
 		setCell(bTypes, i, j, REGULAR_CELL);
 	}
 }
@@ -382,13 +383,14 @@ void setCellUpdateMove(board* b,moveNode* move,int i,int j,int val,int printInd)
 	InsertFirst(move->changes,change);
 }
 void setCellUpdateErroneousAndMove(board* b,board* bTypes,moveNode* move,int i,int j,int val,int gameMode,int printInd){
-	int erroneous;
+	int erroneous,trivialChange;
+	trivialChange= val==getCell(b,i,j);
 	erroneous=setCausesErroneousCell( b,bTypes,i,j,val,1,gameMode);
 	setCellUpdateMove(b,move,i,j,val,printInd);
 	if(erroneous&&(getCell(bTypes, i, j)!=FIXED_CELL||gameMode==EDIT_MODE)){
 		setCell(bTypes, i, j, ERRONEOUS_CELL);
 	}
-	if(!erroneous&&getCell(bTypes, i, j)==ERRONEOUS_CELL){
+	if(!erroneous&&getCell(bTypes, i, j)==ERRONEOUS_CELL&&!trivialChange){
 		setCell(bTypes, i, j, REGULAR_CELL);
 	}
 }
