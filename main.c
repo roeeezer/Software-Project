@@ -63,13 +63,14 @@ void saveGameTester(){
 	game* Pgame=createGame(1);
 	resetBoard(Pgame->board,0);
 	resetBoard(Pgame->boardSol,0);
-	printf("Before build random\n");
-	buildBoardRandom(80,Pgame);
+	/*printf("Before build random\n");
+	buildBoardRandom(10,Pgame);*/
+	resetBoard(Pgame->board, REGULAR_CELL);
 	resetBoard(Pgame->boardTypes, REGULAR_CELL);
 	printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
 	copyBoard(Pgame->boardSol,Pgame->board);
 	printf("Before save\n");
-	saveGame(Pgame->board,Pgame->boardTypes,"filledBoard",2);
+	saveGame(Pgame->board,Pgame->boardTypes,"24Board",2);
 
 }
 
@@ -107,7 +108,7 @@ int finalMain(){
 		}
 
 	}
-	printf("Exit...");
+	printf("Exit...\n");
 	/*all the commands outside the undoList are already destroyed so we only need to destroy the game*/
 	destroyGame(g);
 

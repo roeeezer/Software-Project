@@ -90,8 +90,8 @@ int findNextEmptyCell(board* b,int fromInd){
 
 void findCellBlockIndices(board* b,int i,int j,int* blockIndices){
 	int rowsOfBlocks,columnsOfBlocks;
-	rowsOfBlocks = b->columns;
-	columnsOfBlocks = b->rows;
+	rowsOfBlocks = b->rows;
+	columnsOfBlocks = b->columns;
 	blockIndices[0] = i/rowsOfBlocks;
 	blockIndices[1] = j/columnsOfBlocks;
 }
@@ -298,7 +298,6 @@ int setCausesErroneousCellInBlock(board* b,board* bTypes,int i,int j,int v,int i
 	int blockIndices[2],k,r,oldV,res=0;
 	oldV = getCell(b,i,j);
 	findCellBlockIndices(b,i,j,blockIndices);
-
 	for(k=blockIndices[0]*b->rows;k<(blockIndices[0]+1)*b->rows;k++){
 		for(r=blockIndices[1]*b->columns;r<(blockIndices[1]+1)*b->columns;r++){
 			if((r!=j||k!=i)&&getCell(b,k,r)==v&&v!=0){/*collision*/
@@ -345,6 +344,7 @@ int setCausesErroneousCell(board* b,board* bTypes,int i,int j,int v,int ind,int 
 		return 1;
 	}
 	b3 = setCausesErroneousCellInBlock(b,bTypes,i,j,v,ind,gameMode);
+	printf("b3=%d\n",b3);
 	if(b3&&!ind){
 		return 1;
 	}

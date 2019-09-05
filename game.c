@@ -189,13 +189,10 @@ ERROR executeDefaultEdit(game* g){
 	int n,m;
 	n=blockRows;
 	m=blockColumns;
-	printf("TMP inside executeDefaultEdit\n");
 	destroyBoard(g->board);
 	destroyBoard(g->boardTypes);
 	destroyBoard(g->boardSol);
-	printf("TMP after board destroyers\n");
 	destroyMovesList(g->undoList);
-	printf("TMP after  undoList destroyer\n");
 	g->board = createBoard(n,m);
 	g->boardTypes = createBoard(n,m);
 	g->boardSol = createBoard(n,m);

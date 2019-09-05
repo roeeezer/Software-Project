@@ -14,8 +14,8 @@
 #include "error.h"
 #include "files.h"
 #include "movesList.h"
-#define blockRows 3
-#define blockColumns 3
+#define blockRows 2
+#define blockColumns 4
 
 
 
