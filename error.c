@@ -91,9 +91,6 @@ void printErrorMessage(ERROR error, command *pCommand){
         case FIXED_CELL_ERROR: /*TODO: implement all these*/
         	printf("Error: you cannot set a fixed cell in solve mode!\n");
             break;
-        case BOARD_SOLVED_CORRECTLY:
-        	printf("Congratulations! You solved the board correctly!\n");
-            break;
         case GENERATE_NOT_ENOUGH_CELLS:
             break;
         case FAILED_TO_GENERATE:

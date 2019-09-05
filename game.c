@@ -189,10 +189,13 @@ ERROR executeDefaultEdit(game* g){
 	int n,m;
 	n=blockRows;
 	m=blockColumns;
+	printf("TMP inside executeDefaultEdit\n");
 	destroyBoard(g->board);
 	destroyBoard(g->boardTypes);
 	destroyBoard(g->boardSol);
+	printf("TMP after board destroyers\n");
 	destroyMovesList(g->undoList);
+	printf("TMP after  undoList destroyer\n");
 	g->board = createBoard(n,m);
 	g->boardTypes = createBoard(n,m);
 	g->boardSol = createBoard(n,m);
@@ -303,7 +306,8 @@ ERROR executeCommand(command* pCommand, game* pGame,int redoInd){
            	printf("You can undo you last move to continue solving\n");
            }
            else{
-        	   return BOARD_SOLVED_CORRECTLY;}
+        	   pGame->currMode = BOARD_SOLVED_CORRECTLY_MODE;
+           }
     }
     return error;
 }

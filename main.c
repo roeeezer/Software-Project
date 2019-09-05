@@ -100,11 +100,9 @@ int finalMain(){
 			printErrorMessage( e, c);
 			destroyCommand(c);
 		}
-		if(e==BOARD_SOLVED_CORRECTLY){
-			printBoard(g->board,g->boardTypes,g->currMode,g->mark_errors);
-			/*This is not a real ERROR therefore the board should be printed*/
+		if(g->currMode==BOARD_SOLVED_CORRECTLY_MODE){
+			printf("Congratulations! You solved the board correctly!\n");
 			g->currMode = INIT_MODE;
-			e = NO_ERROR;
 
 		}
 

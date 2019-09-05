@@ -11,6 +11,7 @@
 #define INIT_MODE 0
 #define EDIT_MODE 1
 #define SOLVE_MODE 2
+#define BOARD_SOLVED_CORRECTLY_MODE 3
 /*this is for redoInd: if redoInd==REDO_COMMAND_IND we should print every change in the board
  * and shouldn't track the changes in the undoList
  * if printInd==1 we should print the changes in the board */
