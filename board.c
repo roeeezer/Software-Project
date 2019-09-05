@@ -357,14 +357,15 @@ int validAsignment(board* b,int v,int i,int j){
 }
 void setCellAndUpdateErroneous(board* b,board* bTypes,int i,int j,int val,int gameMode,int redoInd){
 	int erroneous;
+	if(redoInd==REDO_COMMAND_IND){
+		printf("Cell (%d,%d) value was set to %d\n",j+1,i+1,val);
+		/*according to the moodle forum we should print trivial changes too*/
+	}
 	if(getCell(b,i,j)==val){
 		return ;
 	}
 	erroneous=setCausesErroneousCell( b,bTypes,i,j,val,1,gameMode);/*update all the cell's neighbors cell types*/
 	setCell(b,i,j,val);
-	if(redoInd==REDO_COMMAND_IND){
-		printf("Cell (%d,%d) value was set to %d\n",j+1,i+1,val);
-	}
 	if(erroneous&&(getCell(bTypes, i, j)!=FIXED_CELL||gameMode==EDIT_MODE)){
 		setCell(bTypes, i, j, ERRONEOUS_CELL);
 	}

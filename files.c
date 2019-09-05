@@ -25,26 +25,35 @@ ERROR saveGame(board* b,board* bTypes,char* path,int gameMode){
 		/*TODO: deal with the error*/
 		return FOPEN_ERROR;
 	}
-	fprintf(fo,"%d %d\n",b->rows,b->columns);
+	if(fprintf(fo,"%d %d\n",b->rows,b->columns)<0){
+		return FPRINTF_ERROR;
+	}
 	for(i=0;i<s;i++){
 		for(j=0;j<s;j++){
 			if(fprintf(fo,"%d",getCell(b,i,j))<0){
 				return FPRINTF_ERROR;
 			}
 			if((getCell(bTypes,i,j) == FIXED_CELL || gameMode == EDIT_MODE) && getCell(b, i, j) != 0){
-				fprintf(fo,".");
+				if(fprintf(fo,".")<0){
+					return FPRINTF_ERROR;
+				}
 			}
 			if(j!=s-1){
-				fprintf(fo," ");
+				if(fprintf(fo," ")<0){
+					return FPRINTF_ERROR;
+				}
 			}
 			if(j==s-1){
-				fprintf(fo,"\n");
+				if(fprintf(fo,"\n")<0){
+					return FPRINTF_ERROR;
+				}
 			}
 		}
 	}
 	if(fclose(fo)==-1){/*fclose returns EOF when it fails*/
 		return FCLOSE_ERROR;
 	}
+	printf("The board was saved successfully!\n");
 	return NO_ERROR;
 }
 int validChar(char c){

@@ -59,9 +59,7 @@ void printErrorMessage(ERROR error, command *pCommand){
             printf("Error: file could not be opened!\n");
             break;
         case FCLOSE_ERROR:
-            /*TODO:@Omer choose a message. we need to decide whether to continue with the loaded board
-             * with the previous board in that case*/
-            printf("Error: fclose error!\n");
+            printf("Error: file could not be closed!\n");
             break;
         case INVALID_FILE_FORMAT:
             printf("Error: invalid file format!\n");
@@ -93,9 +91,8 @@ void printErrorMessage(ERROR error, command *pCommand){
         case FIXED_CELL_ERROR: /*TODO: implement all these*/
         	printf("Error: you cannot set a fixed cell in solve mode!\n");
             break;
-        case BOARD_SOLVED_ERRONEOUS:
-            break;
         case BOARD_SOLVED_CORRECTLY:
+        	printf("Congratulations! You solved the board correctly!\n");
             break;
         case GENERATE_NOT_ENOUGH_CELLS:
             break;

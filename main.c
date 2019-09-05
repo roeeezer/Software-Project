@@ -64,16 +64,16 @@ void saveGameTester(){
 	resetBoard(Pgame->board,0);
 	resetBoard(Pgame->boardSol,0);
 	printf("Before build random\n");
-	buildBoardRandom(750,Pgame);
+	buildBoardRandom(80,Pgame);
 	resetBoard(Pgame->boardTypes, REGULAR_CELL);
 	printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
 	copyBoard(Pgame->boardSol,Pgame->board);
 	printf("Before save\n");
-	saveGame(Pgame->board,Pgame->boardTypes,"bigBoard",2);
+	saveGame(Pgame->board,Pgame->boardTypes,"filledBoard",2);
 
 }
 
-int newFinalMain(){
+int finalMain(){
 	int seed=1;
 	ERROR e;
 	game* g;
@@ -100,16 +100,24 @@ int newFinalMain(){
 			printErrorMessage( e, c);
 			destroyCommand(c);
 		}
+		if(e==BOARD_SOLVED_CORRECTLY){
+			printBoard(g->board,g->boardTypes,g->currMode,g->mark_errors);
+			/*This is not a real ERROR therefore the board should be printed*/
+			g->currMode = INIT_MODE;
+
+		}
 
 	}
 	printf("Exit...");
 	destroyGame(g);
+	printf("TMP: the game was successfully destroyed\n");
 	destroyCommand(c);
+
 	return 1;
 
 
 }
-int finalMain(){
+int oldFinalMain(){
 	int exitInd,restartInd,seed;
 	command* PcurrCommand;
 	ERROR commandError;
@@ -313,7 +321,7 @@ void destroyTester(){
 
 int main(){
 	SP_BUFF_SET();
-	newFinalMain();
+	finalMain();
 	return 1;
 }
 

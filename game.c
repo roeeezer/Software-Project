@@ -44,8 +44,9 @@ void destroyGame(game* game){
     destroyBoard(game->board);
     destroyBoard(game->boardSol);
     destroyBoard(game->boardTypes);
-
+    printf("TMP boards were successfully destroyed\n");
     destroyMovesList(game->undoList);
+    printf("TMP undoList was successfully destroyed\n");
 	free(game);
 }
 
@@ -80,17 +81,17 @@ void buildBoardFromSolution(game*Pgame,int fixedCells){
         setCell(Pgame->boardTypes, y, x, 1);
 	}
 }
-ERROR executeSolveCommand(command* pCommand,game* pGame,ERROR error){
+ERROR executeSolveOrEditCommand(command* pCommand,game* pGame,ERROR error){
     board *newBoard=NULL,*newBoardTypes=NULL;
-    int n=0,m=0,newMode;
+    int n=0,m=0,currMode;
     if(pCommand->name==SOLVE){/*the currentMode might not be updated (it could be init for example)
     but we need the set and erroneous checks to fit the new (after command) mode*/
-    	newMode=SOLVE_MODE;
+    	currMode=SOLVE_MODE;
     }
     else{
-    	newMode=EDIT_MODE;
+    	currMode=EDIT_MODE;
     }
-    error = loadGame(&newBoard,&newBoardTypes,pCommand->param1,&n,&m,newMode);
+    error = loadGame(&newBoard,&newBoardTypes,pCommand->param1,&n,&m,currMode);
     if (error == NO_ERROR){
     	destroyBoard(pGame->board);
     	destroyBoard(pGame->boardTypes);
@@ -100,7 +101,7 @@ ERROR executeSolveCommand(command* pCommand,game* pGame,ERROR error){
     	pGame->boardTypes = newBoardTypes;
     	pGame->boardSol = createBoard(n,m);
     	pGame->undoList = createMovesList();
-        pGame->currMode = SOLVE_MODE;
+        pGame->currMode = currMode;
         return error;
     }
     if(error==FCLOSE_ERROR){/*all the errors that occur after the new boards are created*/
@@ -204,12 +205,11 @@ ERROR executeCommand(command* pCommand, game* pGame,int redoInd){
     /*After this point, command is assumed legal for this game state.*/
     switch(pCommand->name) {
         case SOLVE:
-            error= executeSolveCommand(pCommand,pGame,error);
+            error= executeSolveOrEditCommand(pCommand,pGame,error);
             break;
         case EDIT:
-        	/*@Omer: TODO: change the if condition to fit your functions*/
         	if(strcmp(pCommand->param1,"\0")!=0){/*strcmp returns 0 if the strings are identical*/
-        		error= executeSolveCommand(pCommand,pGame,error);
+        		error= executeSolveOrEditCommand(pCommand,pGame,error);
         	}
         	else{
         		destroyGame(pGame);
@@ -282,10 +282,17 @@ ERROR executeCommand(command* pCommand, game* pGame,int redoInd){
     	addMove(pGame->undoList,move);
     	promoteCurrPointer(pGame->undoList);
     }
-    if(pGame->board->emptyCellsCounter==0){
-    	/*@Omer: TODO: there is a special treatment for that case*/
-    	}
 
+    if (pGame->currMode == SOLVE_MODE && pGame->board->emptyCellsCounter == 0&& pCommand->name!=REDO){
+    	/*when the command is REDO then the 'real' command to be redone has already entered this if block
+    	 * in the recursive call to executeCommand*/
+           if (erroneousBoard(pGame->boardTypes)){
+           	printf("This solution is incorrect!\n");
+           	printf("You can undo you last move to continue solving\n");
+           }
+           else{
+        	   return BOARD_SOLVED_CORRECTLY;}
+    }
     return error;
 }
 
@@ -364,11 +371,6 @@ ERROR executeSetCommand(game *game,moveNode *move, int x, int y, int z,int redoI
     	setCellAndUpdateErroneous(game->board, game->boardTypes, i,j, z,game->currMode,redoInd);
     }
 
-    if (currMode == SOLVE && game->board->emptyCellsCounter == 0){
-           if (erroneousBoard(game->boardTypes))
-               return BOARD_SOLVED_ERRONEOUS;
-           return BOARD_SOLVED_CORRECTLY;
-    }
     return NO_ERROR;
 }
 
