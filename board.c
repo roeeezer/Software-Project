@@ -169,7 +169,6 @@ void printOneRowInRowsOfBlocks(board* b,int blocksRow,int boardRow,board* bTypes
 	printf("|");
 	for(blockComlumnInSingleRow=0;blockComlumnInSingleRow<columnsOfBlocksInBoard;blockComlumnInSingleRow++){
 		printSingleRowInSingleBlock(b,blocksRow,boardRow,blockComlumnInSingleRow,bTypes, gameMode, markErrors);
-		/*printf(" |");*/
 		printf("|");
 	}
 	printf("\n");
@@ -192,10 +191,11 @@ void printCellValue(board* b,int i,int j,board* bTypes,int gameMode,int markErro
 	val = getCell(b,i,j);
 	type = getCell(bTypes,i,j);
 	printf(" ");
+	if(val<10){
+		printf(" ");}
 	if(val==0){
 			printf("  ");
 		}
-
 
 	else if(type == FIXED_CELL&& gameMode!=EDIT_MODE){
 		printf("%d.",val);
@@ -207,11 +207,11 @@ void printCellValue(board* b,int i,int j,board* bTypes,int gameMode,int markErro
 
 			}
 	else{
-		printf(" %d",val);
+		printf("%d ",val);
 	}
 
-	if(val<10){
-		printf(" ");}
+
+
 }
 int boardHasASolution(board* b){
 	/* @Omer TODO: return true if b has a solution*/
@@ -344,7 +344,6 @@ int setCausesErroneousCell(board* b,board* bTypes,int i,int j,int v,int ind,int 
 		return 1;
 	}
 	b3 = setCausesErroneousCellInBlock(b,bTypes,i,j,v,ind,gameMode);
-	printf("b3=%d\n",b3);
 	if(b3&&!ind){
 		return 1;
 	}
