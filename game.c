@@ -44,9 +44,7 @@ void destroyGame(game* game){
     destroyBoard(game->board);
     destroyBoard(game->boardSol);
     destroyBoard(game->boardTypes);
-    printf("TMP boards were successfully destroyed\n");
     destroyMovesList(game->undoList);
-    printf("TMP undoList was successfully destroyed\n");
 	free(game);
 }
 

@@ -110,9 +110,8 @@ int finalMain(){
 
 	}
 	printf("Exit...");
+	/*all the commands outside the undoList are already destroyed so we only need to destroy the game*/
 	destroyGame(g);
-	printf("TMP: the game was successfully destroyed\n");
-	destroyCommand(c);
 
 	return 1;
 
