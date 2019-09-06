@@ -2,7 +2,7 @@
 #include "gurobi.h"
 #include <stdlib.h>
 #include "board.h"
-ERROR createVarArr(VAR **varArrP, int varCount, int N, board* pBoard);
+ERROR createVarArr(VAR *varArr, int varCount, int N, board* pBoard);
 
 void cleanUp(int *ind, double *val, double *lowerBound, double *upperBound, double *obj, char *vtype, VAR *varArr,
              GRBenv *env, GRBmodel *model);
@@ -11,15 +11,15 @@ void fillArrWithDouble(double *arr, int arrSize, double val);
 
 void setVtype(char *vtype, int len, char type);
 
-ERROR addCellConstraints(VAR **varArrP, GRBmodel *model, int *ind, double *val, int varCount);
+ERROR addCellConstraints(VAR *varArr, GRBmodel *model, int *ind, double *val, int varCount);
 
 void fillVals(double *val, int valSize);
 
-ERROR addRowConstraints(GRBmodel *model, VAR **varArr, int *ind, double *val, int varCount, board *pBoard);
+ERROR addRowConstraints(GRBmodel *model, VAR *varArr, int *ind, double *val, int varCount, board *pBoard);
 
-ERROR addColConstraints(GRBmodel *model, VAR **varArr, int *ind, double *val, int varCount, board *pBoard);
+ERROR addColConstraints(GRBmodel *model, VAR *varArr, int *ind, double *val, int varCount, board *pBoard);
 
-ERROR addBlockConstraints(GRBmodel *model, VAR **varArr, int *ind, double *val, int varCount, board *pBoard);
+ERROR addBlockConstraints(GRBmodel *model, VAR *varArr, int *ind, double *val, int varCount, board *pBoard);
 
 void createRandomObjFunction(double *obj, int varCount);
 
@@ -101,7 +101,7 @@ ERROR setUpGurobi(board *pBoard, int ilp) {
         cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model);
         return MALLOC_ERROR;
     }
-    error = createVarArr(&varArr, varCount, N, pBoard);
+    error = createVarArr(varArr, varCount, N, pBoard);
     if (error != NO_ERROR){
         cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model);
         return error;
@@ -136,22 +136,22 @@ ERROR setUpGurobi(board *pBoard, int ilp) {
         cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model);
         return GUROBI_ERROR;
     }
-    error = addCellConstraints(&varArr, model, ind, val, varCount);
+    error = addCellConstraints(varArr, model, ind, val, varCount);
     if (error != NO_ERROR){
         cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model);
         return GUROBI_ERROR;
     }
-    error = addRowConstraints(model, &varArr, ind, val, varCount, pBoard);
+    error = addRowConstraints(model, varArr, ind, val, varCount, pBoard);
     if (error != NO_ERROR){
         cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model);
         return GUROBI_ERROR;
     }
-    error = addColConstraints(model, &varArr, ind, val, varCount, pBoard);
+    error = addColConstraints(model, varArr, ind, val, varCount, pBoard);
     if (error != NO_ERROR){
         cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model);
         return GUROBI_ERROR;
     }
-    error = addBlockConstraints(model, &varArr, ind, val, varCount, pBoard);
+    error = addBlockConstraints(model, varArr, ind, val, varCount, pBoard);
     if (error != NO_ERROR){
         cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model);
         return GUROBI_ERROR;
@@ -207,7 +207,7 @@ ERROR fillBoardFromSol(board *pBoard, VAR *varArr, int varCount, double *sol) {
     int i;
     for (i = 0; i < varCount; i++) {
         if (sol[i] == 1) {
-            setCell(pBoard, varArr[i]->row, varArr[i]->col, varArr[i]->val);
+            setCell(pBoard, (varArr+i)->row, (varArr+i)->col, (varArr+i)->val);
         }
     }
     return NO_ERROR;
@@ -231,7 +231,7 @@ void createRandomObjFunction(double *obj, int varCount) {
  * @param pBoard
  * @return
  */
-ERROR addBlockConstraints(GRBmodel *model, VAR **varArr, int *ind, double *val, int varCount, board *pBoard) {
+ERROR addBlockConstraints(GRBmodel *model, VAR *varArr, int *ind, double *val, int varCount, board *pBoard) {
     int rowLen, colLen, blockRow, blockCol, index, i,v, N, numOfCols, numOfRows, grbError;
     rowLen = pBoard->rows;
     colLen = pBoard->columns;
@@ -243,9 +243,9 @@ ERROR addBlockConstraints(GRBmodel *model, VAR **varArr, int *ind, double *val, 
             for (v = 1; v < N + 1; v++) {
                 index = 0;
                 for (i = 0; i < varCount; i++) {
-                    if ((varArr[i]->row / rowLen) == blockRow &&
-                        (varArr[i]->col / colLen) == blockCol &&
-                         varArr[i]->val == v){
+                    if (((varArr+i)->row / rowLen) == blockRow &&
+                        ((varArr+i)->col / colLen) == blockCol &&
+                         (varArr+i)->val == v){
                         ind[index] = i;
                         index++;
                     }
@@ -272,14 +272,14 @@ ERROR addBlockConstraints(GRBmodel *model, VAR **varArr, int *ind, double *val, 
  * @param pBoard
  * @return appropriate error code
  */
-ERROR addRowConstraints(GRBmodel *model, VAR **varArr, int *ind, double *val, int varCount, board *pBoard) {
+ERROR addRowConstraints(GRBmodel *model, VAR *varArr, int *ind, double *val, int varCount, board *pBoard) {
     int N, row, index, i,v, grbError;
     N = pBoard->squareSideSize;
     for (row = 0; row < N; row++) {
         for (v = 1; v < N + 1; v++) {
             index = 0;
             for (i = 0; i < varCount; i++) {
-                if (varArr[i]->row == row && varArr[i]->val == v){
+                if ((varArr+i)->row == row && (varArr+i)->val == v){
                     ind[index] = i;
                     index++;
                 }
@@ -305,14 +305,14 @@ ERROR addRowConstraints(GRBmodel *model, VAR **varArr, int *ind, double *val, in
  * @param pBoard
  * @return appropriate error code
  */
-ERROR addColConstraints(GRBmodel *model, VAR **varArr, int *ind, double *val, int varCount, board *pBoard){
+ERROR addColConstraints(GRBmodel *model, VAR *varArr, int *ind, double *val, int varCount, board *pBoard){
     int N, col, index, i,v, grbError;
     N = pBoard->squareSideSize;
     for (col = 0; col < N; col++) {
         for (v = 1; v < N + 1; v++) {
             index = 0;
             for (i = 0; i < varCount; i++) {
-                if (varArr[i]->col == col && varArr[i]->val == v){
+                if ((varArr+i)->col == col && (varArr+i)->val == v){
                     ind[index] = i;
                     index++;
                 }
@@ -344,7 +344,7 @@ void fillVals(double *val, int valSize) {
 /**
  * Adds cell constraints to the model, i.e. that every cell has exactly one value.
  * Assumes varArr is sorted by row, then col, then value.
- * @param varArrP
+ * @param varArr
  * @param model
  * @param ind
  * @param val
@@ -352,15 +352,15 @@ void fillVals(double *val, int valSize) {
  * @param varCount
  * @return
  */
-ERROR addCellConstraints(VAR **varArrP, GRBmodel *model, int *ind, double *val, int varCount) {
+ERROR addCellConstraints(VAR *varArr, GRBmodel *model, int *ind, double *val, int varCount) {
     /*TODO: double check this logic*/
     int i, index, row, col, numOfVarsInConstraint, grbError;
     for (i = 0; i < varCount;) {
         numOfVarsInConstraint = 0;
         index = 0;
-        row = varArrP[i]->row;
-        col = varArrP[i]->col;
-        for (;varArrP[i]->row == row && varArrP[i]->col == col; i++) { /*Since variables are in order of row and col*/
+        row = (varArr+i)->row;
+        col = (varArr+i)->col;
+        for (; (varArr+i)->row == row && (varArr+i)->col == col; i++) { /*Since variables are in order of row and col*/
             ind[index] = i;
             index++;
             numOfVarsInConstraint++;
@@ -404,10 +404,10 @@ cleanUp(int *ind, double *val, double *lowerBound, double *upperBound, double *o
 
 /**
  * Creates the array of VAR-type variables for sudoku
- * @param varArrP pre-allocated array
+ * @param varArr pre-allocated array
  * @param varCount size of this array
  */
-ERROR createVarArr(VAR **varArrP, int varCount, int N, board *pBoard) {
+ERROR createVarArr(VAR *varArr, int varCount, int N, board *pBoard) {
     int i, j, v, index;
     index = 0;
     for (i = 0; i < N; i++) {
@@ -416,12 +416,12 @@ ERROR createVarArr(VAR **varArrP, int varCount, int N, board *pBoard) {
                 for (v = 1; v < N + 1; v++) {/*Values are 1-indexed*/
                     if (validAsignment(pBoard, v, i, j)) {
                         if (index > varCount) {
-                            if (DEBUG) printf("VarCount exceeded in creating varArrP\n");
+                            if (DEBUG) printf("VarCount exceeded in creating varArr\n");
                             return GUROBI_ERROR; /*Shouldn't happen */
                         }
-                        varArrP[index]->row = i;
-                        varArrP[index]->col = j;
-                        varArrP[index]->val = v;
+                        (varArr+index)->row = i;
+                        (varArr+index)->col = j;
+                        (varArr+index)->val = v;
                         index++;
                     }
                 }
