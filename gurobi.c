@@ -21,21 +21,29 @@ ERROR addColConstraints(GRBmodel *model, VAR **varArr, int *ind, double *val, in
 
 ERROR addBlockConstraints(GRBmodel *model, VAR **varArr, int *ind, double *val, int varCount, board *pBoard);
 
-void createRandomObjFunction(double *obj);
+void createRandomObjFunction(double *obj, int varCount);
 
+ERROR fillBoardFromSol(board *pBoard, VAR *varArr, int varCount, double *sol);
+
+/**
+ * Gets a sudoku board and *writes the solution to it*
+ * @param pBoard
+ * @param ilp boolean: is the solution ILP or LP?
+ * @return
+ */
 ERROR setUpGurobi(board *pBoard, int ilp) {
     GRBenv *env;
     GRBmodel *model;
     ERROR error;
-    int N, varCount, grbError;
+    int N, varCount, grbError, optimstatus;
     int * ind;
-    double * val, *lb, *ub, *obj;
+    double * val, *lb, *ub, *obj, *sol;
     char *vtype;
     VAR* varArr;
     env = NULL;
     model = NULL;
     ind = NULL;
-    val = lb = ub = obj = NULL;
+    sol = val = lb = ub = obj = NULL;
     vtype = NULL;
     varArr = NULL;
     N = pBoard->squareSideSize;
@@ -101,14 +109,14 @@ ERROR setUpGurobi(board *pBoard, int ilp) {
     /* Create an empty model named "sudoku" */
     if (ilp) {
         setVtype(vtype, varCount, GRB_BINARY);
-        createRandomObjFunction(obj); /*TODO: implement. Perhaps not random, but garbage obj?*/
+        createRandomObjFunction(obj, varCount); /*TODO: implement. Perhaps not random, but garbage obj?*/
         grbError = GRBnewmodel(env, &model, "sudoku", varCount, obj, NULL, NULL, vtype, NULL);
     }
     else{
         setVtype(vtype, varCount, GRB_CONTINUOUS);
         fillArrWithDouble(lb, varCount, 0.0);
         fillArrWithDouble(ub, varCount, 1.0);
-        createRandomObjFunction(obj);
+        createRandomObjFunction(obj, 0);
         grbError = GRBnewmodel(env, &model, "sudoku", varCount, obj, lb, ub, vtype, NULL);
     }
     if (grbError) {
@@ -154,14 +162,62 @@ ERROR setUpGurobi(board *pBoard, int ilp) {
         cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model);
         return GUROBI_ERROR;
     }
+
     /*TODO: finished adding constraints, optimize and return*/
+    grbError = GRBoptimize(model);
+    if (grbError){
+        printf("ERROR %d GRBOptimize(): %s\n", grbError, GRBgeterrormsg(env));
+        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model);
+        return GUROBI_ERROR;
+    }
+    grbError = GRBwrite(model, "sudoku.lp");
+    if (grbError){
+        printf("ERROR %d GRBWrite(): %s\n", grbError, GRBgeterrormsg(env));
+        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model);
+        return GUROBI_ERROR;
+    }
+    grbError = GRBgetintattr(model, GRB_INT_ATTR_STATUS, &optimstatus);
+    if (optimstatus == GRB_OPTIMAL)
+        printf("Optimal objective: found\n");
+    /* no solution found */
+    else if (optimstatus == GRB_INF_OR_UNBD)
+        printf("Model is infeasible or unbounded\n");
+        /* error or calculation stopped */
+    else
+        printf("Optimization was stopped early\n");
+    /*TODO (omer): correct sol with malloc and everything */
+    sol = val;
+    grbError = GRBgetdblattrarray(model, GRB_DBL_ATTR_X, 0, varCount, sol);
+    if (ilp){
+        error = fillBoardFromSol(pBoard, varArr, varCount, sol);
+    }
+    else
+        error = TMP_ERROR;/*TODO add options for LP not just ILP*/
+    if (grbError){
+        printf("ERROR %d GRBgetdblattrarray(): %s\n", grbError, GRBgeterrormsg(env));
+        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model);
+        return GUROBI_ERROR;
+    }
     cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model);
     return error;
 
 }
 
-void createRandomObjFunction(double *obj) {
-    obj[0] = 0; /*TODO: changeme*/
+ERROR fillBoardFromSol(board *pBoard, VAR *varArr, int varCount, double *sol) {
+    int i;
+    for (i = 0; i < varCount; i++) {
+        if (sol[i] == 1) {
+            setCell(pBoard, varArr[i]->row, varArr[i]->col, varArr[i]->val);
+        }
+    }
+    return NO_ERROR;
+}
+
+void createRandomObjFunction(double *obj, int varCount) {
+    int i; /*TODO: changeme*/
+    for (i = 0; i < varCount; i++) {
+        obj[i] = (double) rand() / RAND_MAX;
+    }
 
 }
 
@@ -176,7 +232,7 @@ void createRandomObjFunction(double *obj) {
  * @return
  */
 ERROR addBlockConstraints(GRBmodel *model, VAR **varArr, int *ind, double *val, int varCount, board *pBoard) {
-    int rowLen, colLen, blockRow, blockCol, index, i,v, N, numOfCols, numOfRows;
+    int rowLen, colLen, blockRow, blockCol, index, i,v, N, numOfCols, numOfRows, grbError;
     rowLen = pBoard->rows;
     colLen = pBoard->columns;
     N = pBoard->squareSideSize;
@@ -195,7 +251,11 @@ ERROR addBlockConstraints(GRBmodel *model, VAR **varArr, int *ind, double *val, 
                     }
                 }
                 if (index > 0){
-                    GRBaddconstr(model, index, ind, val, GRB_EQUAL, 1.0, NULL);
+                    grbError = GRBaddconstr(model, index, ind, val, GRB_EQUAL, 1.0, NULL);
+                    if (grbError) {
+                        printf("ERROR in block constraint!\n");
+                        return GUROBI_ERROR;
+                    }
                 }
             }
         }
@@ -213,7 +273,7 @@ ERROR addBlockConstraints(GRBmodel *model, VAR **varArr, int *ind, double *val, 
  * @return appropriate error code
  */
 ERROR addRowConstraints(GRBmodel *model, VAR **varArr, int *ind, double *val, int varCount, board *pBoard) {
-    int N, row, index, i,v;
+    int N, row, index, i,v, grbError;
     N = pBoard->squareSideSize;
     for (row = 0; row < N; row++) {
         for (v = 1; v < N + 1; v++) {
@@ -225,7 +285,11 @@ ERROR addRowConstraints(GRBmodel *model, VAR **varArr, int *ind, double *val, in
                 }
             }
             if (index > 0){
-                GRBaddconstr(model, index, ind, val, GRB_EQUAL, 1.0, NULL);
+                grbError = GRBaddconstr(model, index, ind, val, GRB_EQUAL, 1.0, NULL);
+                if (grbError) {
+                    printf("ERROR in row constraint!\n");
+                    return GUROBI_ERROR;
+                }
             }
         }
     }
@@ -242,7 +306,7 @@ ERROR addRowConstraints(GRBmodel *model, VAR **varArr, int *ind, double *val, in
  * @return appropriate error code
  */
 ERROR addColConstraints(GRBmodel *model, VAR **varArr, int *ind, double *val, int varCount, board *pBoard){
-    int N, col, index, i,v;
+    int N, col, index, i,v, grbError;
     N = pBoard->squareSideSize;
     for (col = 0; col < N; col++) {
         for (v = 1; v < N + 1; v++) {
@@ -254,7 +318,11 @@ ERROR addColConstraints(GRBmodel *model, VAR **varArr, int *ind, double *val, in
                 }
             }
             if (index > 0){
-                GRBaddconstr(model, index, ind, val, GRB_EQUAL, 1.0, NULL);
+                grbError = GRBaddconstr(model, index, ind, val, GRB_EQUAL, 1.0, NULL);
+                if (grbError) {
+                    printf("ERROR in col constraint!\n");
+                    return GUROBI_ERROR;
+                }
             }
         }
     }
