@@ -64,6 +64,9 @@ void printErrorMessage(ERROR error, command *pCommand){
         case INVALID_FILE_FORMAT:
             printf("Error: invalid file format!\n");
             break;
+        case INVALID_FILE_FORMAT_BOARDS_WERE_CREATED:
+            printf("Error: invalid file format!\n");
+            break;
         case FPRINTF_ERROR:
             printf("Error: failure to write to the specified file!\n");
             break;
