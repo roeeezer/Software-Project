@@ -3,20 +3,6 @@
  *
  *      Author: roee
  */
-
-#ifndef BOARD_H_
-#define BOARD_H_
-#include <stdio.h>
-#include "moveNode.h"
-#define INIT_MODE 0
-#define EDIT_MODE 1
-#define SOLVE_MODE 2
-#define BOARD_SOLVED_CORRECTLY_MODE 3
-/*this is for redoInd: if redoInd==REDO_COMMAND_IND we should print every change in the board
- * and shouldn't track the changes in the undoList
- * if printInd==1 we should print the changes in the board */
-#define STANDART_COMMAND_IND 0
-#define REDO_COMMAND_IND 1
 /*Board Structure:
  * the board structure was necessary because the modules game and solver need to
  * exchange game boards among them in a way that is not depended on the data structure
@@ -30,10 +16,31 @@
  * columns - number of columns in each block of the soduko board
  * squareSideSize = rows*columns - saved for readability and convenience
  * */
-/*cell Types in boardTypes of the game */
+#ifndef BOARD_H_
+#define BOARD_H_
+#include <stdio.h>
+#include "moveNode.h"
+#define INIT_MODE 0
+#define EDIT_MODE 1
+#define SOLVE_MODE 2
+#define BOARD_SOLVED_CORRECTLY_MODE 3
+
+#define STANDART_COMMAND_IND 0
+#define REDO_COMMAND_IND 1
+/*COMMAND_IND is for redoInd: if redoInd==REDO_COMMAND_IND we should print every change in the board
+ * and shouldn't track the changes in the undoList
+ * if printInd==1 we should print the changes in the board */
+
 #define REGULAR_CELL 0
 #define FIXED_CELL 1
 #define ERRONEOUS_CELL 2
+/*cell Types in boardTypes of the game */
+
+/*indication for the required respond in setCausesErroneousCell functions*/
+#define CHECK_FOR_ERRONEOUS_CELLS_IND 0
+#define CHECK_AND_UPDATE_ERRONEOUS_CELLS_IND 1
+#define CHECK_FOR_ERRONEOUS_COLLISION_OF_FIXED_CELLS_IND 2
+
 typedef struct{
 	int* boardArr;
 	int rows;
@@ -98,10 +105,10 @@ int erroneousBoard(board* bTypes);
 
 /*ind=0 for checking if this set command causes erroneous cells
  * ind=1 for checking if this set command causes erroneous cells and updating
- * the erroneous cells in bTypes (adding of removing erroneous flags according to the value in th set)
+ * the erroneous cells in bTypes (adding and removing erroneous flags according to the value of the set)
  * ind=2 if we want to set a fixed cell (i,j) and to check if the set will cause a collision with
- * other fixed cells - used in function boardContainsFixedErroneousCells
- * getCell(i,j) current value does not affect this function!
+ * other fixed cells - this ind is used in the function boardContainsFixedErroneousCells
+ * the current value , getCell(i,j) , does not affect this function!
  * @POST: $RET=1 iff the answer to the question determined by ind is YES*/
 
 int setCausesErroneousCell(board* b,board* bTypes,int i,int j,int v,int ind,int gameMode);

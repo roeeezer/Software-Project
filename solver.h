@@ -1,8 +1,8 @@
 /*
  * solver.h
  *
- * solver module contains all the functions that solves the sudoku board
- * using random and deterministic backtracking and all its sub functions.
+ * solver module contains the auto-fill process and all the functions that searches for solutions of the
+ * sudoku-board such as exhaustive backtracking, ILP solver and functions
  *
  */
 

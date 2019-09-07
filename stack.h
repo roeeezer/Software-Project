@@ -1,9 +1,9 @@
 
 /*
- * stack.h
- *
- *  Created on: 3 баев„ 2019
  *      Author: roee
+ * stack.h
+ * Implementation of the stack data structure that replaces the recursion in
+ * the exhaustive backtracking process.
  */
 
 #ifndef STACK_H_
