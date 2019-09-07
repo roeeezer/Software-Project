@@ -100,28 +100,28 @@ ERROR loadGame(board** b,board** bTypes,char* path,int *n,int *m,int gameMode){
 	for(i=0;i<N;i++){
 		for(j=0;j<N;j++){
 			if(fscanf(f,"%d",&val)<=0){
-				return INVALID_FILE_FORMAT;
+				return INVALID_FILE_FORMAT_BOARDS_WERE_CREATED;
 			}
 			if(val<0||val>N){
-				return INVALID_FILE_FORMAT;
+				return INVALID_FILE_FORMAT_BOARDS_WERE_CREATED;
 			}
 			setCell(*b,i,j,val);
 			fscanf(f,"%c",&ch);
 			/*if this scan could not scan a char (but a number) then the pointer in the file will not
 			 * progress so we won't have to change the process of the next iteration*/
 			if(!validChar(ch)){
-				return INVALID_FILE_FORMAT;
+				return INVALID_FILE_FORMAT_BOARDS_WERE_CREATED;
 			}
 			if(ch=='.'){
 				if(val==0){/*fixed cells with value 0*/
-					return INVALID_FILE_FORMAT;
+					return INVALID_FILE_FORMAT_BOARDS_WERE_CREATED;
 				}
 				setCell(*bTypes, i, j, FIXED_CELL);}
 		}
 
 	}
 	if(fscanf(f,"%d",&val)>0){/*the file contains too many numbers for the give n,m*/
-		return INVALID_FILE_FORMAT;
+		return INVALID_FILE_FORMAT_BOARDS_WERE_CREATED;
 	}
 	if(boardContainsFixedErroneousCells(*b,*bTypes)){
 		return FIXED_ERRONEOUS_CELLS_IN_FILE;

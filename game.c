@@ -102,7 +102,7 @@ ERROR executeSolveOrEditCommand(command* pCommand,game* pGame,ERROR error){
         pGame->currMode = currMode;
         return error;
     }
-    if(error==FCLOSE_ERROR){/*all the errors that occur after the new boards are created*/
+    if(error==FCLOSE_ERROR||error==INVALID_FILE_FORMAT_BOARDS_WERE_CREATED||error==FIXED_ERRONEOUS_CELLS_IN_FILE){/*all the errors that occur after the new boards are created*/
     	destroyBoard(newBoard);
     	destroyBoard(newBoardTypes);
     }
