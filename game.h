@@ -67,7 +67,7 @@ void buildBoardFromSolution(game* Pgame,int fixedCells);
  * ind==1 iff we wish to update the undolist. in every call ind should always be 1 except for a command
  * that is executed as part of a redo command where ind should be 0
  */
-ERROR executeCommand(command* pCommand, game* pGame,int ind);
+ERROR executeCommand(command* pCommand, game* pGame);
 void executeCommandDEPRECATED(command* PcurrCommand, game* Pgame);
 int commandMightHaveChangedBoard(command* c);
 

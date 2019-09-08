@@ -55,9 +55,13 @@ void setCell(board* Pboard,int i,int j,int val){
 		}
 	}
 }
+
+/*returns 1 if cell is empty*/
 int emptyCell(board* Pboard,int i,int j){
 	return getCell(Pboard, i, j)==0;
 }
+
+/*@post: all cells in the board contains the value: v*/
 void resetBoard(board* b,int v){
 	int s,i,j;
 	s = b->squareSideSize;
@@ -74,6 +78,10 @@ int boardSolved(board * pBoard){
     s = s * s;
     return (findNextEmptyCell(pBoard, 0) == s);
 }
+
+/*returns the next empty cell index in the board s.t $result and fromInd is 1D index
+ * if cell[fromInd] is empty then res=fromInd
+ * if the board is full res = MaxIndex+1 */
 int findNextEmptyCell(board* b,int fromInd){
 	int s,cellsInBoard,i;
 	int indices[2];
@@ -87,6 +95,7 @@ int findNextEmptyCell(board* b,int fromInd){
 	}
 	return i;
 }
+
 
 void findCellBlockIndices(board* b,int i,int j,int* blockIndices){
 	int rowsOfBlocks,columnsOfBlocks;
@@ -327,6 +336,7 @@ int setCausesErroneousCellInBlock(board* b,board* bTypes,int i,int j,int v,int i
 	return res;
 }
 
+
 int setCausesErroneousCell(board* b,board* bTypes,int i,int j,int v,int ind,int gameMode){
 	int b1,b2,b3,res;
 	if(getCell(b,i,j)==v){
@@ -354,13 +364,9 @@ int validAsignment(board* b,int v,int i,int j){
 	return !setCausesErroneousCell( b,NULL,i, j, v, CHECK_FOR_ERRONEOUS_CELLS_IND,7);/*7 is arbitrary, if ind==0 then the value of gameMode doesnt matter*/
 
 }
-void setCellAndUpdateErroneous(board* b,board* bTypes,int i,int j,int val,int gameMode,int redoInd){
+void setCellAndUpdateErroneous(board* b,board* bTypes,int i,int j,int val,int gameMode){
 	int erroneous,trivialChange;
 	trivialChange= val==getCell(b,i,j);
-	if(redoInd==REDO_COMMAND_IND){
-		printf("Cell (%d,%d) value was set to %d\n",j+1,i+1,val);
-		/*according to the moodle forum we should print trivial changes too*/
-	}
 	if(getCell(b,i,j)==val){
 		return ;
 	}
@@ -374,7 +380,7 @@ void setCellAndUpdateErroneous(board* b,board* bTypes,int i,int j,int val,int ga
 	}
 }
 void setCellUpdateMove(board* b,moveNode* move,int i,int j,int val,int printInd){
-	changeNode* change = createChangeNode(i,j,getCell(b,i,j));
+	changeNode* change = createChangeNode(i,j,getCell(b,i,j),val);
 	setCell(b,i,j,val);
 	if(printInd){
 		printf("Cell (%d,%d) value was set to %d\n",j+1,i+1,val);

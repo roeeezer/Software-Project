@@ -42,7 +42,7 @@ int exhaustiveBackTracingRec(board* b,board* bSol,int startInd);
 /*@pre bSol is a copy of the board*/
 int exhaustiveBackTracingWithStack(board* b,board* bSol);
 /*the options of ind are described in game.h*/
-ERROR autofillBoard(board* b,board* bt,moveNode* move,int redoInd,int gameMode,int printInd);
+ERROR autofillBoard(board* b,board* bt,moveNode* move,int gameMode,int printInd);
 ERROR solveILP(board *b);
 ERROR solveLPWithThreshold(board *pBoard, double threshold);
 int fillXRandomCells(board* pBoard, int x);

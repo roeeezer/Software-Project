@@ -5,11 +5,12 @@
 #include "changeNode.h"
 
 
-changeNode* createChangeNode(int i,int j,int prevVal){
+changeNode* createChangeNode(int i,int j,int prevVal,int newVal){
 	changeNode* res = (changeNode*)malloc(sizeof(changeNode));
 	res->i = i;
 	res->j = j;
 	res->prevVal = prevVal;
+	res->newVal = newVal;
 	res->next=NULL;
 	return res;
 
@@ -29,16 +30,21 @@ void destroyAllChangeNodesStartingFrom(changeNode* start){
 	destroyAllChangeNodesStartingFrom(start->next);
 	destroyChangeNode(start);
 }
-void printChange(changeNode* change){
-	printf("Cell (%d,%d) value was set back to %d\n",change->j+1,change->i+1,change->prevVal);
+void printChange(changeNode* change,int ind){
+	if(ind==UNDO_CHANGE_IND){
+		printf("Cell (%d,%d) value was set to %d\n",change->j+1,change->i+1,change->prevVal);
+		}
+	if(ind==REDO_CHANGE_IND){
+		printf("Cell (%d,%d) value was set to %d\n",change->j+1,change->i+1,change->newVal);
+		}
 }
-void printChangesStartingFrom(changeNode* start){
+void printChangesStartingFrom(changeNode* start,int ind){
 	if(start->next==NULL){
-		printChange(start);
+		printChange(start,ind);
 		return;
 	}
-	printChangesStartingFrom(start->next);
-	printChange(start);
+	printChangesStartingFrom(start->next,ind);
+	printChange(start,ind);
 
 }
 

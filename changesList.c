@@ -30,12 +30,13 @@ void InsertFirst(changesList* list,changeNode* change){
 	list->first = change;
 
 }
-void printChangesList(changesList* list){
+void printChangesList(changesList* list,int ind){
 	if(emptyChangesList(list)){
-		printf("No changes were made\n");
+		printf("Error:No changes were made in this move\n");/*this should never happen every,
+		every move causes at list 1 one change (even if it's a trivial change) */
 		return;
 	}
-	printChangesStartingFrom(list->first);
+	printChangesStartingFrom(list->first,ind);
 
 }
 
