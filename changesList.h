@@ -1,5 +1,6 @@
 /*
  * changesList.h
+ * each moveNode contains a list of changes (or changeNodes) that occur due to this move
  *
  */
 #include <stdio.h>

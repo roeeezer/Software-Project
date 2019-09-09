@@ -336,7 +336,14 @@ int setCausesErroneousCellInBlock(board* b,board* bTypes,int i,int j,int v,int i
 	return res;
 }
 
-
+/*the function gives a binary answer (0=No, 1=Yes) for the question specified by ind such that:
+ * ind=0 for checking if this set command causes erroneous cells
+ * ind=1 for checking if this set command causes erroneous cells and updating
+ * the erroneous cells in bTypes (adding and removing erroneous flags according to the value of the set)
+ * ind=2 if we want to set a fixed cell (i,j) and to check if the set will cause a collision with
+ * other fixed cells - this ind is used in the function boardContainsFixedErroneousCells
+ * the current value , getCell(i,j) , does not affect this function!
+ * @POST: $RET=1 iff the answer to the question determined by ind is YES*/
 int setCausesErroneousCell(board* b,board* bTypes,int i,int j,int v,int ind,int gameMode){
 	int b1,b2,b3,res;
 	if(getCell(b,i,j)==v){
@@ -360,10 +367,14 @@ int setCausesErroneousCell(board* b,board* bTypes,int i,int j,int v,int ind,int 
 	res= b1||b2||b3;
 	return res;
 }
+
+/*@ret>1 if and only if the assignment of value v in the (i,j) cell follows the soduko rules*/
 int validAsignment(board* b,int v,int i,int j){
 	return !setCausesErroneousCell( b,NULL,i, j, v, CHECK_FOR_ERRONEOUS_CELLS_IND,7);/*7 is arbitrary, if ind==0 then the value of gameMode doesnt matter*/
 
 }
+
+
 void setCellAndUpdateErroneous(board* b,board* bTypes,int i,int j,int val,int gameMode){
 	int erroneous,trivialChange;
 	trivialChange= val==getCell(b,i,j);
@@ -400,6 +411,7 @@ void setCellUpdateErroneousAndMove(board* b,board* bTypes,moveNode* move,int i,i
 	}
 }
 
+/*this function is used to check the validity of a loaded board from file in loadGame*/
 int boardContainsFixedErroneousCells(board *b,board *bTypes){
 	int N,i,j,v;
 	N = b->squareSideSize;

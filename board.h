@@ -77,7 +77,7 @@ int boardSolved(board * pBoard);
 /*prints a single cell according to the described format.
  * negative values represent fixed cell and zero values represent empty cells*/
 void printCellValue(board* b,int i,int j,board* bTypes,int gameMode,int markErrors);
-/*@ret>1 if and only if the assignment of value v in the (i,j) cell follows the soduko rules*/
+
 int validAsignment(board* b,int v,int i,int j);
 
 int findNextEmptyCell(board* b,int fromInd);
@@ -94,13 +94,7 @@ int boardHasASolution(board* b);
 /*$ret==1 iff the bTypes contains and erroneous cell*/
 int erroneousBoard(board* bTypes);
 
-/*ind=0 for checking if this set command causes erroneous cells
- * ind=1 for checking if this set command causes erroneous cells and updating
- * the erroneous cells in bTypes (adding and removing erroneous flags according to the value of the set)
- * ind=2 if we want to set a fixed cell (i,j) and to check if the set will cause a collision with
- * other fixed cells - this ind is used in the function boardContainsFixedErroneousCells
- * the current value , getCell(i,j) , does not affect this function!
- * @POST: $RET=1 iff the answer to the question determined by ind is YES*/
+
 
 int setCausesErroneousCell(board* b,board* bTypes,int i,int j,int v,int ind,int gameMode);
 

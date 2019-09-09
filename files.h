@@ -1,7 +1,9 @@
 /*
  * files.h
+ * contains loading and saving sudoku-boards to files
  *
  *      Author: roee
+ *
  */
 
 #ifndef FILES_H_
