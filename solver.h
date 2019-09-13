@@ -1,8 +1,8 @@
 /*
  * solver.h
  *
- * solver module contains all the functions that solves the sudoku board
- * using random and deterministic backtracking and all its sub functions.
+ * solver module contains the auto-fill process and all the functions that searches for solutions of the
+ * sudoku-board such as exhaustive backtracking, ILP solver and functions
  *
  */
 
@@ -42,7 +42,7 @@ int exhaustiveBackTracingRec(board* b,board* bSol,int startInd);
 /*@pre bSol is a copy of the board*/
 int exhaustiveBackTracingWithStack(board* b,board* bSol);
 /*the options of ind are described in game.h*/
-ERROR autofillBoard(board* b,board* bt,moveNode* move,int redoInd,int gameMode,int printInd);
+ERROR autofillBoard(board* b,board* bt,moveNode* move,int gameMode,int printInd);
 ERROR solveILP(board *b);
 ERROR solveLPWithThreshold(board *pBoard, double threshold);
 int fillXRandomCells(board* pBoard, int x);

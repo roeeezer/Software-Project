@@ -6,7 +6,7 @@
 #include "files.h"
 
 
-
+/*saves the given board as a file in the required format located in path*/
 ERROR saveGame(board* b,board* bTypes,char* path,int gameMode){
 	FILE* fo;
 	int s,i,j;
@@ -56,6 +56,9 @@ ERROR saveGame(board* b,board* bTypes,char* path,int gameMode){
 	printf("The board was saved successfully!\n");
 	return NO_ERROR;
 }
+
+/*returns a binary answers to the question: can a saved board file in the required format
+ * contains the char c*/
 int validChar(char c){
 	if(((int)c)>=48 &&((int)c)<=57){/*c is a digit 0-9*/
 		return 1;
@@ -66,13 +69,17 @@ int validChar(char c){
 	if(((int)c)==10){/*I think ch gets this value when the scan was invalid*/
 		return 1;
 	}
-	if(((int)c)==13){/*TMP check: when txt files are copied to the nova somehow they contain this char in the nova server*/
+	if(((int)c)==13){/*when txt files are copied to the nova somehow they contain this char in the nova server*/
 		return 1;
 	}
 	return 0;
 }
-/*b,bTypes should NOT be the real boards of the current game, they should be 2 new
- * empty board pointers so we can restore the old game in case the load command has failed*/
+
+/*given a file that is located in path and contains the data of a sudoku-board in the required format this function
+ * creates the board described in the file and assign the pointers b,bTypes to point to the newly
+ * created board
+ * b,bTypes should NOT be the real boards of the current game, they should be 2 new
+ * empty board pointers so we can restore the old game in case the load command fails*/
 ERROR loadGame(board** b,board** bTypes,char* path,int *n,int *m,int gameMode){
 	int N,i,j,val;
 	char ch;
