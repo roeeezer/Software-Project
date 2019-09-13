@@ -1,11 +1,11 @@
 
 #include "gurobi.h"
 #include <stdlib.h>
-#include "board.h"
+
 ERROR createVarArr(VAR *varArr, int varCount, int N, board* pBoard);
 
 void cleanUp(int *ind, double *val, double *lowerBound, double *upperBound, double *obj, char *vtype, VAR *varArr,
-             GRBenv *env, GRBmodel *model);
+             GRBenv *env, GRBmodel *model, double *sol);
 
 void fillArrWithDouble(double *arr, int arrSize, double val);
 
@@ -21,17 +21,26 @@ ERROR addColConstraints(GRBmodel *model, VAR *varArr, int *ind, double *val, int
 
 ERROR addBlockConstraints(GRBmodel *model, VAR *varArr, int *ind, double *val, int varCount, board *pBoard);
 
-void createRandomObjFunction(double *obj, int varCount);
+void createRandomObjFunction(double *obj, int varCount, int i);
 
 ERROR fillBoardFromSol(board *pBoard, VAR *varArr, int varCount, double *sol);
 
+void copyVarArr(VAR *dest, VAR *source, int i);
+
+void copyDoubleArr(double *dest, double *source, int varCount);
+
+void printLPSolution(VAR *vars, double *scores, int len, double *obj);
+
 /**
- * Gets a sudoku board and *writes the solution to it*
- * @param pBoard
- * @param ilp boolean: is the solution ILP or LP?
- * @return
+ *  Gets a sudoku board and *writes the solution to it*
+ * @param pBoard the board to write to
+ * @param ilp 0 for LP, otherwise ILP
+ * @param resultVars only used for LP
+ * @param solValues only used for LP
+ * @param resultCount only used for LP
+ * @return the appropriate error
  */
-ERROR setUpGurobi(board *pBoard, int ilp) {
+ERROR setUpGurobi(board *pBoard, int ilp, VAR **resultVars, double **solValues, int *resultCount) {
     GRBenv *env;
     GRBmodel *model;
     ERROR error;
@@ -61,146 +70,203 @@ ERROR setUpGurobi(board *pBoard, int ilp) {
         return GUROBI_ERROR;
     }
 
-
-
     /*Allocate and check malloc success */
     ind = (int *) malloc(varCount * sizeof(int)); /*TODO: maybe ind and val only need N size? max constraint size*/
     if (ind == NULL){
-        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model);
+        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
         return MALLOC_ERROR;
     }
     val = (double *) malloc(varCount * sizeof(double));
     if (val == NULL) {
-        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model);
+        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
         return MALLOC_ERROR;
     }
-    /*Constraints are always with*/
+    sol = (double *) malloc(varCount * sizeof(double));
+    if (sol == NULL) {
+        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
+        return MALLOC_ERROR;
+    }
+    /*Constraints are always with 1.0*/
     fillVals(val, N);
     obj = (double *) malloc(varCount * sizeof(double));
     if (obj == NULL){
-        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model);
+        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
         return MALLOC_ERROR;
     }
     vtype = (char *) malloc(varCount * sizeof(char));
     if (vtype == NULL){
-        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model);
+        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
         return MALLOC_ERROR;
     }
     lb = (double *) malloc(varCount * sizeof(double));
     if (lb == NULL){
-        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model);
+        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
         return MALLOC_ERROR;
     }
     ub = (double *) malloc(varCount * sizeof(double));
     if (ub == NULL){
-        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model);
+        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
         return MALLOC_ERROR;
     }
     varArr = (VAR *) malloc(varCount * sizeof(VAR));
     if (varArr == NULL){
-        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model);
+        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
         return MALLOC_ERROR;
     }
     error = createVarArr(varArr, varCount, N, pBoard);
     if (error != NO_ERROR){
-        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model);
+        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
         return error;
     }
-    /* Create an empty model named "sudoku" */
+    createRandomObjFunction(obj, varCount, ilp);
     if (ilp) {
         setVtype(vtype, varCount, GRB_BINARY);
-        createRandomObjFunction(obj, varCount); /*TODO: implement. Perhaps not random, but garbage obj?*/
-        grbError = GRBnewmodel(env, &model, "sudoku", varCount, obj, NULL, NULL, vtype, NULL);
+        grbError = GRBnewmodel(env, &model, "Sudoku", varCount, obj, NULL, NULL, vtype, NULL);
     }
     else{
         setVtype(vtype, varCount, GRB_CONTINUOUS);
         fillArrWithDouble(lb, varCount, 0.0);
         fillArrWithDouble(ub, varCount, 1.0);
-        createRandomObjFunction(obj, 0);
-        grbError = GRBnewmodel(env, &model, "sudoku", varCount, obj, lb, ub, vtype, NULL);
+        grbError = GRBnewmodel(env, &model, "Sudoku", varCount, obj, lb, ub, vtype, NULL);
     }
     if (grbError) {
         printf("ERROR %d GRBnewmodel(): %s\n", grbError, GRBgeterrormsg(env));
-        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model);
+        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
         return GUROBI_ERROR;
     }
     grbError = GRBsetintattr(model, GRB_INT_ATTR_MODELSENSE, GRB_MAXIMIZE);
     if (grbError) {
         printf("ERROR %d GRBsetintattr(): %s\n", grbError, GRBgeterrormsg(env));
-        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model);
+        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
         return GUROBI_ERROR;
     }
     grbError = GRBupdatemodel(model);
     if (grbError) {
         printf("ERROR %d GRBupdatemodel(): %s\n", grbError, GRBgeterrormsg(env));
-        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model);
+        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
         return GUROBI_ERROR;
     }
     error = addCellConstraints(varArr, model, ind, val, varCount);
     if (error != NO_ERROR){
-        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model);
+        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
         return GUROBI_ERROR;
     }
     error = addRowConstraints(model, varArr, ind, val, varCount, pBoard);
     if (error != NO_ERROR){
-        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model);
+        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
         return GUROBI_ERROR;
     }
     error = addColConstraints(model, varArr, ind, val, varCount, pBoard);
     if (error != NO_ERROR){
-        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model);
+        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
         return GUROBI_ERROR;
     }
     error = addBlockConstraints(model, varArr, ind, val, varCount, pBoard);
     if (error != NO_ERROR){
-        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model);
+        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
         return GUROBI_ERROR;
     }
     grbError = GRBupdatemodel(model);
     if (grbError) {
         printf("ERROR %d GRBupdatemodel(): %s\n", grbError, GRBgeterrormsg(env));
-        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model);
+        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
         return GUROBI_ERROR;
     }
-
-    /*TODO: finished adding constraints, optimize and return*/
     grbError = GRBoptimize(model);
     if (grbError){
         printf("ERROR %d GRBOptimize(): %s\n", grbError, GRBgeterrormsg(env));
-        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model);
+        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
         return GUROBI_ERROR;
     }
     grbError = GRBwrite(model, "sudoku.lp");
     if (grbError){
         printf("ERROR %d GRBWrite(): %s\n", grbError, GRBgeterrormsg(env));
-        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model);
+        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
         return GUROBI_ERROR;
     }
     grbError = GRBgetintattr(model, GRB_INT_ATTR_STATUS, &optimstatus);
+    if (grbError){
+        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
+        return GUROBI_ERROR;
+    }
     if (optimstatus == GRB_OPTIMAL)
         printf("Optimal objective: found\n");
     /* no solution found */
-    else if (optimstatus == GRB_INF_OR_UNBD)
-        printf("Model is infeasible or unbounded\n");
-        /* error or calculation stopped */
-    else
-        printf("Optimization was stopped early\n");
-    /*TODO (omer): correct sol with malloc and everything */
-    sol = val;
+    else {
+        if (optimstatus == GRB_INF_OR_UNBD || optimstatus == GRB_INFEASIBLE)
+            printf("Model is infeasible or unbounded\n");
+            /* error or calculation stopped */
+        else
+            printf("Optimization was stopped early\n");
+        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
+        return GUROBI_ERROR;
+    }
     grbError = GRBgetdblattrarray(model, GRB_DBL_ATTR_X, 0, varCount, sol);
+    if (grbError) {
+        printf("ERROR %d GRBgetdblattrarray(): %s\n", grbError, GRBgeterrormsg(env));
+        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
+        return GUROBI_ERROR;
+    }
     if (ilp){
         error = fillBoardFromSol(pBoard, varArr, varCount, sol);
     }
-    else
-        error = TMP_ERROR;/*TODO add options for LP not just ILP*/
-    if (grbError){
-        printf("ERROR %d GRBgetdblattrarray(): %s\n", grbError, GRBgeterrormsg(env));
-        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model);
-        return GUROBI_ERROR;
+    else{
+        /* TODO debugPrint*/
+        /*if (DEBUG) printLPSolution(varArr, sol, varCount, obj);*/
+        *resultVars = (VAR *) malloc(varCount * sizeof(VAR));
+        if (*resultVars == NULL){
+            cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
+            return MALLOC_ERROR;
+        }
+        *solValues = (double *) malloc(varCount * sizeof(double));
+        if (*solValues == NULL){
+            cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
+            return MALLOC_ERROR;
+        }
+        *resultCount = varCount;
+        copyVarArr(*resultVars, varArr, varCount);
+        copyDoubleArr(*solValues, sol, varCount);
     }
-    cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model);
+    cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
     return error;
 
+}
+
+void printLPSolution(VAR *vars, double *scores, int len, double *obj) {
+    int i;
+    printf("Now printing LP solution values:");
+    for (i = 0; i < len; i++) {
+        printf("var at row %d, col %d, cell value of %d, obj function is %f, score is %f\n",
+               (vars+i)->row, (vars+i)->col, (vars+i)->val, obj[i], scores[i]);
+    }
+}
+
+/**
+ * arrays must be preallocated
+ * @param dest
+ * @param source
+ * @param varCount
+ */
+void copyDoubleArr(double *dest, double *source, int varCount) {
+    int i;
+    for (i = 0; i < varCount; i++) {
+        dest[i] = source[i];
+    }
+}
+
+/**
+ * arrays must be preallocated
+ * @param dest
+ * @param source
+ * @param varCount
+ */
+void copyVarArr(VAR *dest, VAR *source, int varCount) {
+    int i;
+    for (i = 0; i < varCount; i++) {
+        (dest+i)->row = (source+i)->row;
+        (dest+i)->col = (source+i)->col;
+        (dest+i)->val = (source+i)->val;
+    }
 }
 
 ERROR fillBoardFromSol(board *pBoard, VAR *varArr, int varCount, double *sol) {
@@ -213,10 +279,17 @@ ERROR fillBoardFromSol(board *pBoard, VAR *varArr, int varCount, double *sol) {
     return NO_ERROR;
 }
 
-void createRandomObjFunction(double *obj, int varCount) {
-    int i; /*TODO: changeme*/
+void createRandomObjFunction(double *obj, int varCount, int ilp) {
+    int i;
     for (i = 0; i < varCount; i++) {
-        obj[i] = (double) rand() / RAND_MAX;
+        if (ilp){
+            if (i == 0)
+                obj[i] = 1;
+            else
+                obj[i] = 0;
+        }
+        else
+            obj[i] = (double) rand() / RAND_MAX;
     }
 
 }
@@ -360,7 +433,7 @@ ERROR addCellConstraints(VAR *varArr, GRBmodel *model, int *ind, double *val, in
         index = 0;
         row = (varArr+i)->row;
         col = (varArr+i)->col;
-        for (; (varArr+i)->row == row && (varArr+i)->col == col; i++) { /*Since variables are in order of row and col*/
+        for (;i < varCount && (varArr+i)->row == row && (varArr+i)->col == col; i++) { /*Since variables are in order of row and col*/
             ind[index] = i;
             index++;
             numOfVarsInConstraint++;
@@ -386,9 +459,8 @@ void fillArrWithDouble(double *arr, int arrSize, double val) {
     }
 }
 
-void
-cleanUp(int *ind, double *val, double *lowerBound, double *upperBound, double *obj, char *vtype, VAR *varArr,
-        GRBenv *env, GRBmodel *model) {
+void cleanUp(int *ind, double *val, double *lowerBound, double *upperBound, double *obj, char *vtype, VAR *varArr,
+             GRBenv *env, GRBmodel *model, double *sol) {
     free(ind);
     free(val);
     free(obj);
@@ -396,10 +468,11 @@ cleanUp(int *ind, double *val, double *lowerBound, double *upperBound, double *o
     free(lowerBound);
     free(upperBound);
     free(varArr);
-    if (env != NULL)
-        GRBfreeenv(env);
+    free(sol);
     if (model != NULL)
         GRBfreemodel(model);
+    if (env != NULL)
+        GRBfreeenv(env);
 }
 
 /**
