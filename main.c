@@ -13,10 +13,81 @@
 #include "command.h"
 #include "board.h"
 #include "error.h"
-#include "gurobi_c.h"
 #include "files.h"
 #include <time.h>
 
+void setUpLoadedTest(board **pBoard, board **btypes);
+
+void testSimpleAutofill(){
+    board *pBoard, *btypes;
+    ERROR error;
+    setUpLoadedTest(&pBoard, &btypes);
+    printf("Before:\n");
+    printBoard(pBoard, btypes, SOLVE_MODE, 1);
+    error = simpleAutofill(pBoard);
+    if (error != NO_ERROR)
+        printf("MALLOC ERROR in simpleAutofill?\n");
+    printf("After:\n");
+    printBoard(pBoard, btypes, SOLVE_MODE, 1);
+}
+
+void testLPWithThreshold(double thresh){
+    board *pBoard, *btypes;
+    ERROR error;
+    setUpLoadedTest(&pBoard, &btypes);
+    error = solveLPWithThreshold(pBoard, thresh);
+    if (error != NO_ERROR){
+        printf("LP error!");
+        return;
+    }
+    printf("After:\n");
+    printBoard(pBoard,btypes, SOLVE_MODE, 1);
+    destroyBoard(pBoard);
+    destroyBoard(btypes);
+
+}
+
+void setUpLoadedTest(board **pBoard, board **btypes) {
+    int n, m;
+    n=m=0;
+    printf("Now loading\n");
+    loadGame(pBoard, btypes, "./board1", &n, &m, SOLVE_MODE);
+}
+
+void testGenerate(){
+    command* comm;
+    game *pGame = createGame(1);
+    pGame->currMode = EDIT_MODE;
+    printBoard(pGame->board, pGame->boardTypes, SOLVE_MODE, 1);
+    printf("Done initing\n");
+    comm = createCommand();
+    readCommand(comm, pGame);
+    executeCommand(comm, pGame);
+    printf("done executing\n");
+    printBoard(pGame->board, pGame->boardTypes, SOLVE_MODE, 1);
+    /*destroyCommand(comm);*/
+    destroyGame(pGame);
+}
+
+void testILP(){
+    board *pBoard, *btypes;
+    ERROR error;
+    int n, m;
+    n=m=0;
+    printf("Now loading\n");
+    loadGame(&pBoard, &btypes, "./board1", &n, &m, SOLVE_MODE);
+    printf("Before:\n");
+    printBoard(pBoard,btypes, SOLVE_MODE, 1);
+    error = solveILP(pBoard);
+    if (error == NO_ERROR){
+        printf("After:\n");
+        printBoard(pBoard,btypes, SOLVE_MODE, 1);
+    }
+    else
+        printf("ERROR!\n");
+    destroyBoard(pBoard);
+    destroyBoard(btypes);
+}
 
 void testReadCommand(){
     game* pGame;
@@ -25,6 +96,7 @@ void testReadCommand(){
     pGame = createGame(5);
     pCommand = createCommand();
     error = readCommand(pCommand, pGame);
+    printf("param 1: %s\n param 2: %s, param 3: %s\n",pCommand->param1, pCommand->param2, pCommand->param3);
     printf("DONE READING \n");
     printErrorMessage(error, pCommand);
     printf("Setting game mode to solve and trying again\n");
@@ -319,8 +391,26 @@ void destroyTester(){
 }
 
 int main(){
+    testSimpleAutofill();
+    return 1;
+    /**int choice;
+    double thresh;
+    printf("Enter threshold as double \n");
+    scanf("%lf", &thresh);
+    testLPWithThreshold(thresh);
+    return 1;
+    printf("enter input: 1 - testGenerate\t2 - testILP\t3 - testReadCommand\n");
+    scanf("%d", &choice);
+    if (choice == 1)
+        testGenerate();
+    else if (choice == 2)
+        testILP();
+    else if (choice == 3)
+        testReadCommand();
+    return 1;
+    return 1;
 	SP_BUFF_SET();
 	finalMain();
-	return 1;
+	return 1;*/
 }
 

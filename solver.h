@@ -12,6 +12,9 @@
 #include "stack.h"
 #include "error.h"
 #include "moveNode.h"
+#include "gurobi.h"
+
+
 void solveBoardRandomly(board* sol);
 /*recursively implements the deterministic back tracking algorithm of the board
  * from cell number startInd (a 1D index) to the last cell in the board*/
@@ -47,5 +50,10 @@ ERROR solveILP(board *b);
 ERROR solveLPWithThreshold(board *pBoard, double threshold);
 int fillXRandomCells(board* pBoard, int x);
 void clearRandomCell(board* pBoard);
-
+/**
+ * Simple autofill, to be used by LP methods for adding "obvious" cells before starting LP/ILP
+ * Writes result to board.
+ * @param pBoard board to be filled.
+ */
+ERROR simpleAutofill(board *pBoard);
 #endif /* SOLVER_H_ */

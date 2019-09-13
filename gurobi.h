@@ -2,14 +2,17 @@
 #ifndef GIT_GUROBI_H
 #define GIT_GUROBI_H
 
-#include "error.h"
 #include "gurobi_c.h"
+#include "error.h"
+#include "board.h"
 
 #define DEBUG 1
 
 typedef struct{
    int row, col, val;
 }VAR;
+
+ERROR setUpGurobi(board *pBoard, int ilp, VAR **resultVars, double **solValues, int *resultCount);
 
 /**
  *

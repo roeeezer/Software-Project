@@ -18,17 +18,21 @@ typedef enum {
 int correctNumberOfParams(commandName name, int numOfParams);
 int readInteger(char *token, int *pInt);
 int checkValidFloat(char* );
-
+int isValidInteger(char* param);
 ERROR checkMarkErrorsParam(char *param1);
 
-ERROR checkSetParams(char *param1, char *param2, char *param3, int i);
+ERROR checkSetParams(char *param1, char *param2, char *param3, int N);
 
 ERROR checkGuessParam(char *param);
 
 ERROR checkCommandValidForMode(commandName name, int mode);
 
-ERROR checkSetParam(char *param1, int N);
+ERROR checkSetParam(char *param, int N, int isValueParam);
 
+
+ERROR checkGenerateParams(char *param2, char *param1, int N);
+
+ERROR checkGuessHintParams(char *param1, char *param2, int N);
 
 int getInitializationInput(){
 	int res,validScan;
@@ -108,8 +112,8 @@ ERROR matchCommandName(const char *token, commandName *name) {
 
 ERROR checkLegalParam(command* pCommand, game* pGame) {
     char * param1, *param2, *param3;
-    if(!pGame){/*tmp delete this*/
-    	printf("checkLegalParam Error\n");}
+    int N;
+    N = pGame->board->squareSideSize;
     param1 = pCommand->param1;
     param2 = pCommand->param2;
     param3 = pCommand->param3;
@@ -131,36 +135,48 @@ ERROR checkLegalParam(command* pCommand, game* pGame) {
         case MARK_ERRORS:
             return checkMarkErrorsParam(param1);
         case SET:
-            return checkSetParams(param1, param2, param3, pGame->board->squareSideSize);
+            return checkSetParams(param1, param2, param3, N);
         case GUESS:
             return checkGuessParam(param1);
         case GENERATE:
-            /*return checkGenerateParams(param1, param2);*/
+            return checkGenerateParams(param2, param1, N);
         case GUESS_HINT:
-            /*return checkGuessHintParams(param1, param2);TODO: uncomment this*/
+            return checkGuessHintParams(param1, param2, N);
         case HINT:
-            /*return checkHintParams(param1, param2);TODO: uncomment this*/
+            return checkGuessHintParams(param1, param2, N); /*Same params*/
         case NONE:
         default:
             break;
-        /*TODO: implement these checks*/
     }
 
     return UNKNOWN_ERROR;
+}
+
+ERROR checkGuessHintParams(char *param1, char *param2, int N) {
+    return checkSetParams(param1, param2, "0", N); /* "0" is a dummy variable, is always legal*/
+
+}
+
+ERROR checkGenerateParams(char *param2, char *param1, int N) {
+    if (!isValidInteger(param1) || !isValidInteger(param2))
+        return PARAM_OUT_OF_RANGE_FOR_GENERATE;
+    if (atoi(param1) < 0 || atoi(param1) > N || atoi(param2) < 0 || atoi(param2) > N)
+        return PARAM_OUT_OF_RANGE_FOR_GENERATE;
+    return NO_ERROR;
 }
 
 
 ERROR checkGuessParam(char *param) {
     if (checkValidFloat(param) && atof(param)>= 0.0 && atof(param) <= 1.0)
         return NO_ERROR;
-    return PARAM_OUT_OF_RANGE;
+    return PARAM_OUT_OF_RANGE_FOR_GUESS;
 }
 
 ERROR checkSetParams(char *param1, char *param2, char *param3, int N) {
     ERROR error1, error2, error3;
-    error1 = checkSetParam(param1, N);
-    error2 = checkSetParam(param2, N);
-    error3 = checkSetParam(param3, N);
+    error1 = checkSetParam(param1, N, 0);
+    error2 = checkSetParam(param2, N, 0);
+    error3 = checkSetParam(param3, N, 1);
     if (error1 != NO_ERROR) return error1;
     if (error2 != NO_ERROR) return error2;
     if (error3 != NO_ERROR) return error3;
@@ -173,18 +189,20 @@ int isValidInteger(char* param){
         if (param[i] < 48 || param[i] > 57) return 0;
     return 1;
 }
-
-ERROR checkSetParam(char *param, int N) {
-    if (isValidInteger(param) && atoi(param) <= N && atoi(param) >=0)
+/**
+ * @param isValueParam must be 1 if this is the value param (can be 0), 0 otherwise (can't be 0)
+ */
+ERROR checkSetParam(char *param, int N, int isValueParam) {
+    if (isValidInteger(param) && atoi(param) <= N && atoi(param) >= (1 - isValueParam))
         return NO_ERROR;
-    return PARAM_OUT_OF_RANGE;
+    return PARAM_OUT_OF_RANGE_FOR_SET;
 }
 
 ERROR checkMarkErrorsParam(char *param1) {
 
     if (strcmp(param1, "0") == 0 || strcmp(param1, "1") == 0)
         return NO_ERROR;
-    return PARAM_OUT_OF_RANGE;
+    return PARAM_OUT_OF_RANGE_FOR_MARK_ERRORS;
 }
 
 /**
@@ -236,11 +254,14 @@ ERROR readCommand(command *pCommand, game* pGame) {
     param2 = strtok(NULL, delim);
     param3 = strtok(NULL, delim);
     param4 = strtok(NULL, delim); /* param4 only used to check if more text remains after 3rd param read*/
+    printf("read all 3 params! 1 %s\n2 %s\n3 %s\n", param1, param2, param3);
     numberOfParams += (param1 != NULL) + (param2 != NULL) + (param3 != NULL) + (param4 != NULL);
     if (!correctNumberOfParams(name, numberOfParams))
         return INCORRECT_NUMBER_OF_PARAMS;
-    if (param1)
+    if (param1){
+        printf("inside readCommand:\n param1: %s\n", param1); /*todo debugPrint*/
         strcpy(pCommand->param1, param1);
+    }
     if (param2)
         strcpy(pCommand->param2, param2);
     if (param3)

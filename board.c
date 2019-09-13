@@ -16,7 +16,7 @@ board* createBoard(int blockRows,int blockColumns){
 	res->rows = blockRows;
 	res->columns = blockColumns;
 	res->squareSideSize= (res->rows)*(res->columns);
-	res->boardArr = malloc((res->squareSideSize*res->squareSideSize)*sizeof(int));
+	res->boardArr = calloc((res->squareSideSize*res->squareSideSize),sizeof(int)); /*calloc for valid reads*/
 	if (res->boardArr == NULL){
         printf("Error: malloc has failed\n");
         exit(-42);
@@ -118,7 +118,7 @@ void copyBoard(board* copy,board* orig){
 	int s,cellsInBoard,i,v;
 	int indices[2];
 	if(copy->rows!=orig->rows||copy->columns!=orig->columns){
-		printf("unmatched boards in copyBoard(board* copy,board* orig)");
+		printf("unmatched boards in copyBoard(board* copy,board* orig)"); /*TODO debugPrint ?*/
 		exit(0);
 	}
 	s = copy->squareSideSize;
