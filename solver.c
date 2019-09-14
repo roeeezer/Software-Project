@@ -7,6 +7,134 @@
 #include <stdlib.h>
 #include "solver.h"
 
+int chooseWithThreshold(double *scoresArr, int *valuesArr, double threshold, int len);
+/**
+ * Copy board and solve ILP on it.
+ * Copies back to original board afterwards
+ * Autofills board first to prevent wastefulness
+ * @param pBoard
+ * @return appropriate error
+ */
+ERROR solveILP(board* pBoard){
+    board* cpBoard;
+    ERROR error;
+    cpBoard = createBoard(pBoard->rows, pBoard->columns);
+    copyBoard(cpBoard, pBoard);
+    simpleAutofill(cpBoard);
+    error = setUpGurobi(cpBoard, 1, NULL, NULL, NULL);
+    if (error == NO_ERROR)
+        copyBoard(pBoard, cpBoard);
+    else if (DEBUG) /*TODO debugPrint*/
+        printf("Error in solveILP\n");
+    destroyBoard(cpBoard);
+    return error;
+}
+
+
+/**
+ * finds LP solution, while only considering result values above a certain threshold.
+ * Writes solution to the board. resultVars and solValues will be allocated in setUpGurobi.
+ * @param pBoard the board to solve
+ * @param threshold double between 0 and 1 for which values to keep
+ * @return
+ */
+ERROR solveLPWithThreshold(board *pBoard, double threshold){
+    board* cpBoard;
+    int N,i,j, varCount, index, row, col, numOfValuesInCell;
+    ERROR error;
+    VAR * resultVars;
+    double * solValues;
+    double* cellScores;
+    int * cellValues;
+    int resultForCell;
+    resultVars = NULL;
+    solValues = NULL;
+    cpBoard = createBoard(pBoard->rows, pBoard->columns);
+    copyBoard(cpBoard, pBoard);
+    simpleAutofill(cpBoard);
+    error = setUpGurobi(cpBoard, 0, &resultVars, &solValues, &varCount);
+    if (error != NO_ERROR){
+        free(resultVars);
+        free(solValues);
+        destroyBoard(cpBoard);
+        return error;
+    }
+    N = pBoard->squareSideSize;
+    cellScores = (double *) malloc(N * sizeof(double));
+    if (cellScores == NULL)
+        return MALLOC_ERROR;
+    cellValues = (int *) malloc(N * sizeof(double));
+    if (cellValues == NULL)
+        return MALLOC_ERROR;
+    if (resultVars == NULL || solValues == NULL)
+        printf("YOur arrays are NULL!\n"); /*TODO debugPrint*/
+    for (i = 0; i < varCount;) {
+        numOfValuesInCell = 0;
+        index = 0;
+        row = (resultVars + i)->row;
+        col = (resultVars + i)->col;
+        for (;i < varCount && (resultVars + i)->row == row && (resultVars + i)->col == col; i++) { /*Since variables are in order of row and col*/
+            cellScores[index] = solValues[i];
+            cellValues[index] = (resultVars + i)->val;
+            index++;
+            numOfValuesInCell++;
+        }
+        for (j = 0; j < numOfValuesInCell; j++) {
+            if (!validAsignment(cpBoard, cellValues[j], row, col))
+                cellScores[j] = 0;
+        }
+       resultForCell = chooseWithThreshold(cellScores, cellValues, threshold, numOfValuesInCell); /*Only valid cells*/
+       setCell(cpBoard, row, col, resultForCell); /*Will not be erroneous because of validAssignment check 4 rows above*/
+    }
+    copyBoard(pBoard,cpBoard);
+    free(resultVars);
+    free(solValues);
+    free(cellScores);
+    free(cellValues);
+    destroyBoard(cpBoard);
+    return NO_ERROR;
+}
+
+/**
+ *  function for choosing from weighted random. The score of the value at valuesArr[i] is scoresArr[i]
+ * @param scoresArr the scores of each value (by index, not by actual value)
+ * @param valuesArr array of possible cell values
+ * @param threshold for choice, don't choose cells of score< threshold
+ * @param len length of the arrays
+ * @return the value to set for the cell. Algorithm's correctness implies that a cell with score 0 will never be chosen
+ */
+int chooseWithThreshold(double *scoresArr, int *valuesArr, double threshold, int len) {
+    int resIndex, i;
+    double sum, randChoice;
+    sum=0;
+    resIndex=-1;
+    for (i = 0; i < len; i++) {
+        scoresArr[i] = scoresArr[i] * (scoresArr[i] >= threshold);
+    }
+    for (i = 0; i < len; i++) {
+        sum += scoresArr[i]; /*Sum used for normalizing*/
+    }
+    if (sum == 0.0){
+        return 0; /*no value is over threshold, cell remains empty*/
+    }
+    for (i = 0; i < len; i++) {
+        scoresArr[i] = scoresArr[i] / sum; /*Normalize total sum of scores to 1*/
+    }
+    randChoice = (double)rand() / RAND_MAX;
+    for (i = 0; i < len; i++) {
+        /** cumulative sum weighted random choice algorithm:
+         * when the cumulative sum surpasses randChoice we return this value*/
+        randChoice -= scoresArr[i];
+        if (randChoice <= 0) {
+            resIndex = i;
+            break;
+        }
+    }
+    if ((resIndex == -1) && DEBUG) printf("Problem with chooseWithThreshold!\n"); /*TODO debugPrint*/
+    return valuesArr[resIndex];
+}
+
+
 int DeterministicBackTracingRec(board* b,board* bSol,int startInd){
 	int s,cellsInBoard,v,nextEmptyCell;
 	int indices[2];
@@ -31,6 +159,27 @@ int DeterministicBackTracingRec(board* b,board* bSol,int startInd){
 		setCell(bSol,indices[0],indices[1],0);
 	}
 	return 0;
+}
+ERROR simpleAutofill(board *pBoard){
+    int i,j, N, size;
+    int * valuesList;
+    valuesList = malloc(sizeof(int) * pBoard->squareSideSize);
+    if (valuesList == NULL){
+        return MALLOC_ERROR;
+    }
+    N = pBoard->squareSideSize;
+    for(i=0;i<N;i++){
+        for(j=0;j<N;j++){
+            if(getCell(pBoard,i,j)==0){
+                size=createValidValuesList(valuesList,pBoard, i, j);
+                if(size==1){
+                    setCell(pBoard,i,j,valuesList[0]);
+                }
+            }
+        }
+    }
+    free(valuesList);
+    return NO_ERROR;
 }
 int exhaustiveBackTracingWithStack(board* b,board* bSol){
 	int s,cellsInBoard,currInd,nextEmptyInd,returnVal=0,addReturnVal,skipToNextStackNode=0;
@@ -102,7 +251,8 @@ int exhaustiveBackTracingWithStack(board* b,board* bSol){
 			setCell(bSol,indices[0],indices[1],0);
 			/*printf("startInd=%d \t counter=%d\n",startInd,counter);*/
 			return counter;
-		}
+}
+
 int createValidValuesList(int* valuesList,board* bSol,int i,int j){
 	int v,curr;
 	curr=0;
@@ -125,6 +275,7 @@ void deleteIndexFromList(int* valuesList,int ind,int size){
 
 
 }
+
 ERROR autofillBoard(board* b,board* bt,moveNode* move,int gameMode,int printInd){
 	int* valuesList;
 	int i,j,size,v,N=b->squareSideSize;
@@ -238,25 +389,6 @@ int findRandomSolution(board* Pboard,board* PboardSol){
 	copyBoard(PboardSol,Pboard);
 	firstEmptyCell = findNextEmptyCell(Pboard,0);
 	return RandomBackTracingRec(Pboard,PboardSol,firstEmptyCell);
-}
-
-ERROR solveILP(board* b){
-    if (b)
-        return UNKNOWN_ERROR; /*TODO: implement this*/
-    return NO_ERROR;
-}
-
-/**
- * finds LP solution, while only considering result values above a certain threshold.
- * Writes solution to the board
- * @param pBoard the board to solve
- * @param threshold double between 0 and 1 for which values to keep
- * @return
- */
-ERROR solveLPWithThreshold(board *pBoard, double threshold){
-    if (pBoard || threshold)
-        return UNKNOWN_ERROR; /*TODO: implement this*/
-    return NO_ERROR;
 }
 
 /**

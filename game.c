@@ -15,7 +15,7 @@ ERROR executeSetCommand(game *game,moveNode *move, int x, int y, int z);
 
 ERROR executeGenerateCommand(game *game,moveNode* move, int x, int y);
 
-ERROR executeGuessCommand(game *game, double thresh);
+ERROR executeGuessCommand(game *game, double thresh, moveNode *move);
 
 /*n is the number of rows in each board block
  *m is the number of columns in each board block
@@ -247,7 +247,7 @@ ERROR executeCommand(command* pCommand, game* pGame){
             error = NO_ERROR;
             break;
         case GUESS:
-            error = executeGuessCommand(pGame, atof(pCommand->param1));
+            error = executeGuessCommand(pGame, atof(pCommand->param1), NULL);
             break;
         case GENERATE:
             error = executeGenerateCommand(pGame,move, atoi(pCommand->param1), atoi(pCommand->param2));
@@ -318,11 +318,18 @@ ERROR executeCommand(command* pCommand, game* pGame){
     return error;
 }
 
-ERROR executeGuessCommand(game *game, double thresh) {
+ERROR executeGuessCommand(game *game, double thresh, moveNode *move) {
     ERROR error;
+    board* cpBoard;
     if (erroneousBoard(game->boardTypes))
         return GUESS_ERRONEOUS_BOARD;
-    error = solveLPWithThreshold(game->board, thresh);
+    cpBoard = createBoard(game->board->rows,game->board->columns);
+    copyBoard(cpBoard, game->board);
+    simpleAutofill(cpBoard);
+    error = solveLPWithThreshold(cpBoard, thresh);
+    if (error == NO_ERROR)
+        copyBoardAndUpdateMove(game->board, cpBoard, move);
+    destroyBoard(cpBoard);
     return error;
 }
 
@@ -335,9 +342,11 @@ ERROR executeGuessCommand(game *game, double thresh) {
  * @return appropriate error
  */
 ERROR executeGenerateCommand(game *game,moveNode* move, int x, int y) {
+    /*TODO add autofill before start, as well as checking erroneous*/
     board* origBoard, *cpBoard;
-    int i, success, N;
+    int i, success, N, debug_clears;
     ERROR error;
+    debug_clears = 0;
     success=0;
     origBoard = game->board;
     N = origBoard->squareSideSize;
@@ -361,9 +370,12 @@ ERROR executeGenerateCommand(game *game,moveNode* move, int x, int y) {
         destroyBoard(cpBoard);
         return FAILED_TO_GENERATE;
     }
-    for (i = 0; i < (N*N)-y; i++) {
+    for (i = 0; i < ((N*N)-y); i++) {
         clearRandomCell(cpBoard);
+        debug_clears++;
     }
+    /*printBoard(cpBoard, game->boardTypes, SOLVE_MODE, 1); TODO debugPrint*/
+    printf("cleared %d cells\n y is %d, N is %d\n", debug_clears, y, N); /*TODO debugPrint*/
     copyBoardAndUpdateMove(origBoard, cpBoard,move);
     destroyBoard(cpBoard);
     return NO_ERROR;
