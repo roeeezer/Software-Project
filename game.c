@@ -297,6 +297,9 @@ ERROR executeCommand(command* pCommand, game* pGame){
             error = UNKNOWN_ERROR;
             break;
     }
+    if(commandIsAMove(pCommand)&&error!=NO_ERROR){
+    	destroyMoveNode(move);
+    }
     if(commandIsAMove(pCommand)&&error==NO_ERROR){
     	makeMoveTheLastInTheList(pGame->undoList,pGame->undoList->curr);
     	addMove(pGame->undoList,move);
