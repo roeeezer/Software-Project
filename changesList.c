@@ -32,8 +32,8 @@ void InsertFirst(changesList* list,changeNode* change){
 }
 void printChangesList(changesList* list,int ind){
 	if(emptyChangesList(list)){
-		printf("Error:No changes were made in this move\n");/*this should never happen every,
-		every move causes at list 1 one change (even if it's a trivial change) */
+		/*printf("No changes were made in this move\n");
+		 * this might happen only in autofill move that didnt fill any cells  */
 		return;
 	}
 	printChangesStartingFrom(list->first,ind);

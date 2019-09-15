@@ -297,15 +297,16 @@ ERROR executeCommand(command* pCommand, game* pGame){
             error = UNKNOWN_ERROR;
             break;
     }
+    if(commandIsAMove(pCommand)&&error!=NO_ERROR){
+    	destroyMoveNode(move);
+    }
     if(commandIsAMove(pCommand)&&error==NO_ERROR){
     	makeMoveTheLastInTheList(pGame->undoList,pGame->undoList->curr);
     	addMove(pGame->undoList,move);
     	promoteCurrPointer(pGame->undoList);
     }
 
-    if (pGame->currMode == SOLVE_MODE && pGame->board->emptyCellsCounter == 0&& pCommand->name!=REDO){
-    	/*when the command is REDO then the 'real' command to be redone has already entered this if block
-    	 * in the recursive call to executeCommand*/
+    if (pGame->currMode == SOLVE_MODE && pGame->board->emptyCellsCounter == 0){
            if (erroneousBoard(pGame->boardTypes)){
            	printf("This solution is incorrect!\n");
            	printf("You can undo you last move to continue solving\n");
