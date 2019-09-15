@@ -147,7 +147,6 @@ ERROR checkLegalParam(command* pCommand, game* pGame) {
         case NONE:
         default:
             break;
-        /*TODO: implement these checks*/
     }
 
     return UNKNOWN_ERROR;
@@ -161,7 +160,7 @@ ERROR checkGuessHintParams(char *param1, char *param2, int N) {
 ERROR checkGenerateParams(char *param2, char *param1, int N) {
     if (!isValidInteger(param1) || !isValidInteger(param2))
         return PARAM_OUT_OF_RANGE_FOR_GENERATE;
-    if (atoi(param1) < 0 || atoi(param1) > N || atoi(param2) < 0 || atoi(param2) > N)
+    if (atoi(param1) < 0 || atoi(param1) > N*N || atoi(param2) < 0 || atoi(param2) > N*N)
         return PARAM_OUT_OF_RANGE_FOR_GENERATE;
     return NO_ERROR;
 }

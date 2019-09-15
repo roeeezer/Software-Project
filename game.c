@@ -322,7 +322,7 @@ ERROR executeGuessCommand(game *game, double thresh, moveNode *move) {
     ERROR error;
     board* cpBoard;
     if (erroneousBoard(game->boardTypes))
-        return GUESS_ERRONEOUS_BOARD;
+        return COMMAND_UNAVAILABLE_WITH_ERRONEOUS_BOARD;
     cpBoard = createBoard(game->board->rows,game->board->columns);
     copyBoard(cpBoard, game->board);
     simpleAutofill(cpBoard);

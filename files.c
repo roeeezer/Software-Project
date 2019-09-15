@@ -4,6 +4,7 @@
  *      Author: roee
  */
 #include "files.h"
+#include "solver.h"
 
 
 /*saves the given board as a file in the required format located in path*/

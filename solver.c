@@ -3,11 +3,15 @@
  *
  *      Author: roee
  */
+#include "board.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "solver.h"
 
 int chooseWithThreshold(double *scoresArr, int *valuesArr, double threshold, int len);
+
+ERROR solveLP(board *pBoard, VAR **resultVars, double **solValues, int *varCount);
+
 /**
  * Copy board and solve ILP on it.
  * Copies back to original board afterwards
@@ -30,35 +34,33 @@ ERROR solveILP(board* pBoard){
     return error;
 }
 
-
 /**
- * finds LP solution, while only considering result values above a certain threshold.
- * Writes solution to the board. resultVars and solValues will be allocated in setUpGurobi.
- * @param pBoard the board to solve
- * @param threshold double between 0 and 1 for which values to keep
+ *
+ * @param pBoard
+ * @param x
+ * @param y
+ * @param cellValues, to be allocated inside the function. Must be freed by caller.
+ * @param cellScores to be allocated inside the function. Must be freed by caller.
  * @return
  */
-ERROR solveLPWithThreshold(board *pBoard, double threshold){
+ERROR solveLPForTargetCell(board *pBoard, int x, int y, int *cellValues, double *cellScores, int *numOfValuesInCell) {
+    /*TODO @Omer go over this*/
     board* cpBoard;
-    int N,i,j, varCount, index, row, col, numOfValuesInCell;
+    int N,i, varCount, index;
     ERROR error;
     VAR * resultVars;
     double * solValues;
-    double* cellScores;
-    int * cellValues;
-    int resultForCell;
     resultVars = NULL;
     solValues = NULL;
-    cpBoard = createBoard(pBoard->rows, pBoard->columns);
-    copyBoard(cpBoard, pBoard);
-    simpleAutofill(cpBoard);
-    error = setUpGurobi(cpBoard, 0, &resultVars, &solValues, &varCount);
+    error = solveLP(pBoard, &resultVars, &solValues, &varCount);
     if (error != NO_ERROR){
         free(resultVars);
         free(solValues);
-        destroyBoard(cpBoard);
         return error;
     }
+    cpBoard = createBoard(pBoard->rows, pBoard->columns);
+    copyBoard(cpBoard, pBoard);
+    simpleAutofill(cpBoard);
     N = pBoard->squareSideSize;
     cellScores = (double *) malloc(N * sizeof(double));
     if (cellScores == NULL)
@@ -66,8 +68,55 @@ ERROR solveLPWithThreshold(board *pBoard, double threshold){
     cellValues = (int *) malloc(N * sizeof(double));
     if (cellValues == NULL)
         return MALLOC_ERROR;
-    if (resultVars == NULL || solValues == NULL)
-        printf("YOur arrays are NULL!\n"); /*TODO debugPrint*/
+    if (DEBUG && (resultVars == NULL || solValues == NULL))
+        printf("Your arrays are NULL!\n"); /*TODO debugPrint*/
+    for (i = 0; i < varCount;i++) {
+        *numOfValuesInCell = 0;
+        index = 0;
+        if ((resultVars + i)->row == y && (resultVars + i)->col == x) {
+            cellScores[index] = solValues[i];
+            cellValues[index] = (resultVars + i)->val;
+            index++;
+            (*numOfValuesInCell) += 1;
+        }
+    }
+    return NO_ERROR; /*TODO change this func not done*/
+}
+
+/**
+ * finds LP solution, while only considering result values above a certain threshold.
+ * Writes solution to the board. resultVars and solValues will be allocated in solveLP.
+ * @param pBoard the board to solve
+ * @param threshold double between 0 and 1 for which values to keep
+ * @return appropriate ERROR
+ */
+ERROR solveLPWithThreshold(board *pBoard, double threshold){
+    ERROR error;
+    VAR * resultVars;
+    double * solValues;
+    int varCount;
+    double *cellScores;
+    board *cpBoard;
+    int N, i, j, index, row, col, numOfValuesInCell;
+    int *cellValues;
+    int resultForCell;
+    error = solveLP(pBoard, &resultVars, &solValues, &varCount);
+    if (error != NO_ERROR){
+        free(resultVars);
+        free(solValues);
+        return error;
+    }
+    cpBoard = createBoard(pBoard->rows, pBoard->columns);
+    copyBoard(cpBoard, pBoard);
+    N = pBoard->squareSideSize;
+    cellScores = (double *) malloc(N * sizeof(double));
+    if (cellScores == NULL)
+        return MALLOC_ERROR;
+    cellValues = (int *) malloc(N * sizeof(double));
+    if (cellValues == NULL)
+        return MALLOC_ERROR;
+    if (DEBUG && (resultVars == NULL || solValues == NULL))
+        printf("Your arrays are NULL!\n"); /*TODO debugPrint*/
     for (i = 0; i < varCount;) {
         numOfValuesInCell = 0;
         index = 0;
@@ -93,6 +142,27 @@ ERROR solveLPWithThreshold(board *pBoard, double threshold){
     free(cellValues);
     destroyBoard(cpBoard);
     return NO_ERROR;
+}
+/**
+ * The internal method, used for solving LP, filling in the appropriate arrays as necessary
+ * the arrays should NOT be pre-allocated. setUpGurobi does allocation.
+ * @param pBoard the board to solve
+ * @param resultVars pointer to the array of resulting VARs for the problem
+ * @param solValues pointer to the values of the VARs in the optimal solution
+ * @param varCount the length of the above 2 arrays
+ * @return appropriate error.
+ */
+ERROR solveLP(board *pBoard, VAR **resultVars, double **solValues, int *varCount) {
+    ERROR error;
+    board* cpBoard;
+    (*resultVars) = NULL;
+    (*solValues) = NULL;
+    cpBoard = createBoard(pBoard->rows, pBoard->columns);
+    copyBoard(cpBoard, pBoard);
+    simpleAutofill(cpBoard);
+    error = setUpGurobi(cpBoard, 0, resultVars, solValues, varCount);
+    destroyBoard(cpBoard);
+    return error;
 }
 
 /**
@@ -422,6 +492,7 @@ int fillXRandomCells(board* pBoard, int x){
         setCell(pBoard, i, j, chosenValue);
         counter++;
     }
+    free(valuesList);
     return 1;
 }
 
@@ -436,4 +507,14 @@ void clearRandomCell(board* pBoard){
             return;
         }
     }
+}
+
+int boardHasASolution(board* pBoard){
+	board * cpBoard;
+	ERROR error;
+	cpBoard = createBoard(pBoard->rows, pBoard->columns);
+	copyBoard(cpBoard, pBoard);
+    error = solveILP(cpBoard);
+    destroyBoard(cpBoard);
+    return error == NO_ERROR;
 }

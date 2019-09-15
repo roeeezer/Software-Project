@@ -8,6 +8,8 @@
 
 #ifndef SOLVER_H_
 #define SOLVER_H_
+
+#include <stdio.h>
 #include "board.h"
 #include "stack.h"
 #include "error.h"
@@ -47,6 +49,7 @@ int exhaustiveBackTracingWithStack(board* b,board* bSol);
 /*the options of ind are described in game.h*/
 ERROR autofillBoard(board* b,board* bt,moveNode* move,int gameMode,int printInd);
 ERROR solveILP(board *b);
+ERROR solveLPForTargetCell(board *pBoard, int x, int y, int *cellValues, double *cellScores, int *numOfValuesInCell);
 ERROR solveLPWithThreshold(board *pBoard, double threshold);
 int fillXRandomCells(board* pBoard, int x);
 void clearRandomCell(board* pBoard);
@@ -56,4 +59,7 @@ void clearRandomCell(board* pBoard);
  * @param pBoard board to be filled.
  */
 ERROR simpleAutofill(board *pBoard);
+
+int boardHasASolution(board* pBoard);
+
 #endif /* SOLVER_H_ */

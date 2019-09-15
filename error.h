@@ -39,13 +39,13 @@ typedef enum {
 	FIXED_CELL_ERROR,
 	GENERATE_NOT_ENOUGH_CELLS,
 	FAILED_TO_GENERATE,
-    GUESS_ERRONEOUS_BOARD,
+    /*GUESS_ERRONEOUS_BOARD,*/
 	NO_MOVES_TO_UNDO_ERROR,
 	NO_MOVES_TO_REDO_ERROR,
 	TMP_ERROR,/*just for compilation reasons*/
     GUROBI_ERROR,
     UNKNOWN_ERROR /*An unknown error occurred. For checking if we reached unexpected situations*/
 } ERROR;
-void printErrorMessage(ERROR error, command *pCommand);
+void printErrorMessage(ERROR error, command *pCommand, int N);
 
 #endif /* ERROR_H_ */
