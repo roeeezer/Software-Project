@@ -80,6 +80,7 @@ ERROR solveLPForTargetCell(board *pBoard, int x, int y, int *cellValues, double 
             (*numOfValuesInCell) += 1;
         }
     }
+    return NO_ERROR; /*TODO change this func not done*/
 }
 
 /**

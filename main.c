@@ -443,7 +443,7 @@ int main(){
     printf("Enter number of runs\n");
     scanf("%d", &numOfRuns);
     for (i = 0; i < numOfRuns; i++) {
-        successCounter += `testLPGeneratesSolvableBoard`(thresh, 0);
+        successCounter += testLPGeneratesSolvableBoard(thresh, 0);
     }
     printf("Total successes: %d out of %d runs\nSuccess rate of %f with threshold %f\n", successCounter,
            numOfRuns, (double) successCounter / numOfRuns, thresh);
