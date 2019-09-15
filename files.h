@@ -1,6 +1,6 @@
 /*
  * files.h
- * contains loading and saving sudoku-boards to files
+ * contains all the loading and saving sudoku-boards to files functions
  *
  *      Author: roee
  *

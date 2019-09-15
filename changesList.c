@@ -21,6 +21,7 @@ void destroyChangesList(changesList* l){
 		destroyAllChangeNodesStartingFrom(l->first);}
 	free(l);
 }
+/*Inserts "change" at the beginning of the changesList "list"*/
 void InsertFirst(changesList* list,changeNode* change){
 	if(emptyChangesList(list)){
 		list->first=change;
@@ -30,10 +31,12 @@ void InsertFirst(changesList* list,changeNode* change){
 	list->first = change;
 
 }
+/*this function is called when the user call for undo/redo command
+ * and we want to print all the changes of the relevant move*/
 void printChangesList(changesList* list,int ind){
 	if(emptyChangesList(list)){
-		/*printf("No changes were made in this move\n");
-		 * this might happen only in autofill move that didnt fill any cells  */
+
+		 /* this might happen in autofill move that didn't fill any cells  */
 		return;
 	}
 	printChangesStartingFrom(list->first,ind);

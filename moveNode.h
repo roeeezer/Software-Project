@@ -1,5 +1,6 @@
 /*
  * moveNode.h
+ * the Node object that wraps every move in the movesList of the game
  *
  */
 #include "command.h"

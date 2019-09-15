@@ -19,6 +19,7 @@ void destroyChangeNode(changeNode* change){
 	free(change);
 
 }
+/*destroys the node "start" and all the changeNodes that comes next to it*/
 void destroyAllChangeNodesStartingFrom(changeNode* start){
 	if(start==NULL){
 		return;
@@ -38,6 +39,7 @@ void printChange(changeNode* change,int ind){
 		printf("Cell (%d,%d) value was set to %d\n",change->j+1,change->i+1,change->newVal);
 		}
 }
+/*prints the node "start" and all the changeNodes that comes next to it*/
 void printChangesStartingFrom(changeNode* start,int ind){
 	if(start->next==NULL){
 		printChange(start,ind);

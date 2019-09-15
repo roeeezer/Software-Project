@@ -124,6 +124,7 @@ void printCommandName(command *c) {
 
 
 }
+/*follows the definition of "move" in page 3*/
 int commandIsAMove(command* c){
 	commandName name = c->name;
 	if(name==SET||name==AUTOFILL||name==GENERATE||name==GUESS){

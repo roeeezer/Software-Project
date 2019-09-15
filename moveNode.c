@@ -24,6 +24,7 @@ void destroyMoveNode(moveNode* m){
 	destroyChangesList(m->changes);
 	free(m);
 }
+/*destroys the node "start" and all the moveNodes that comes next to it*/
 void destroyAllMoveNodesStartingFrom(moveNode* start){
 	if(start==NULL){
 		return;

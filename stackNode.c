@@ -18,6 +18,8 @@ stackNode* createStackNode(int cellIndex,int fromVal){
 void destroyStackNode(stackNode* node){
 	free(node);
 }
+/*destroys the stackNode "node" and all the stackNodes that comes lower
+ * then that*/
 void destroyAllLowerNodes(stackNode* node){
 	if(node == NULL){
 		return;

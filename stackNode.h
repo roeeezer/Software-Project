@@ -1,8 +1,10 @@
 /*
  * stackNode.h
  *
- *  Created on: 23 баев„ 2019
- *      Author: roee
+ *
+ *      the stack is implemented as a linked list of stackNodes that
+ *      contains all the information needed for the recursive calls
+ *      simulation
  */
 
 #ifndef STACKNODE_H_

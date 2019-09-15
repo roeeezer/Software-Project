@@ -32,6 +32,7 @@ int emptyStack(stack* s){
 stackNode* top(stack* s){
 	return s->topNode;
 }
+/* Deletes the top stackNode in the stack*/
 void deleteTop(stack* s){
 	stackNode* prevTop;
 	if(emptyStack(s)){

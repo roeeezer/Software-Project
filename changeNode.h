@@ -1,6 +1,7 @@
 /*
  * changeNode.h
- * contains all the information need for the undo\redo commands about a single change
+ * contains all the information needed for the undo\redo commands about a single change
+ * in a single move
  *
  */
 #include <stdio.h>
