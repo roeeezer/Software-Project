@@ -87,7 +87,7 @@ ERROR setUpGurobi(board *pBoard, int ilp, VAR **resultVars, double **solValues, 
         return MALLOC_ERROR;
     }
     /*Constraints are always with 1.0*/
-    fillVals(val, N);
+    fillVals(val, varCount);
     obj = (double *) malloc(varCount * sizeof(double));
     if (obj == NULL){
         cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
@@ -178,12 +178,6 @@ ERROR setUpGurobi(board *pBoard, int ilp, VAR **resultVars, double **solValues, 
         cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
         return GUROBI_ERROR;
     }
-    grbError = GRBwrite(model, "sudoku.lp");
-    if (grbError){
-        printf("ERROR %d GRBWrite(): %s\n", grbError, GRBgeterrormsg(env));
-        cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
-        return GUROBI_ERROR;
-    }
     grbError = GRBgetintattr(model, GRB_INT_ATTR_STATUS, &optimstatus);
     if (grbError){
         cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
@@ -194,10 +188,10 @@ ERROR setUpGurobi(board *pBoard, int ilp, VAR **resultVars, double **solValues, 
     /* no solution found */
     else {
         if (optimstatus == GRB_INF_OR_UNBD || optimstatus == GRB_INFEASIBLE)
-            printf("Model is infeasible or unbounded\n");
+            printf("Model is infeasible or unbounded\n"); /*todo debugPrint*/
             /* error or calculation stopped */
         else
-            printf("Optimization was stopped early\n");
+            printf("Optimization was stopped early\n"); /*todo debugPrint*/
         cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
         return GUROBI_ERROR;
     }
@@ -206,6 +200,22 @@ ERROR setUpGurobi(board *pBoard, int ilp, VAR **resultVars, double **solValues, 
         printf("ERROR %d GRBgetdblattrarray(): %s\n", grbError, GRBgeterrormsg(env));
         cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
         return GUROBI_ERROR;
+    }
+    if (DEBUG){
+        if (ilp) grbError = GRBwrite(model, "sudokuILP.lp");
+        else grbError = GRBwrite(model, "sudokuLP.lp");
+        if (grbError){
+            printf("ERROR %d GRBWrite(): %s\n", grbError, GRBgeterrormsg(env));
+            cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
+            return GUROBI_ERROR;
+        }
+        if (ilp) grbError = GRBwrite(model, "sudokuILP.sol");
+        else grbError = GRBwrite(model, "sudokuLP.sol");
+        if (grbError){
+            printf("ERROR %d GRBWrite(): %s\n", grbError, GRBgeterrormsg(env));
+            cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
+            return GUROBI_ERROR;
+        }
     }
     if (ilp){
         error = fillBoardFromSol(pBoard, varArr, varCount, sol);
@@ -461,14 +471,14 @@ void fillArrWithDouble(double *arr, int arrSize, double val) {
 
 void cleanUp(int *ind, double *val, double *lowerBound, double *upperBound, double *obj, char *vtype, VAR *varArr,
              GRBenv *env, GRBmodel *model, double *sol) {
-    free(ind);
-    free(val);
-    free(obj);
-    free(vtype);
-    free(lowerBound);
-    free(upperBound);
-    free(varArr);
-    free(sol);
+    if (ind) free(ind);
+    if (val) free(val);
+    if (obj) free(obj);
+    if (vtype) free(vtype);
+    if (lowerBound) free(lowerBound);
+    if (upperBound) free(upperBound);
+    if (varArr) free(varArr);
+    if (sol) free(sol);
     if (model != NULL)
         GRBfreemodel(model);
     if (env != NULL)

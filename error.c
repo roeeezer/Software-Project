@@ -11,7 +11,7 @@
  * @param pCommand
  */
 
-void printErrorMessage(ERROR error, command *pCommand){
+void printErrorMessage(ERROR error, command *pCommand, int N) {
     switch(error) {
         case NO_ERROR:
         	/*temp: just for debuging*/
@@ -91,15 +91,27 @@ void printErrorMessage(ERROR error, command *pCommand){
         case TMP_ERROR:
             printf("Error: temporary error!\n");
             break;
-        case FIXED_CELL_ERROR: /*TODO: implement all these*/
+        case FIXED_CELL_ERROR:
         	printf("Error: you cannot set a fixed cell in solve mode!\n");
             break;
         case GENERATE_NOT_ENOUGH_CELLS:
+            printf("Error: not enough empty cells to fill\n");
             break;
         case FAILED_TO_GENERATE:
+            printf("Error: generate has failed. Perhaps board is unsolvable?\n");
             break;
-        case GUESS_ERRONEOUS_BOARD:
-        	/*@Omer perhaps you should delete this error and use COMMAND_UNAVAILABLE_WITH_ERRONEOUS_BOARD instead*/
+        case PARAM_OUT_OF_RANGE_FOR_MARK_ERRORS:
+            printf("Error: the parameter for this command must be 0 or 1\n");
+            break;
+        case PARAM_OUT_OF_RANGE_FOR_SET:
+            printf("Error: the first two parameters must be integers between 1 and %d, "
+                   "and the third must be between 0 and %d\n", N, N);
+            break;
+        case PARAM_OUT_OF_RANGE_FOR_GUESS:
+            printf("Error: both parameters must be integers between 1 and %d\n", N);
+            break;
+        case PARAM_OUT_OF_RANGE_FOR_GENERATE:
+            printf("Error: both parameters must be integers between 0 and %d\n", N * N);
             break;
     }
 }

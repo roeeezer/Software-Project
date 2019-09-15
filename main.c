@@ -31,11 +31,51 @@ void testSimpleAutofill(){
     printBoard(pBoard, btypes, SOLVE_MODE, 1);
 }
 
+int testLPGeneratesSolvableBoard(double thresh, int printAfterRun) {
+    board *pBoard, *btypes;
+    ERROR error;
+    clock_t begin, end;
+    int res;
+    setUpLoadedTest(&pBoard, &btypes);
+    printf("Before:\n");
+    if (printAfterRun)printBoard(pBoard, btypes, SOLVE_MODE, 1);
+    begin = clock();
+    error = solveLPWithThreshold(pBoard, thresh);
+    end = clock();
+    printf("Total time for LP: %f \n", (end - begin) / (double)(CLOCKS_PER_SEC));
+    if (error != NO_ERROR){
+        printf("LP error!");
+        return -100;
+    }
+    printf("After LP :\n");
+    if (printAfterRun) printBoard(pBoard,btypes, SOLVE_MODE, 1);
+    printf("Now checking if board is solvable with ILP:\n");
+    error = solveILP(pBoard);
+    if (error != NO_ERROR){
+        printf("Unable to solve board with ILP!\n");
+        res = 0;
+    }
+    else{
+        printf("Succesfully solved board with ILP\nAfter:\n");
+        if (printAfterRun) printBoard(pBoard, btypes, SOLVE_MODE, 1);
+        res=1;
+    }
+    destroyBoard(pBoard);
+    destroyBoard(btypes);
+    return res;
+}
+
 void testLPWithThreshold(double thresh){
     board *pBoard, *btypes;
     ERROR error;
+    clock_t begin, end;
     setUpLoadedTest(&pBoard, &btypes);
+    printf("Before:\n");
+    printBoard(pBoard, btypes, SOLVE_MODE, 1);
+    begin = clock();
     error = solveLPWithThreshold(pBoard, thresh);
+    end = clock();
+    printf("Total time for LP: %f \n", (end - begin) / (double)(CLOCKS_PER_SEC));
     if (error != NO_ERROR){
         printf("LP error!");
         return;
@@ -73,12 +113,16 @@ void testILP(){
     board *pBoard, *btypes;
     ERROR error;
     int n, m;
+    clock_t begin, end;
     n=m=0;
     printf("Now loading\n");
     loadGame(&pBoard, &btypes, "./board1", &n, &m, SOLVE_MODE);
     printf("Before:\n");
     printBoard(pBoard,btypes, SOLVE_MODE, 1);
+    begin = clock();
     error = solveILP(pBoard);
+    end = clock();
+    printf("Total time for ILP: %f \n", (end - begin) / (double)(CLOCKS_PER_SEC));
     if (error == NO_ERROR){
         printf("After:\n");
         printBoard(pBoard,btypes, SOLVE_MODE, 1);
@@ -98,14 +142,14 @@ void testReadCommand(){
     error = readCommand(pCommand, pGame);
     printf("param 1: %s\n param 2: %s, param 3: %s\n",pCommand->param1, pCommand->param2, pCommand->param3);
     printf("DONE READING \n");
-    printErrorMessage(error, pCommand);
+    printErrorMessage(error, pCommand, 0);
     printf("Setting game mode to solve and trying again\n");
     pGame->currMode = SOLVE_MODE;
     destroyCommand(pCommand);
     pCommand = createCommand();
     error = readCommand(pCommand, pGame);
     printf("DONE READING \n");
-    printErrorMessage(error, pCommand);
+    printErrorMessage(error, pCommand, 0);
 }
 
 void exhaustiveBackTrackingTester(){
@@ -170,7 +214,7 @@ int finalMain(){
 			}
 		}
 		if(e!=NO_ERROR){
-			printErrorMessage( e, c);
+            printErrorMessage(e, c, g->board->squareSideSize);
 			destroyCommand(c);
 		}
 		if(g->currMode==BOARD_SOLVED_CORRECTLY_MODE){
@@ -263,7 +307,7 @@ void executeCommandTester(){
 		printf("mode:%d\n",Pgame->currMode);
 		printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);}
 	else{
-		printErrorMessage(err,c);
+        printErrorMessage(err, c, 0);
 	}
 
 }
@@ -295,7 +339,7 @@ void autofillTester(){
 	executeCommand(c,Pgame);
 	c->name = AUTOFILL;
 	executeCommand(c,Pgame);
-	printErrorMessage( err, c);
+    printErrorMessage(err, c, 0);
 	if(err==NO_ERROR){
 		printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
 	}
@@ -307,7 +351,7 @@ void executeCommandAndPrintData(game* g,command* c){
 	printf("Execute ");
 	printCommandName(c);printf("\n");
 	err=executeCommand(c,g);
-	printErrorMessage( err, c);
+    printErrorMessage(err, c, 0);
 	printBoard(g->board,g->boardTypes,g->currMode,g->mark_errors);
 	printf("movesList after execution: ");
 	printMovesList(g->undoList);
@@ -391,13 +435,21 @@ void destroyTester(){
 }
 
 int main(){
-    testSimpleAutofill();
-    return 1;
-    /**int choice;
+    int choice, successCounter, numOfRuns, i;
     double thresh;
+    successCounter = 0;
     printf("Enter threshold as double \n");
     scanf("%lf", &thresh);
-    testLPWithThreshold(thresh);
+    printf("Enter number of runs\n");
+    scanf("%d", &numOfRuns);
+    for (i = 0; i < numOfRuns; i++) {
+        successCounter += `testLPGeneratesSolvableBoard`(thresh, 0);
+    }
+    printf("Total successes: %d out of %d runs\nSuccess rate of %f with threshold %f\n", successCounter,
+           numOfRuns, (double) successCounter / numOfRuns, thresh);
+    return 1;
+    printf("Now testing ILP\n");
+    testILP();
     return 1;
     printf("enter input: 1 - testGenerate\t2 - testILP\t3 - testReadCommand\n");
     scanf("%d", &choice);
@@ -411,6 +463,6 @@ int main(){
     return 1;
 	SP_BUFF_SET();
 	finalMain();
-	return 1;*/
+	return 1;
 }
 

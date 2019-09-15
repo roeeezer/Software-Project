@@ -5,6 +5,7 @@
  */
 #include <stdlib.h>
 #include "board.h"
+#include "solver.h"
 
 board* createBoard(int blockRows,int blockColumns){
 	board* res;
@@ -222,12 +223,7 @@ void printCellValue(board* b,int i,int j,board* bTypes,int gameMode,int markErro
 
 
 }
-int boardHasASolution(board* b){
-	/* @Omer TODO: return true if b has a solution*/
-	if (!b)
-	    return -1;
-	return 1;
-}
+
 int erroneousBoard(board* bTypes){
 	int i,j,s = bTypes->squareSideSize;
 	for(i=0;i<s;i++){
