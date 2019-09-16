@@ -204,32 +204,6 @@ int chooseWithThreshold(double *scoresArr, int *valuesArr, double threshold, int
     return valuesArr[resIndex];
 }
 
-
-int DeterministicBackTracingRec(board* b,board* bSol,int startInd){
-	int s,cellsInBoard,v,nextEmptyCell;
-	int indices[2];
-	s=b->squareSideSize;
-	cellsInBoard=s*s;
-	if(startInd==cellsInBoard){
-		/*the entire board was solved successfully therefore the recursion
-		 * call called a cell which is beyond the last cell(cell[81] in a regular
-		 * 3X3 sudoku*/
-		return 1;
-	}
-	oneDto2Dindices(b,indices,startInd);
-	nextEmptyCell=findNextEmptyCell(b,startInd+1);
-	for(v=1;v<=s;v++){
-		/*squareSideSize is the maximal possible value of a single digit in the board*/
-		if(validAsignment(bSol,v,indices[0],indices[1])){
-			setCell(bSol,indices[0],indices[1],v);
-			if(DeterministicBackTracingRec(b,bSol,nextEmptyCell)){
-				return 1;
-			}
-		}
-		setCell(bSol,indices[0],indices[1],0);
-	}
-	return 0;
-}
 ERROR simpleAutofill(board *pBoard){
     int i,j, N, size;
     int * valuesList;
@@ -289,38 +263,10 @@ int exhaustiveBackTracingWithStack(board* b,board* bSol){
 		}
 	/*tmp*/
 	if(!addReturnVal){
-		printf("error");
+		printf("Error in exhaustive backtracking");
 	}
 	destroyStack(Pstack);
 	return returnVal;
-}
-/*this is temporary just to compare with exhaustiveBackTracingWithStack */
-		int exhaustiveBackTracingRec(board* b,board* bSol,int startInd){
-			int s,cellsInBoard,v,nextEmptyCell,counter=0;
-			int indices[2];
-			s=b->squareSideSize;
-			cellsInBoard=s*s;
-			if(startInd==cellsInBoard){
-				/*the entire board was solved successfully therefore the recursion
-				 * call called a cell which is beyond the last cell(cell[81] in a regular
-				 * 3X3 sudoku*/
-				/*printf("startInd=%d \t res=%d\n",startInd,1);*/
-				return 1;
-			}
-			oneDto2Dindices(b,indices,startInd);
-			nextEmptyCell=findNextEmptyCell(b,startInd+1);
-			for(v=1;v<=s;v++){
-				/*squareSideSize is the maximal possible value of a single digit in the board*/
-				if(validAsignment(bSol,v,indices[0],indices[1])){
-					setCell(bSol,indices[0],indices[1],v);
-					counter+= exhaustiveBackTracingRec(b,bSol,nextEmptyCell);
-
-				}
-
-			}
-			setCell(bSol,indices[0],indices[1],0);
-			/*printf("startInd=%d \t counter=%d\n",startInd,counter);*/
-			return counter;
 }
 
 int createValidValuesList(int* valuesList,board* bSol,int i,int j){
@@ -384,81 +330,6 @@ ERROR autofillBoard(board* b,board* bt,moveNode* move,int gameMode,int printInd)
 	return NO_ERROR;
 
 
-}
-int RandomBackTracingRec(board* b,board* bSol,int startInd){
-		int s,cellsInBoard,v,nextEmptyCell,listSize,r;
-		int indices[2],* valuesList;
-		valuesList = malloc(sizeof(int)*b->squareSideSize);
-		if (valuesList == NULL){
-            printf("Error: malloc has failed\n");
-            exit(-42);
-		}
-		/*squareSideSize is the maximal possible value of a single digit in the board*/
-		s=b->squareSideSize;
-		cellsInBoard=s*s;
-		if(startInd==cellsInBoard){
-			/*the entire board was solved successfully therefore the recursion
-			 * call called a cell which is beyond the last cell(cell[81] in a regular
-			 * 3X3 soduko*/
-			free(valuesList);
-			return 1;
-		}
-		oneDto2Dindices(b,indices,startInd);
-		nextEmptyCell=findNextEmptyCell(b,startInd+1);
-		listSize=createValidValuesList(valuesList,bSol,indices[0],indices[1]);
-		while(0<listSize){
-			if(listSize==1){
-				r=0;
-			}
-			else{
-				r = rand()%listSize;
-				}
-			v = valuesList[r];
-			setCell(bSol,indices[0],indices[1],v);
-			if(RandomBackTracingRec(b,bSol,nextEmptyCell)){
-				free(valuesList);
-
-				return 1;
-			}
-
-			setCell(bSol,indices[0],indices[1],0);
-			deleteIndexFromList(valuesList,r,listSize);
-			listSize--;
-		}
-		free(valuesList);
-		return 0;
-}
-
-int findDeterministicSolution(board* Pboard,board* PboardSol){
-	int firstEmptyCell;
-	board* pSol = createBoard(Pboard->rows, Pboard->columns);
-	copyBoard(pSol,Pboard);
-	firstEmptyCell = findNextEmptyCell(Pboard,0);
-	if (DeterministicBackTracingRec(Pboard,pSol,firstEmptyCell)){
-        copyBoard(PboardSol, pSol);
-        destroyBoard(pSol);
-        return 1;
-	}
-    destroyBoard(pSol);
-	return 0;
-}
-/*
-int findNumberOfSolutions(board* Pboard,board* PboardSol){
-	int res;
-	board* pSol = createBoard(Pboard->rows, Pboard->columns);
-	copyBoard(pSol,Pboard);
-	res=exhaustiveBackTracingWithStack(Pboard,pSol);
-
-    destroyBoard(pSol);
-    return res;
-
-}
-*/
-int findRandomSolution(board* Pboard,board* PboardSol){
-	int firstEmptyCell;
-	copyBoard(PboardSol,Pboard);
-	firstEmptyCell = findNextEmptyCell(Pboard,0);
-	return RandomBackTracingRec(Pboard,PboardSol,firstEmptyCell);
 }
 
 /**

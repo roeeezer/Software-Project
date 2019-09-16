@@ -22,15 +22,13 @@ ERROR executeGuessCommand(game *game, double thresh, moveNode *move);
  *the entire board contains mXn blocks- each contains nXm cells */
 
 
-game* createGame(int seed){
+game* createGame(){
 	game* res = (game*) malloc(sizeof(game));
 	if (res == NULL){
         printf("Error: malloc has failed\n");
         exit(-42);
 	}
-	res->seed = seed;
 	res->board = createBoard(blockRows,blockColumns);
-	res->boardSol = createBoard(blockRows,blockColumns);
 	res->boardTypes = createBoard(blockRows,blockColumns);
 	res->undoList = createMovesList();
 	resetBoard(res->boardTypes, REGULAR_CELL);
@@ -42,43 +40,11 @@ game* createGame(int seed){
 
 void destroyGame(game* game){
     destroyBoard(game->board);
-    destroyBoard(game->boardSol);
     destroyBoard(game->boardTypes);
     destroyMovesList(game->undoList);
 	free(game);
 }
 
-int initializeGame(int seed, game **newGame) {
-    /* function was changed to return int for result status instead of board*/
-    game* res;
-	int fixedCells= getInitializationInput();
-	if (fixedCells == -1){
-	    return 1; /*exitInd = 1 */
-	}
-	res = createGame(seed);
-	buildBoardRandom(fixedCells,res);
-	*newGame = res;
-	return 0; /*exitInd = 0*/
-}
-int buildBoardRandom(int fixedCells,game* Pgame){
-    findRandomSolution(Pgame->board, Pgame->boardSol);
-	buildBoardFromSolution(Pgame,fixedCells);
-	return 1;
-}
-
-void buildBoardFromSolution(game*Pgame,int fixedCells){
-	int i, x, y, size = Pgame->board->squareSideSize;
-	for (i=0; i < fixedCells; i++){
-	    x = rand() % size;
-        y = rand() % size;
-        while (getCell(Pgame->boardTypes, y, x) ==1){
-            x = rand() % size;
-            y = rand() % size;
-        }
-        setCell(Pgame->board, y, x, getCell(Pgame->boardSol,y,x));
-        setCell(Pgame->boardTypes, y, x, 1);
-	}
-}
 ERROR executeSolveOrEditCommand(command* pCommand,game* pGame,ERROR error){
     board *newBoard=NULL,*newBoardTypes=NULL;
     int n=0,m=0,currMode;
@@ -93,11 +59,9 @@ ERROR executeSolveOrEditCommand(command* pCommand,game* pGame,ERROR error){
     if (error == NO_ERROR){
     	destroyBoard(pGame->board);
     	destroyBoard(pGame->boardTypes);
-    	destroyBoard(pGame->boardSol);
     	destroyMovesList(pGame->undoList);
     	pGame->board = newBoard;
     	pGame->boardTypes = newBoardTypes;
-    	pGame->boardSol = createBoard(n,m);
     	pGame->undoList = createMovesList();
         pGame->currMode = currMode;
         return error;
@@ -199,11 +163,9 @@ ERROR executeDefaultEdit(game* g){
 	m=blockColumns;
 	destroyBoard(g->board);
 	destroyBoard(g->boardTypes);
-	destroyBoard(g->boardSol);
 	destroyMovesList(g->undoList);
 	g->board = createBoard(n,m);
 	g->boardTypes = createBoard(n,m);
-	g->boardSol = createBoard(n,m);
 	g->undoList = createMovesList();
     g->currMode = EDIT_MODE;
     return NO_ERROR;/*the only possible error is malloc fatal error*/
@@ -411,46 +373,6 @@ ERROR executeSetCommand(game *game,moveNode *move, int x, int y, int z) {
 
 /*TODO: Remove this function*/
 
-void executeCommandDEPRECATED(command* PcurrCommand, game* Pgame){
-	/*Currently treats NONE command name as illegal command*/
-	int validBoard;
-	int j, i, z;
-	int currval;
-	j=i=z=1;/*= PcurrCommand->param1 - 1,i= PcurrCommand->param2 - 1,z=PcurrCommand->param3; j=column(i.e j) i = row(i.e. i)*/
-	currval = getCell(Pgame->board, i, j);
-	if ((PcurrCommand->name != EXIT && PcurrCommand->name != NONE && boardSolved(Pgame->board)) ||
-	     PcurrCommand->name == NONE) {
-	    printf("Error: invalid command\n");
-	    return;
-	}
-	if(PcurrCommand->name==SET){
-        if (currval < 0) /*TODO: Change to use some is_fixed_cell function*/
-            printf("Error: cell is fixed\n");
-        else if (z != 0 && !validAsignment(Pgame->board, z, i, j))
-	            printf("Error: value is invalid\n"); /*TODO: This is allowed, need to confirm printing*/
-        else{ /*No error, should set cell value*/
-	        setCell(Pgame->board, i, j, z);
-	        printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
-	        if (boardSolved(Pgame->board)){
-	            printf("Puzzle solved successfully\n");
-	        }
-
-	    }
-	}
-	else if(PcurrCommand->name==HINT){
-        printf("Hint: set cell to %d\n", abs(getCell(Pgame->boardSol, i, j)));
-		}
-	else if(PcurrCommand->name==VALIDATE){ /*TODO: change to using gurobi ILP. First check if board is errnoeus!*/
-		validBoard=findDeterministicSolution(Pgame->board,Pgame->boardSol);
-		if(validBoard==1){
-			printf("Validation passed: board is solvable\n");
-		}
-		else{
-			printf("Validation failed: board is unsolvable\n");
-		}
-
-			}
-}
 int commandMightHaveChangedBoard(command* c){
 	commandName name = c->name;
 	return name==EDIT||name==SOLVE||name==SET||name==AUTOFILL||name==UNDO||name==REDO||name==GENERATE||name==GUESS||name==RESET;

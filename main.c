@@ -152,43 +152,7 @@ void testReadCommand(){
     printErrorMessage(error, pCommand, 0);
 }
 
-void exhaustiveBackTrackingTester(){
-	clock_t start, end;
-	double cpu_time_used;
-	game* Pgame=createGame(2);
-	resetBoard(Pgame->board,0);
-	resetBoard(Pgame->boardSol,0);
-	resetBoard(Pgame->boardTypes,0);
-	buildBoardRandom(35,Pgame);
-	printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
-	copyBoard(Pgame->boardSol,Pgame->board);
 
-     start = clock();
-     printf("old func:%d\n",exhaustiveBackTracingRec(Pgame->board,Pgame->boardSol,0));
-     end = clock();
-     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-     printf("time:%f\n",cpu_time_used);
-     start = clock();
-     printf("new func:%d\n",exhaustiveBackTracingWithStack(Pgame->board,Pgame->boardSol));
-     end = clock();
-     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-     printf("time:%f\n",cpu_time_used);
-
-}
-void saveGameTester(){
-	game* Pgame=createGame(1);
-	resetBoard(Pgame->board,0);
-	resetBoard(Pgame->boardSol,0);
-	/*printf("Before build random\n");
-	buildBoardRandom(10,Pgame);*/
-	resetBoard(Pgame->board, REGULAR_CELL);
-	resetBoard(Pgame->boardTypes, REGULAR_CELL);
-	printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
-	copyBoard(Pgame->boardSol,Pgame->board);
-	printf("Before save\n");
-	saveGame(Pgame->board,Pgame->boardTypes,"24Board",2);
-
-}
 
 int finalMain(){
 	int seed=1;
@@ -232,120 +196,7 @@ int finalMain(){
 
 
 }
-int oldFinalMain(){
-	int exitInd,restartInd,seed;
-	command* PcurrCommand;
-	ERROR commandError;
-	 /* ERROR commandError;*/
-	game* Pgame; /*need to use createGame?*/
-	seed=1;
-    srand(seed);
-	exitInd=0;
-	while(!exitInd){
-	    restartInd = 0;
-		exitInd = initializeGame(seed, &Pgame);
-		if(exitInd){
-            printf("Exiting...\n");
-            return 0;}
-			printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
-		while(!exitInd&&!restartInd){
-			PcurrCommand=createCommand();
-			/*check malloc success*/
-             commandError = readCommand(PcurrCommand, Pgame);
-			exitInd=(PcurrCommand->name == EXIT);
-			/*restartInd=(PcurrCommand->name==RESTART);*/
-            executeCommandDEPRECATED(PcurrCommand, Pgame);
-			destroyCommand(PcurrCommand);
-			/*TODO: check if executionError (returns from executeCommand) is BOARD_SOLVED_CORRECTLY and act*/
-		}
-		destroyGame(Pgame);}
-	printf("Exiting...\n");
-	/*Roee: just for compilation:*/
-	printf("%d",commandError);
-	return 0;
-}
 
-void loaderTester(){
-	int n=0,m=0;
-	board *b,*bt;
-	game* Pgame=createGame(5);
-	b = Pgame->board;
-	bt = Pgame->boardTypes;
-	buildBoardRandom(45,Pgame);
-	resetBoard(Pgame->boardSol,0);
-	resetBoard(bt,REGULAR_CELL);
-
-
-	printBoard(b,bt,Pgame->currMode,Pgame->mark_errors);
-	saveGame(b,bt,"board1.txt",SOLVE);
-	printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
-	printf("before load b val=%d\n",b==NULL);
-
-	loadGame(&b,&bt,"board1.txt",&n,&m,Pgame->currMode);
-	printf("after load b val=%d\n",b==NULL);
-
-	printBoard(b,bt,Pgame->currMode,Pgame->mark_errors);
-
-
-}
-void executeCommandTester(){
-	game* Pgame;
-	command *c;
-	ERROR err;
-	c = createCommand();
-	Pgame=createGame(1);
-	buildBoardRandom(28,Pgame);
-	resetBoard(Pgame->boardTypes, REGULAR_CELL);
-
-
-	c->name=SOLVE;
-	c->param1 = "board2.txt";
-	err=executeCommand(c,Pgame);
-	printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
-
-	if(err==NO_ERROR){
-		printf("mode:%d\n",Pgame->currMode);
-		printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);}
-	else{
-        printErrorMessage(err, c, 0);
-	}
-
-}
-void erroneousCheckTester(){
-	game* Pgame;
-	int i=0,j=2,v=1;
-	Pgame=createGame(5);
-	Pgame->currMode = EDIT_MODE;
-	buildBoardRandom(45,Pgame);
-	resetBoard(Pgame->boardTypes, FIXED_CELL);
-	printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
-	setCellAndUpdateErroneous(Pgame->board,Pgame->boardTypes, i, j, v,Pgame->currMode);
-	printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
-
-}
-void autofillTester(){
-	game* Pgame;
-	command *c;
-	ERROR err=NO_ERROR;
-	c = createCommand();
-
-	Pgame=createGame(5);
-	c->name = SAVE;
-	c->param1 = "tmpBoard.txt";
-	buildBoardRandom(55,Pgame);
-	resetBoard(Pgame->boardTypes, REGULAR_CELL);
-
-	printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
-	executeCommand(c,Pgame);
-	c->name = AUTOFILL;
-	executeCommand(c,Pgame);
-    printErrorMessage(err, c, 0);
-	if(err==NO_ERROR){
-		printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
-	}
-
-
-}
 void executeCommandAndPrintData(game* g,command* c){
 	ERROR err=NO_ERROR;
 	printf("Execute ");
@@ -424,18 +275,10 @@ void undoListTester(){
 
 	destroyGame(Pgame);
 }
-void destroyTester(){
-	game* Pgame;
-	Pgame=createGame(5);
-	Pgame->currMode = SOLVE_MODE;
-	buildBoardRandom(55,Pgame);
-	resetBoard(Pgame->boardTypes, REGULAR_CELL);
-	printBoard(Pgame->board,Pgame->boardTypes,Pgame->currMode,Pgame->mark_errors);
-	destroyGame(Pgame);
-}
+
 
 int main(){
-    int choice, successCounter, numOfRuns, i;
+    /*int choice, successCounter, numOfRuns, i;
     double thresh;
     successCounter = 0;
     printf("Enter threshold as double \n");
@@ -459,8 +302,8 @@ int main(){
         testILP();
     else if (choice == 3)
         testReadCommand();
-    return 1;
-    return 1;
+    return 1;*/
+
 	SP_BUFF_SET();
 	finalMain();
 	return 1;

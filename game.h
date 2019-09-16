@@ -14,15 +14,13 @@
 #include "error.h"
 #include "files.h"
 #include "movesList.h"
-#define blockRows 2
-#define blockColumns 4
+#define blockRows 3
+#define blockColumns 3
 
 
 
 typedef struct{
-	int seed;
 	board* board;
-	board* boardSol;
 	board* boardTypes;
 	/*0 - for regular cell
 	* 1 - for fixed cell
@@ -38,23 +36,8 @@ typedef struct{
 
 
 } game;
-game* createGame(int seed);
+game* createGame();
 void destroyGame(game* game);
-
-/*Initializes a new game, getting user input for number of fixed cells,
- * then generates a board.
- * Returns the value for exitInd:
- * 1 if unable to initialize game (and now we have to quit)
- * 0 if game was initialized successfully */
-int initializeGame(int seed, game **newGame);
-
-/*Finds a random solution,
- * then fills the board with fixedCells fixed cells*/
-int buildBoardRandom(int fixedCells,game* game);
-
-/* Uses a solution board to randomly build a board
- * with fixedCells fixed cells */
-void buildBoardFromSolution(game* Pgame,int fixedCells);
 
 /**
  * @param PcurrCommand the pointer to the command
@@ -68,7 +51,6 @@ void buildBoardFromSolution(game* Pgame,int fixedCells);
  * that is executed as part of a redo command where ind should be 0
  */
 ERROR executeCommand(command* pCommand, game* pGame);
-void executeCommandDEPRECATED(command* PcurrCommand, game* Pgame);
 int commandMightHaveChangedBoard(command* c);
 
 
