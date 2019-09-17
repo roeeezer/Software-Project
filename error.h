@@ -39,11 +39,15 @@ typedef enum {
 	FIXED_CELL_ERROR,
 	GENERATE_NOT_ENOUGH_CELLS,
 	FAILED_TO_GENERATE,
+    HINT_OR_GUESS_BOARD_ERRONEOUS,
+    HINT_OR_GUESS_FIXED_CELL,
+    HINT_OR_GUESS_NON_EMPTY_CELL,
     /*GUESS_ERRONEOUS_BOARD,*/
 	NO_MOVES_TO_UNDO_ERROR,
 	NO_MOVES_TO_REDO_ERROR,
 	TMP_ERROR,/*just for compilation reasons*/
-    GUROBI_ERROR,
+    GUROBI_GENERAL_ERROR,
+    GUROBI_UNABLE_TO_SOLVE,
     UNKNOWN_ERROR /*An unknown error occurred. For checking if we reached unexpected situations*/
 } ERROR;
 void printErrorMessage(ERROR error, command *pCommand, int N);

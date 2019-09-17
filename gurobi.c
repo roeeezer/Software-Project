@@ -61,13 +61,13 @@ ERROR setUpGurobi(board *pBoard, int ilp, VAR **resultVars, double **solValues, 
     grbError = DEBUG ? GRBloadenv(&env, "mip1.log") : GRBloadenv(&env, NULL);
     if (grbError) {
         printf("ERROR %d GRBloadenv(): %s\n", grbError, GRBgeterrormsg(env));
-        return GUROBI_ERROR;
+        return GUROBI_GENERAL_ERROR;
     }
 
     grbError = GRBsetintparam(env, GRB_INT_PAR_LOGTOCONSOLE, 0);
     if (grbError) {
         printf("ERROR %d GRBsetintattr(): %s\n", grbError, GRBgeterrormsg(env));
-        return GUROBI_ERROR;
+        return GUROBI_GENERAL_ERROR;
     }
 
     /*Allocate and check malloc success */
@@ -132,56 +132,56 @@ ERROR setUpGurobi(board *pBoard, int ilp, VAR **resultVars, double **solValues, 
     if (grbError) {
         printf("ERROR %d GRBnewmodel(): %s\n", grbError, GRBgeterrormsg(env));
         cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
-        return GUROBI_ERROR;
+        return GUROBI_GENERAL_ERROR;
     }
     grbError = GRBsetintattr(model, GRB_INT_ATTR_MODELSENSE, GRB_MAXIMIZE);
     if (grbError) {
         printf("ERROR %d GRBsetintattr(): %s\n", grbError, GRBgeterrormsg(env));
         cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
-        return GUROBI_ERROR;
+        return GUROBI_GENERAL_ERROR;
     }
     grbError = GRBupdatemodel(model);
     if (grbError) {
         printf("ERROR %d GRBupdatemodel(): %s\n", grbError, GRBgeterrormsg(env));
         cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
-        return GUROBI_ERROR;
+        return GUROBI_GENERAL_ERROR;
     }
     error = addCellConstraints(varArr, model, ind, val, varCount);
     if (error != NO_ERROR){
         cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
-        return GUROBI_ERROR;
+        return GUROBI_GENERAL_ERROR;
     }
     error = addRowConstraints(model, varArr, ind, val, varCount, pBoard);
     if (error != NO_ERROR){
         cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
-        return GUROBI_ERROR;
+        return GUROBI_GENERAL_ERROR;
     }
     error = addColConstraints(model, varArr, ind, val, varCount, pBoard);
     if (error != NO_ERROR){
         cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
-        return GUROBI_ERROR;
+        return GUROBI_GENERAL_ERROR;
     }
     error = addBlockConstraints(model, varArr, ind, val, varCount, pBoard);
     if (error != NO_ERROR){
         cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
-        return GUROBI_ERROR;
+        return GUROBI_GENERAL_ERROR;
     }
     grbError = GRBupdatemodel(model);
     if (grbError) {
         printf("ERROR %d GRBupdatemodel(): %s\n", grbError, GRBgeterrormsg(env));
         cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
-        return GUROBI_ERROR;
+        return GUROBI_GENERAL_ERROR;
     }
     grbError = GRBoptimize(model);
     if (grbError){
         printf("ERROR %d GRBOptimize(): %s\n", grbError, GRBgeterrormsg(env));
         cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
-        return GUROBI_ERROR;
+        return GUROBI_GENERAL_ERROR;
     }
     grbError = GRBgetintattr(model, GRB_INT_ATTR_STATUS, &optimstatus);
     if (grbError){
         cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
-        return GUROBI_ERROR;
+        return GUROBI_GENERAL_ERROR;
     }
     if (optimstatus == GRB_OPTIMAL)
         printf("Optimal objective: found\n");
@@ -193,13 +193,13 @@ ERROR setUpGurobi(board *pBoard, int ilp, VAR **resultVars, double **solValues, 
         else
             printf("Optimization was stopped early\n"); /*todo debugPrint*/
         cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
-        return GUROBI_ERROR;
+        return GUROBI_UNABLE_TO_SOLVE;
     }
     grbError = GRBgetdblattrarray(model, GRB_DBL_ATTR_X, 0, varCount, sol);
     if (grbError) {
         printf("ERROR %d GRBgetdblattrarray(): %s\n", grbError, GRBgeterrormsg(env));
         cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
-        return GUROBI_ERROR;
+        return GUROBI_GENERAL_ERROR;
     }
     if (DEBUG){
         if (ilp) grbError = GRBwrite(model, "sudokuILP.lp");
@@ -207,14 +207,14 @@ ERROR setUpGurobi(board *pBoard, int ilp, VAR **resultVars, double **solValues, 
         if (grbError){
             printf("ERROR %d GRBWrite(): %s\n", grbError, GRBgeterrormsg(env));
             cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
-            return GUROBI_ERROR;
+            return GUROBI_GENERAL_ERROR;
         }
         if (ilp) grbError = GRBwrite(model, "sudokuILP.sol");
         else grbError = GRBwrite(model, "sudokuLP.sol");
         if (grbError){
             printf("ERROR %d GRBWrite(): %s\n", grbError, GRBgeterrormsg(env));
             cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
-            return GUROBI_ERROR;
+            return GUROBI_GENERAL_ERROR;
         }
     }
     if (ilp){
@@ -337,7 +337,7 @@ ERROR addBlockConstraints(GRBmodel *model, VAR *varArr, int *ind, double *val, i
                     grbError = GRBaddconstr(model, index, ind, val, GRB_EQUAL, 1.0, NULL);
                     if (grbError) {
                         printf("ERROR in block constraint!\n");
-                        return GUROBI_ERROR;
+                        return GUROBI_GENERAL_ERROR;
                     }
                 }
             }
@@ -371,7 +371,7 @@ ERROR addRowConstraints(GRBmodel *model, VAR *varArr, int *ind, double *val, int
                 grbError = GRBaddconstr(model, index, ind, val, GRB_EQUAL, 1.0, NULL);
                 if (grbError) {
                     printf("ERROR in row constraint!\n");
-                    return GUROBI_ERROR;
+                    return GUROBI_GENERAL_ERROR;
                 }
             }
         }
@@ -404,7 +404,7 @@ ERROR addColConstraints(GRBmodel *model, VAR *varArr, int *ind, double *val, int
                 grbError = GRBaddconstr(model, index, ind, val, GRB_EQUAL, 1.0, NULL);
                 if (grbError) {
                     printf("ERROR in col constraint!\n");
-                    return GUROBI_ERROR;
+                    return GUROBI_GENERAL_ERROR;
                 }
             }
         }
@@ -450,7 +450,7 @@ ERROR addCellConstraints(VAR *varArr, GRBmodel *model, int *ind, double *val, in
         }
         /*sum_{i \in ind} x_i = 1*/
         grbError = GRBaddconstr(model, numOfVarsInConstraint, ind, val, GRB_EQUAL, 1.0, NULL);
-        if (grbError) return GUROBI_ERROR;
+        if (grbError) return GUROBI_GENERAL_ERROR;
     }
     return NO_ERROR;
 }
@@ -500,7 +500,7 @@ ERROR createVarArr(VAR *varArr, int varCount, int N, board *pBoard) {
                     if (validAsignment(pBoard, v, i, j)) {
                         if (index > varCount) {
                             if (DEBUG) printf("VarCount exceeded in creating varArr\n");
-                            return GUROBI_ERROR; /*Shouldn't happen */
+                            return GUROBI_GENERAL_ERROR; /*Shouldn't happen */
                         }
                         (varArr+index)->row = i;
                         (varArr+index)->col = j;

@@ -17,6 +17,8 @@ ERROR executeGenerateCommand(game *game,moveNode* move, int x, int y);
 
 ERROR executeGuessCommand(game *game, double thresh, moveNode *move);
 
+
+
 /*n is the number of rows in each board block
  *m is the number of columns in each board block
  *the entire board contains mXn blocks- each contains nXm cells */
@@ -224,7 +226,7 @@ ERROR executeCommand(command* pCommand, game* pGame){
             error = saveGame(pGame->board,pGame->boardTypes, pCommand->param1,pGame->currMode);
             break;
         case GUESS_HINT:
-            /* error = guessHint(pGame, atoi(pCommand->param1), atoi(pCommand->param2)); TODO: uncomment this*/
+            error = executeGuessHintCommand(pGame->board, pGame->boardTypes, atoi(pCommand->param1), atoi(pCommand->param2));
             break;
         case NUM_SOLUTIONS:
         	if(erroneousBoard(pGame->boardTypes)){
@@ -243,14 +245,12 @@ ERROR executeCommand(command* pCommand, game* pGame){
             break;
         case SET:
             error = executeSetCommand(pGame,move, atoi(pCommand->param1), atoi(pCommand->param2), atoi(pCommand->param3));
-            /*TODO: @Omer implement TODO: uncomment this
-             * Comment from Roee: remember that you cannot set a fixed cell to the value 0*/
             break;
         case HINT:
-            /*error = hint(pGame, atoi(pCommand->param1), atoi(pCommand->param2));TODO: uncomment this*/
+            error = executeHintCommand(pGame->board, pGame->boardTypes, atoi(pCommand->param1), atoi(pCommand->param2));
             break;
         case VALIDATE:
-            /*error = validateBoard(pGame);TODO: uncomment this*/
+            error = executeValidateCommand(pGame->board);
             break;
         case EXIT:
             error = EXIT_MESSAGE;
@@ -277,6 +277,90 @@ ERROR executeCommand(command* pCommand, game* pGame){
         	   pGame->currMode = BOARD_SOLVED_CORRECTLY_MODE;
            }
     }
+    return error;
+}
+
+ERROR executeValidateCommand(board *pBoard) {
+    board * cpBoard;
+    ERROR error;
+    cpBoard = createBoard(pBoard->rows, pBoard->columns);
+    copyBoard(cpBoard, pBoard);
+    error = solveILP(cpBoard);
+    destroyBoard(cpBoard);
+    if (error == NO_ERROR)
+        printf("Validation passed! Board is solvable\n");
+    return error;
+}
+/**
+ *
+ * @param pBoard
+ * @param bTypes
+ * @param x the column (1-indexed)
+ * @param y the row (1-indexed)
+ * @return
+ */
+ERROR executeHintCommand(board *pBoard, board *bTypes, int x, int y) {
+    ERROR error;
+    board * cpBoard;
+    int i, j;
+    i = y-1;
+    j = x-1;
+    if (erroneousBoard(bTypes)) {
+        return HINT_OR_GUESS_BOARD_ERRONEOUS;
+    }
+    if (getCell(bTypes, i, j) == FIXED_CELL)
+        return HINT_OR_GUESS_FIXED_CELL;
+    if (!emptyCell(pBoard, i, j))
+        return HINT_OR_GUESS_NON_EMPTY_CELL;
+    cpBoard = createBoard(pBoard->rows, pBoard->columns);
+    copyBoard(cpBoard, pBoard);
+    error = solveILP(cpBoard);
+    if (error == NO_ERROR)
+        printf("Hint: the value of cell <%d,%d> is: %d\n", x, y, getCell(cpBoard, i, j));
+    destroyBoard(cpBoard);
+    return error;
+}
+
+/**
+ *
+ * @param pBoard
+ * @param boardTypes
+ * @param x the column (1-indexed)
+ * @param y the row (1-indexed)
+ * @return appropriate error
+ */
+ERROR executeGuessHintCommand(board *pBoard, board *boardTypes, int x, int y) {
+    int N, len, counter, *cellValues, i, j;
+    double * cellScores;
+    ERROR error;
+    i = y - 1;
+    j = x - 1;
+    N = pBoard->squareSideSize;
+    if (erroneousBoard(boardTypes)) {
+        return HINT_OR_GUESS_BOARD_ERRONEOUS;
+    }
+    if (getCell(boardTypes, i, j) == FIXED_CELL) {
+        if (DEBUG) printf("Guess hint on fixed cell!");
+        return HINT_OR_GUESS_FIXED_CELL;
+    }
+    if (!emptyCell(pBoard, i, j))
+        return HINT_OR_GUESS_NON_EMPTY_CELL;
+    cellValues = (int *) malloc(N * sizeof(int));
+    if (cellValues == NULL)
+        return MALLOC_ERROR;
+    cellScores = (double *) malloc(N * sizeof(double));
+    if (cellScores == NULL)
+        return MALLOC_ERROR;
+    error = solveLPForTargetCell(pBoard, i, j, cellValues, cellScores, &len);
+    if (error == NO_ERROR) {
+        printf("These are the possible values and scores guessed for cell <%d,%d>\n", x, y);
+        for (counter = 0; counter < len; counter++) {
+            if (cellScores[counter] > 0)
+                printf("The value: %d with a score of: %f\n", cellValues[counter], cellScores[counter]);
+        }
+    }
+    free(cellScores);
+    free(cellValues);
     return error;
 }
 

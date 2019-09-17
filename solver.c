@@ -36,17 +36,17 @@ ERROR solveILP(board* pBoard){
 
 /**
  *
- * @param pBoard
- * @param x
- * @param y
- * @param cellValues, to be allocated inside the function. Must be freed by caller.
- * @param cellScores to be allocated inside the function. Must be freed by caller.
+ * @param pBoard game board. Read-only
+ * @param i, 0-indexed
+ * @param j, 0-indexed
+ * @param cellValues, preallocated array for possible values of cell.
+ * @param cellScores pre-allocated array for scores of values.
  * @return
  */
-ERROR solveLPForTargetCell(board *pBoard, int x, int y, int *cellValues, double *cellScores, int *numOfValuesInCell) {
+ERROR solveLPForTargetCell(board *pBoard, int i, int j, int *cellValues, double *cellScores, int *numOfValuesInCell) {
     /*TODO @Omer go over this*/
     board* cpBoard;
-    int N,i, varCount, index;
+    int counter, varCount, index;
     ERROR error;
     VAR * resultVars;
     double * solValues;
@@ -61,25 +61,19 @@ ERROR solveLPForTargetCell(board *pBoard, int x, int y, int *cellValues, double 
     cpBoard = createBoard(pBoard->rows, pBoard->columns);
     copyBoard(cpBoard, pBoard);
     simpleAutofill(cpBoard);
-    N = pBoard->squareSideSize;
-    cellScores = (double *) malloc(N * sizeof(double));
-    if (cellScores == NULL)
-        return MALLOC_ERROR;
-    cellValues = (int *) malloc(N * sizeof(double));
-    if (cellValues == NULL)
-        return MALLOC_ERROR;
     if (DEBUG && (resultVars == NULL || solValues == NULL))
         printf("Your arrays are NULL!\n"); /*TODO debugPrint*/
-    for (i = 0; i < varCount;i++) {
-        *numOfValuesInCell = 0;
-        index = 0;
-        if ((resultVars + i)->row == y && (resultVars + i)->col == x) {
-            cellScores[index] = solValues[i];
-            cellValues[index] = (resultVars + i)->val;
+    *numOfValuesInCell = 0;
+    index = 0;
+    for (counter = 0; counter < varCount; counter++) {
+        if ((resultVars + counter)->row == i && (resultVars + counter)->col == j) {
+            cellScores[index] = solValues[counter];
+            cellValues[index] = (resultVars + counter)->val;
             index++;
             (*numOfValuesInCell) += 1;
         }
     }
+    destroyBoard(cpBoard);
     return NO_ERROR; /*TODO change this func not done*/
 }
 

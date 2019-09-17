@@ -52,7 +52,7 @@ void printErrorMessage(ERROR error, command *pCommand, int N) {
         case INVALID_GAME_MODE_EDIT:
             printf("Error: This command is only available in Edit mode.\n");
             break;
-        case GUROBI_ERROR:
+        case GUROBI_GENERAL_ERROR:
             printf("Error: Gurobi has encountered an error!\n");
             break;
         case FOPEN_ERROR:
@@ -112,6 +112,14 @@ void printErrorMessage(ERROR error, command *pCommand, int N) {
             break;
         case PARAM_OUT_OF_RANGE_FOR_GENERATE:
             printf("Error: both parameters must be integers between 0 and %d\n", N * N);
+            break;
+        case HINT_OR_GUESS_BOARD_ERRONEOUS:
+            break;
+        case HINT_OR_GUESS_FIXED_CELL:
+            break;
+        case HINT_OR_GUESS_NON_EMPTY_CELL:
+            break;
+        case GUROBI_UNABLE_TO_SOLVE:
             break;
     }
 }

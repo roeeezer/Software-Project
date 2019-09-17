@@ -18,6 +18,31 @@
 
 void setUpLoadedTest(board **pBoard, board **btypes);
 
+void testGuessHintCommand(int x, int y){
+    board * pBoard, *bTypes;
+    setUpLoadedTest(&pBoard, &bTypes);
+    printf("the cell at <%d,%d> is %d \n", x, y, getCell(pBoard, y-1, x-1));
+    printBoard(pBoard, bTypes, SOLVE_MODE, 1);
+    executeGuessHintCommand(pBoard, bTypes, x, y);
+}
+
+void testHintCommand(int x, int y){
+    board * pBoard, *bTypes;
+    setUpLoadedTest(&pBoard, &bTypes);
+    printf("the cell at <%d,%d> is %d \n", x, y, getCell(pBoard, y-1, x-1));
+    printBoard(pBoard, bTypes, SOLVE_MODE, 1);
+    executeHintCommand(pBoard, bTypes, x, y);
+    solveILP(pBoard);
+    printBoard(pBoard, bTypes, SOLVE_MODE, 1);
+}
+
+void testValidateCommand(){
+    board * pBoard, *bTypes;
+    setUpLoadedTest(&pBoard, &bTypes);
+    printBoard(pBoard, bTypes, SOLVE_MODE, 1);
+    executeValidateCommand(pBoard);
+}
+
 void testSimpleAutofill(){
     board *pBoard, *btypes;
     ERROR error;
@@ -278,6 +303,13 @@ void undoListTester(){
 
 
 int main(){
+    int x, y;
+    printf("Enter x: ");
+    scanf("%d", &x);
+    printf("Enter y: ");
+    scanf("%d", &y);
+    testHintCommand(x, y);
+    return 1;
     /*int choice, successCounter, numOfRuns, i;
     double thresh;
     successCounter = 0;

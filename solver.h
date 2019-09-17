@@ -31,7 +31,7 @@ int exhaustiveBackTracingWithStack(board* b,board* bSol);
 /*the options of ind are described in game.h*/
 ERROR autofillBoard(board* b,board* bt,moveNode* move,int gameMode,int printInd);
 ERROR solveILP(board *b);
-ERROR solveLPForTargetCell(board *pBoard, int x, int y, int *cellValues, double *cellScores, int *numOfValuesInCell);
+ERROR solveLPForTargetCell(board *pBoard, int i, int j, int *cellValues, double *cellScores, int *numOfValuesInCell);
 ERROR solveLPWithThreshold(board *pBoard, double threshold);
 int fillXRandomCells(board* pBoard, int x);
 void clearRandomCell(board* pBoard);
