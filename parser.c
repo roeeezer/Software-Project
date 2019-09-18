@@ -254,7 +254,7 @@ ERROR readCommand(command *pCommand, game* pGame) {
     param2 = strtok(NULL, delim);
     param3 = strtok(NULL, delim);
     param4 = strtok(NULL, delim); /* param4 only used to check if more text remains after 3rd param read*/
-    printf("read all 3 params! 1 %s\n2 %s\n3 %s\n", param1, param2, param3);
+    /*printf("read all 3 params! 1 %s\n2 %s\n3 %s\n", param1, param2, param3);*/
     numberOfParams += (param1 != NULL) + (param2 != NULL) + (param3 != NULL) + (param4 != NULL);
     if (!correctNumberOfParams(name, numberOfParams))
         return INCORRECT_NUMBER_OF_PARAMS;

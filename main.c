@@ -301,16 +301,28 @@ void undoListTester(){
 	destroyGame(Pgame);
 }
 
+void numSolutionsTester(){
+	game* g;
+	command *c;
+	g=createGame(5);
+	g->currMode = EDIT_MODE;
+	c = createCommand();
+	c->name = SOLVE;
+	c->param1 = "filledBoard";
+	executeCommand(c,g);
+	c->name = NUM_SOLUTIONS;
+	executeCommand(c,g);
 
+}
 int main(){
-    int x, y;
+	/*int x, y;
     printf("Enter x: ");
     scanf("%d", &x);
     printf("Enter y: ");
     scanf("%d", &y);
     testHintCommand(x, y);
     return 1;
-    /*int choice, successCounter, numOfRuns, i;
+    int choice, successCounter, numOfRuns, i;
     double thresh;
     successCounter = 0;
     printf("Enter threshold as double \n");
@@ -337,7 +349,7 @@ int main(){
     return 1;*/
 
 	SP_BUFF_SET();
-	finalMain();
+	numSolutionsTester();
 	return 1;
 }
 

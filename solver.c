@@ -219,22 +219,27 @@ ERROR simpleAutofill(board *pBoard){
     free(valuesList);
     return NO_ERROR;
 }
-int exhaustiveBackTracingWithStack(board* b,board* bSol){
-	int s,cellsInBoard,currInd,nextEmptyInd,returnVal=0,addReturnVal,skipToNextStackNode=0;
+int exhaustiveBackTracingWithStack(board* b,board* tmpCopy){
+	int s,cellsInBoard,currInd,nextEmptyInd,returnVal=0,addReturnVal=0,skipToNextStackNode=0;
 	int indices[2];stack* Pstack;stackNode* currNode;
 	s=b->squareSideSize;
 	cellsInBoard=s*s;
 	currInd = findNextEmptyCell(b,0);
 	Pstack = createStack(currInd,0);
 	while(!emptyStack(Pstack)){
-		skipToNextStackNode=0;
+		skipToNextStackNode=0;/*when skipToNextStackNode==1 the program will skip to the next while loop iteration*/
 		currNode = top(Pstack);
 		currInd = currNode->cellIndex;
+		printf("currInd=%d\n",currInd);
 		if(addReturnVal&&!skipToNextStackNode){
+			printf("TMP if1\n");
+			/*simulates adding the value from the last recursive call to the counter*/
 			currNode->counter+=returnVal;
 			addReturnVal=0;
 			}
 		if(currInd==cellsInBoard&&!skipToNextStackNode){
+			printf("TMP if2\n");
+			/*the stopping condition in the recursion*/
 			addReturnVal=1;
 			returnVal= 1;
 			deleteTop(Pstack);
@@ -242,14 +247,17 @@ int exhaustiveBackTracingWithStack(board* b,board* bSol){
 		oneDto2Dindices(b,indices,currInd);
 		nextEmptyInd=findNextEmptyCell(b,currInd+1);
 		for(;currNode->fromVal<=s&&!skipToNextStackNode;currNode->fromVal++){
-		if(validAsignment(bSol,currNode->fromVal,indices[0],indices[1])){
-			setCell(bSol,indices[0],indices[1],currNode->fromVal);
+			printf("TMP for loop\n");
+		if(validAsignment(tmpCopy,currNode->fromVal,indices[0],indices[1])){
+			setCell(tmpCopy,indices[0],indices[1],currNode->fromVal);
+			/*simulates a recursive call*/
 			push(Pstack,nextEmptyInd,0);
 			skipToNextStackNode=1;
 	}
 		}
 		if(currNode->fromVal>= s && !skipToNextStackNode){
-			setCell(bSol,indices[0],indices[1],0);
+			printf("TMP if3\n");
+			setCell(tmpCopy,indices[0],indices[1],0);
 			addReturnVal=1;
 			returnVal= currNode->counter;
 			deleteTop(Pstack);
