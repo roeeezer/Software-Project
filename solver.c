@@ -225,20 +225,17 @@ int exhaustiveBackTracingWithStack(board* b,board* tmpCopy){
 	s=b->squareSideSize;
 	cellsInBoard=s*s;
 	currInd = findNextEmptyCell(b,0);
-	Pstack = createStack(currInd,0);
+	Pstack = createStack(currInd,1);
 	while(!emptyStack(Pstack)){
 		skipToNextStackNode=0;/*when skipToNextStackNode==1 the program will skip to the next while loop iteration*/
 		currNode = top(Pstack);
 		currInd = currNode->cellIndex;
-		printf("currInd=%d\n",currInd);
 		if(addReturnVal&&!skipToNextStackNode){
-			printf("TMP if1\n");
 			/*simulates adding the value from the last recursive call to the counter*/
 			currNode->counter+=returnVal;
 			addReturnVal=0;
 			}
 		if(currInd==cellsInBoard&&!skipToNextStackNode){
-			printf("TMP if2\n");
 			/*the stopping condition in the recursion*/
 			addReturnVal=1;
 			returnVal= 1;
@@ -247,16 +244,14 @@ int exhaustiveBackTracingWithStack(board* b,board* tmpCopy){
 		oneDto2Dindices(b,indices,currInd);
 		nextEmptyInd=findNextEmptyCell(b,currInd+1);
 		for(;currNode->fromVal<=s&&!skipToNextStackNode;currNode->fromVal++){
-			printf("TMP for loop\n");
 		if(validAsignment(tmpCopy,currNode->fromVal,indices[0],indices[1])){
 			setCell(tmpCopy,indices[0],indices[1],currNode->fromVal);
 			/*simulates a recursive call*/
-			push(Pstack,nextEmptyInd,0);
+			push(Pstack,nextEmptyInd,1);
 			skipToNextStackNode=1;
 	}
 		}
 		if(currNode->fromVal>= s && !skipToNextStackNode){
-			printf("TMP if3\n");
 			setCell(tmpCopy,indices[0],indices[1],0);
 			addReturnVal=1;
 			returnVal= currNode->counter;

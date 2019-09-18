@@ -43,5 +43,6 @@ void clearRandomCell(board* pBoard);
 ERROR simpleAutofill(board *pBoard);
 
 int boardHasASolution(board* pBoard);
-
+/*TMP just for debuging the real function with stack*/
+int exhaustiveBackTracingRec(board* b,board* bSol,int startInd);
 #endif /* SOLVER_H_ */

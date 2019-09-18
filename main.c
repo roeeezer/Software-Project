@@ -349,7 +349,7 @@ int main(){
     return 1;*/
 
 	SP_BUFF_SET();
-	numSolutionsTester();
+	finalMain();
 	return 1;
 }
 
