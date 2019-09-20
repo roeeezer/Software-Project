@@ -513,7 +513,7 @@ ERROR createVarArr(VAR *varArr, int varCount, int N, board *pBoard) {
                     }
                 }
                 if (!atLeastOneValidAssignment) {
-                    if (DEBUG)printf("Not one valid assignment\n"); /*TODO debugPrint*/
+                    if (DEBUG)printf("Not one valid assignment in <%d,%d> \n", j+1, i+1); /*TODO debugPrint*/
                     return GUROBI_UNABLE_TO_SOLVE;
                 }
             }

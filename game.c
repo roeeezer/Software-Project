@@ -116,7 +116,7 @@ void undoOrRedoChangesList(game* g,changesList* list,int ind){
 	}
 	undoOrRedoChangesListStartingFrom(g,list->first,ind);
 }
-ERROR executeUndo(game* g){
+ERROR executeUndo(game *g, int printChanges) {
 	moveNode* currMove;
 	if(emptyMovesList(g->undoList)||nodeIsStartSentinel(g->undoList,g->undoList->curr)){
 		return NO_MOVES_TO_UNDO_ERROR;
@@ -125,7 +125,8 @@ ERROR executeUndo(game* g){
 	currMove=g->undoList->curr;
 	undoOrRedoChangesList(g,currMove->changes,UNDO_CHANGE_IND);
 
-	printChangesList(currMove->changes,UNDO_CHANGE_IND);
+	if (printChanges)
+	    printChangesList(currMove->changes,UNDO_CHANGE_IND);
 	demoteCurrPointer(g->undoList);
 	return NO_ERROR;
 
@@ -154,7 +155,7 @@ ERROR executeReset(game* g){
 	ERROR e = NO_ERROR;
 
 	while(e!=NO_MOVES_TO_UNDO_ERROR){
-		e=executeUndo(g);
+		e= executeUndo(g, 0);
 	}
 	return NO_ERROR;
 }
@@ -218,13 +219,13 @@ ERROR executeCommand(command* pCommand, game* pGame){
             error = NO_ERROR;
             break;
         case GUESS:
-            error = executeGuessCommand(pGame, atof(pCommand->param1), NULL);
+            error = executeGuessCommand(pGame, atof(pCommand->param1), move);
             break;
         case GENERATE:
             error = executeGenerateCommand(pGame,move, atoi(pCommand->param1), atoi(pCommand->param2));
             break;
         case UNDO:
-        	error = executeUndo(pGame);
+        	error = executeUndo(pGame, 1);
             break;
         case REDO:
         	error = executeRedo(pGame);
@@ -407,14 +408,16 @@ ERROR executeGenerateCommand(game *game,moveNode* move, int x, int y) {
         return GENERATE_NOT_ENOUGH_CELLS;
     cpBoard = createBoard(origBoard->rows, origBoard->columns);
     copyBoard(cpBoard, origBoard);
-    for (i = 0; i < 2; i++) { /*TODO CHANGE BACK TO 1000*/
+    for (i = 0; i < 20; i++) { /*TODO CHANGE BACK TO 1000*/
         success = fillXRandomCells(cpBoard, x);
         if (success){
             error = solveILP(cpBoard);
             if (error == NO_ERROR)
                 break;
-            else
+            else{
                 copyBoard(cpBoard, origBoard);
+                success = 0; /*In case of 1000 iterations with no success in ILP*/
+            }
         }
         else
             copyBoard(cpBoard, origBoard);

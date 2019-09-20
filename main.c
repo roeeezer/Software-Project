@@ -180,7 +180,8 @@ void testReadCommand(){
 
 
 int finalMain(){
-	int seed=1;
+	int seed=1; /*TODO need seed?*/
+    int isMoveCommand;
 	ERROR e;
 	game* g;
 	command* c;
@@ -192,20 +193,26 @@ int finalMain(){
 		c = createCommand();
 		e=readCommand(c, g);
 		if(e==NO_ERROR){
+            isMoveCommand = commandIsAMove(c);
 			e = executeCommand(c, g);
+            if(e==NO_ERROR){
+                if(commandMightHaveChangedBoard(c)){
+                    printBoard(g->board,g->boardTypes,g->currMode,g->mark_errors);
+                }
+                if(!isMoveCommand){
+                    destroyCommand(c);
+                }
+            }
+            if(e!=NO_ERROR){
+                printErrorMessage(e, c, g->board->squareSideSize);
+                if (!isMoveCommand) destroyCommand(c);
+            }
 		}
-		if(e==NO_ERROR){
-			if(commandMightHaveChangedBoard(c)){
-				printBoard(g->board,g->boardTypes,g->currMode,g->mark_errors);
-				if(!commandIsAMove(c)){
-						destroyCommand(c);
-						}
-			}
-		}
-		if(e!=NO_ERROR){
+		else{
             printErrorMessage(e, c, g->board->squareSideSize);
-			destroyCommand(c);
+            destroyCommand(c);
 		}
+
 		if(g->currMode==BOARD_SOLVED_CORRECTLY_MODE){
 			printf("Congratulations! You solved the board correctly!\n");
 			g->currMode = INIT_MODE;
@@ -213,7 +220,7 @@ int finalMain(){
 		}
 
 	}
-	printf("Exit...\n");
+	printf("Exiting...\n");
 	/*all the commands outside the undoList are already destroyed so we only need to destroy the game*/
 	destroyGame(g);
 
