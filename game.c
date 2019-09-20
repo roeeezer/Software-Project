@@ -17,7 +17,11 @@ ERROR executeGenerateCommand(game *game,moveNode* move, int x, int y);
 
 ERROR executeGuessCommand(game *game, double thresh, moveNode *move);
 
+ERROR executeGuessHintCommand(board *pBoard, board *boardTypes, int x, int y);
 
+ERROR executeHintCommand(board *pBoard, board *bTypes, int x, int y);
+
+ERROR executeValidateCommand(board *pBoard);
 
 /*n is the number of rows in each board block
  *m is the number of columns in each board block
@@ -47,6 +51,13 @@ void destroyGame(game* game){
 	free(game);
 }
 
+/**
+ * Handles both solve and edit (when given a path) commands, loading from file
+ * @param pCommand
+ * @param pGame
+ * @param error
+ * @return appropriate error
+ */
 ERROR executeSolveOrEditCommand(command* pCommand,game* pGame,ERROR error){
     board *newBoard=NULL,*newBoardTypes=NULL;
     int n=0,m=0,currMode;
@@ -75,6 +86,11 @@ ERROR executeSolveOrEditCommand(command* pCommand,game* pGame,ERROR error){
     return error;
 
 }
+/**
+ * executes the num_solutions command
+ * @param b
+ * @return the number of solutions
+ */
 int executeNumSolutions(board* b){
 	board* tmpCopy;
 	int res;
@@ -87,6 +103,13 @@ int executeNumSolutions(board* b){
 
 
 }
+
+/**
+ * executes the Autofill command (only if the board allows it)
+ * @param g
+ * @param move
+ * @return the appropriate error
+ */
 ERROR executeAutofill(game* g,moveNode* move){
 	if(erroneousBoard(g->boardTypes)){
 		return COMMAND_UNAVAILABLE_WITH_ERRONEOUS_BOARD;
@@ -94,6 +117,8 @@ ERROR executeAutofill(game* g,moveNode* move){
 	return autofillBoard(g->board,g->boardTypes,move,g->currMode,1);
 
 }
+
+
 void undoOrRedoChange(game* g,changeNode* change,int ind){
 	if(ind==UNDO_CHANGE_IND){
 		setCellAndUpdateErroneous(g->board,g->boardTypes,change->i,change->j,change->prevVal,g->currMode);
@@ -102,6 +127,8 @@ void undoOrRedoChange(game* g,changeNode* change,int ind){
 			setCellAndUpdateErroneous(g->board,g->boardTypes,change->i,change->j,change->newVal,g->currMode);
 		}
 }
+
+
 void undoOrRedoChangesListStartingFrom(game* g,changeNode* start,int ind){
 	if(start->next==NULL){
 		undoOrRedoChange(g,start,ind);
@@ -110,12 +137,21 @@ void undoOrRedoChangesListStartingFrom(game* g,changeNode* start,int ind){
 	undoOrRedoChangesListStartingFrom(g,start->next,ind);
 	undoOrRedoChange(g,start,ind);
 }
+
+
 void undoOrRedoChangesList(game* g,changesList* list,int ind){
 	if(emptyChangesList(list)){
 		return;
 	}
 	undoOrRedoChangesListStartingFrom(g,list->first,ind);
 }
+
+/**
+ * executes undo command
+ * @param g
+ * @param printChanges
+ * @return
+ */
 ERROR executeUndo(game *g, int printChanges) {
 	moveNode* currMove;
 	if(emptyMovesList(g->undoList)||nodeIsStartSentinel(g->undoList,g->undoList->curr)){
@@ -150,7 +186,11 @@ ERROR executeRedo(game* g){
 	promoteCurrPointer(g->undoList);
 	return NO_ERROR;
 }
-
+/**
+ * executes the reset command
+ * @param g
+ * @return the appropriate error
+ */
 ERROR executeReset(game* g){
 	ERROR e = NO_ERROR;
 
@@ -159,7 +199,11 @@ ERROR executeReset(game* g){
 	}
 	return NO_ERROR;
 }
-
+/**
+ * executes the Edit command when not given a second parameter of a file to read.
+ * @param g the game
+ * @return an appropriate error
+ */
 ERROR executeDefaultEdit(game* g){
 	int n,m;
 	n=blockRows;
@@ -187,8 +231,10 @@ ERROR executeCommand(command* pCommand, game* pGame){
     moveNode *move;
     int res;
     error = checkLegalParam(pCommand, pGame);
-    if (error != NO_ERROR)
+    if (error != NO_ERROR){
+        destroyCommand(pCommand);
         return error;
+    }
 
     /*After this point, command is assumed legal for this game state.*/
     if(commandIsAMove(pCommand)){
@@ -372,6 +418,13 @@ ERROR executeGuessHintCommand(board *pBoard, board *boardTypes, int x, int y) {
     return error;
 }
 
+/**
+ * executes Guess command, copying result to original board
+ * @param game
+ * @param thresh the threshold (between 0 and 1)
+ * @param move the relevant move variable
+ * @return an appropriate error
+ */
 ERROR executeGuessCommand(game *game, double thresh, moveNode *move) {
     ERROR error;
     board* cpBoard;
@@ -396,7 +449,6 @@ ERROR executeGuessCommand(game *game, double thresh, moveNode *move) {
  * @return appropriate error
  */
 ERROR executeGenerateCommand(game *game,moveNode* move, int x, int y) {
-    /*TODO add autofill before start, as well as checking erroneous*/
     board* origBoard, *cpBoard;
     int i, success, N, debug_clears;
     ERROR error;
@@ -408,7 +460,7 @@ ERROR executeGenerateCommand(game *game,moveNode* move, int x, int y) {
         return GENERATE_NOT_ENOUGH_CELLS;
     cpBoard = createBoard(origBoard->rows, origBoard->columns);
     copyBoard(cpBoard, origBoard);
-    for (i = 0; i < 20; i++) { /*TODO CHANGE BACK TO 1000*/
+    for (i = 0; i < 1000; i++) { /*TODO CHANGE BACK TO 1000*/
         success = fillXRandomCells(cpBoard, x);
         if (success){
             error = solveILP(cpBoard);
@@ -430,8 +482,7 @@ ERROR executeGenerateCommand(game *game,moveNode* move, int x, int y) {
         clearRandomCell(cpBoard);
         debug_clears++;
     }
-    /*printBoard(cpBoard, game->boardTypes, SOLVE_MODE, 1); TODO debugPrint*/
-    if (DEBUG)printf("cleared %d cells\n y is %d, N is %d\n", debug_clears, y, N); /*TODO debugPrint*/
+    if (DEBUG)printf("cleared %d cells\n y is %d, N is %d\n", debug_clears, y, N);
     copyBoardAndUpdateMove(origBoard, cpBoard,move);
     destroyBoard(cpBoard);
     return NO_ERROR;
@@ -463,10 +514,12 @@ ERROR executeSetCommand(game *game,moveNode *move, int x, int y, int z) {
 }
 
 
-/*ERROR loadBoard(game *game, char *path){} TODO: implement this*/
 
-/*TODO: Remove this function*/
-
+/**
+ *
+ * @param c
+ * @return 1 if this is a command that might have changed the board (by name), 0 otherwise
+ */
 int commandMightHaveChangedBoard(command* c){
 	commandName name = c->name;
 	return name==EDIT||name==SOLVE||name==SET||name==AUTOFILL||name==UNDO||name==REDO||name==GENERATE||name==GUESS||name==RESET;

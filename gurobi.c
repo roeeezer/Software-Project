@@ -71,7 +71,7 @@ ERROR setUpGurobi(board *pBoard, int ilp, VAR **resultVars, double **solValues, 
     }
 
     /*Allocate and check malloc success */
-    ind = (int *) malloc(varCount * sizeof(int)); /*TODO: maybe ind and val only need N size? max constraint size*/
+    ind = (int *) malloc(varCount * sizeof(int));
     if (ind == NULL){
         cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
         return MALLOC_ERROR;
@@ -189,11 +189,11 @@ ERROR setUpGurobi(board *pBoard, int ilp, VAR **resultVars, double **solValues, 
     /* no solution found */
     else {
         if (optimstatus == GRB_INF_OR_UNBD || optimstatus == GRB_INFEASIBLE){
-            if (DEBUG)printf("Model is infeasible or unbounded\n"); /*todo debugPrint*/
+            if (DEBUG)printf("Model is infeasible or unbounded\n");
         }
             /* error or calculation stopped */
         else
-            if (DEBUG) printf("Optimization was stopped early\n"); /*todo debugPrint*/
+            if (DEBUG) printf("Optimization was stopped early\n");
         cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
         return GUROBI_UNABLE_TO_SOLVE;
     }
@@ -223,8 +223,6 @@ ERROR setUpGurobi(board *pBoard, int ilp, VAR **resultVars, double **solValues, 
         error = fillBoardFromSol(pBoard, varArr, varCount, sol);
     }
     else{
-        /* TODO debugPrint*/
-        /*if (DEBUG) printLPSolution(varArr, sol, varCount, obj);*/
         *resultVars = (VAR *) malloc(varCount * sizeof(VAR));
         if (*resultVars == NULL){
             cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
@@ -338,7 +336,7 @@ ERROR addBlockConstraints(GRBmodel *model, VAR *varArr, int *ind, double *val, i
                 if (index > 0){
                     grbError = GRBaddconstr(model, index, ind, val, GRB_EQUAL, 1.0, NULL);
                     if (grbError) {
-                        if (DEBUG) printf("ERROR in block constraint!\n"); /*TODO debugPrint*/
+                        if (DEBUG) printf("ERROR in block constraint!\n");
                         return GUROBI_GENERAL_ERROR;
                     }
                 }
@@ -372,7 +370,7 @@ ERROR addRowConstraints(GRBmodel *model, VAR *varArr, int *ind, double *val, int
             if (index > 0){
                 grbError = GRBaddconstr(model, index, ind, val, GRB_EQUAL, 1.0, NULL);
                 if (grbError) {
-                    if (DEBUG) printf("ERROR in row constraint!\n"); /*TODO debugPrint*/
+                    if (DEBUG) printf("ERROR in row constraint!\n");
                     return GUROBI_GENERAL_ERROR;
                 }
             }
@@ -405,7 +403,7 @@ ERROR addColConstraints(GRBmodel *model, VAR *varArr, int *ind, double *val, int
             if (index > 0){
                 grbError = GRBaddconstr(model, index, ind, val, GRB_EQUAL, 1.0, NULL);
                 if (grbError) {
-                    if (DEBUG) printf("ERROR in col constraint!\n"); /*TODO debugPrint*/
+                    if (DEBUG) printf("ERROR in col constraint!\n");
                     return GUROBI_GENERAL_ERROR;
                 }
             }
@@ -438,7 +436,6 @@ void fillVals(double *val, int valSize) {
  * @return
  */
 ERROR addCellConstraints(VAR *varArr, GRBmodel *model, int *ind, double *val, int varCount) {
-    /*TODO: double check this logic*/
     int i, index, row, col, numOfVarsInConstraint, grbError;
     for (i = 0; i < varCount;) {
         numOfVarsInConstraint = 0;
@@ -513,7 +510,7 @@ ERROR createVarArr(VAR *varArr, int varCount, int N, board *pBoard) {
                     }
                 }
                 if (!atLeastOneValidAssignment) {
-                    if (DEBUG)printf("Not one valid assignment in <%d,%d> \n", j+1, i+1); /*TODO debugPrint*/
+                    if (DEBUG)printf("Not one valid assignment in <%d,%d> \n", j+1, i+1);
                     return GUROBI_UNABLE_TO_SOLVE;
                 }
             }
@@ -522,10 +519,7 @@ ERROR createVarArr(VAR *varArr, int varCount, int N, board *pBoard) {
     return NO_ERROR;
 }
 
-ERROR solveGurobi(board* pBoard, int ilp){
-    if (!pBoard || !ilp) return NO_ERROR;
-    return NO_ERROR; /*TODO: Changme*/
-}
+
 int countVars(board *pBoard, int N) {
     int i, j,k, varCount;
     varCount = 0;

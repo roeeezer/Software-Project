@@ -119,7 +119,7 @@ void copyBoard(board* copy,board* orig){
 	int s,cellsInBoard,i,v;
 	int indices[2];
 	if(copy->rows!=orig->rows||copy->columns!=orig->columns){
-		printf("unmatched boards in copyBoard(board* copy,board* orig)"); /*TODO debugPrint ?*/
+		if (DEBUG) printf("unmatched boards in copyBoard(board* copy,board* orig)");
 		exit(0);
 	}
 	s = copy->squareSideSize;

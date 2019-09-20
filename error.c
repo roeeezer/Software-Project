@@ -4,7 +4,7 @@
  *      Author: roee
  */
 #include "error.h"
-#define DEBUG_ERROR 1 /*TODO debugPrint*/
+#define DEBUG_ERROR 0
 /**
  * Prints the relevant error message
  * @param error
