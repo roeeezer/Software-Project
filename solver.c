@@ -63,7 +63,7 @@ ERROR solveLPForTargetCell(board *pBoard, int i, int j, int *cellValues, double 
     copyBoard(cpBoard, pBoard);
     simpleAutofill(cpBoard);
     if (DEBUG && (resultVars == NULL || solValues == NULL))
-        printf("Your arrays are NULL!\n"); /*TODO debugPrint*/
+        if (DEBUG) printf("Your arrays are NULL!\n"); /*TODO debugPrint*/
     *numOfValuesInCell = 0;
     index = 0;
     for (counter = 0; counter < varCount; counter++) {
@@ -111,7 +111,7 @@ ERROR solveLPWithThreshold(board *pBoard, double threshold){
     if (cellValues == NULL)
         return MALLOC_ERROR;
     if (DEBUG && (resultVars == NULL || solValues == NULL))
-        printf("Your arrays are NULL!\n"); /*TODO debugPrint*/
+        if (DEBUG) printf("Your arrays are NULL!\n"); /*TODO debugPrint*/
     for (i = 0; i < varCount;) {
         numOfValuesInCell = 0;
         index = 0;

@@ -428,7 +428,7 @@ ERROR executeGenerateCommand(game *game,moveNode* move, int x, int y) {
         debug_clears++;
     }
     /*printBoard(cpBoard, game->boardTypes, SOLVE_MODE, 1); TODO debugPrint*/
-    printf("cleared %d cells\n y is %d, N is %d\n", debug_clears, y, N); /*TODO debugPrint*/
+    if (DEBUG)printf("cleared %d cells\n y is %d, N is %d\n", debug_clears, y, N); /*TODO debugPrint*/
     copyBoardAndUpdateMove(origBoard, cpBoard,move);
     destroyBoard(cpBoard);
     return NO_ERROR;

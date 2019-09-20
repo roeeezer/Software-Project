@@ -259,7 +259,7 @@ ERROR readCommand(command *pCommand, game* pGame) {
     if (!correctNumberOfParams(name, numberOfParams))
         return INCORRECT_NUMBER_OF_PARAMS;
     if (param1){
-        if (DEBUG)printf("inside readCommand:\n param1: %s\n", param1); /*todo debugPrint*/
+        if (DEBUG) printf("inside readCommand:\n param1: %s\n", param1); /*todo debugPrint*/
         strcpy(pCommand->param1, param1);
     }
     if (param2)

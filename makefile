@@ -6,7 +6,7 @@ GUROBI_COMP = -I/usr/local/lib/gurobi563/include
 GUROBI_LIB = -L/usr/local/lib/gurobi563/lib -lgurobi56
 
 
-HEADERS = auxiliary.h board.h changeNode.h changesList.h command.h error.h files.h game.h gurobi.h gurobi_c.h moveNode.h movesList.h parser.h solver.h SPBufferset.h stack.h stackNode.h
+HEADERS = board.h changeNode.h changesList.h command.h error.h files.h game.h gurobi.h gurobi_c.h moveNode.h movesList.h parser.h solver.h SPBufferset.h stack.h stackNode.h
 # gurobi.h gurobi_c.h
 #remove auxiliary?
 

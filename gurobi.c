@@ -183,15 +183,17 @@ ERROR setUpGurobi(board *pBoard, int ilp, VAR **resultVars, double **solValues, 
         cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
         return GUROBI_GENERAL_ERROR;
     }
-    if (optimstatus == GRB_OPTIMAL)
-        printf("Optimal objective: found\n");
+    if (optimstatus == GRB_OPTIMAL){
+        if (DEBUG) printf("Optimal objective: found\n");
+    }
     /* no solution found */
     else {
-        if (optimstatus == GRB_INF_OR_UNBD || optimstatus == GRB_INFEASIBLE)
-            printf("Model is infeasible or unbounded\n"); /*todo debugPrint*/
+        if (optimstatus == GRB_INF_OR_UNBD || optimstatus == GRB_INFEASIBLE){
+            if (DEBUG)printf("Model is infeasible or unbounded\n"); /*todo debugPrint*/
+        }
             /* error or calculation stopped */
         else
-            printf("Optimization was stopped early\n"); /*todo debugPrint*/
+            if (DEBUG) printf("Optimization was stopped early\n"); /*todo debugPrint*/
         cleanUp(ind, val, lb, ub, obj, vtype, varArr, env, model, sol);
         return GUROBI_UNABLE_TO_SOLVE;
     }
@@ -336,7 +338,7 @@ ERROR addBlockConstraints(GRBmodel *model, VAR *varArr, int *ind, double *val, i
                 if (index > 0){
                     grbError = GRBaddconstr(model, index, ind, val, GRB_EQUAL, 1.0, NULL);
                     if (grbError) {
-                        printf("ERROR in block constraint!\n"); /*TODO debugPrint*/
+                        if (DEBUG) printf("ERROR in block constraint!\n"); /*TODO debugPrint*/
                         return GUROBI_GENERAL_ERROR;
                     }
                 }
@@ -370,7 +372,7 @@ ERROR addRowConstraints(GRBmodel *model, VAR *varArr, int *ind, double *val, int
             if (index > 0){
                 grbError = GRBaddconstr(model, index, ind, val, GRB_EQUAL, 1.0, NULL);
                 if (grbError) {
-                    printf("ERROR in row constraint!\n"); /*TODO debugPrint*/
+                    if (DEBUG) printf("ERROR in row constraint!\n"); /*TODO debugPrint*/
                     return GUROBI_GENERAL_ERROR;
                 }
             }
@@ -403,7 +405,7 @@ ERROR addColConstraints(GRBmodel *model, VAR *varArr, int *ind, double *val, int
             if (index > 0){
                 grbError = GRBaddconstr(model, index, ind, val, GRB_EQUAL, 1.0, NULL);
                 if (grbError) {
-                    printf("ERROR in col constraint!\n"); /*TODO debugPrint*/
+                    if (DEBUG) printf("ERROR in col constraint!\n"); /*TODO debugPrint*/
                     return GUROBI_GENERAL_ERROR;
                 }
             }
