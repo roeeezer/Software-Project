@@ -11,6 +11,10 @@ moveNode* createMoveNode(command* c){
 		return NULL;
 	}
 	res = (moveNode*)malloc(sizeof(moveNode));
+    if (res == NULL) {
+        printf("Error: malloc has failed!\n");
+        exit(-42);
+    }
 	res->command = c;
 	res->changes = createChangesList();
 	res->next=NULL;

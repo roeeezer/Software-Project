@@ -160,7 +160,7 @@ ERROR checkGuessHintParams(char *param1, char *param2, int N) {
 ERROR checkGenerateParams(char *param2, char *param1, int N) {
     if (!isValidInteger(param1) || !isValidInteger(param2))
         return PARAM_OUT_OF_RANGE_FOR_GENERATE;
-    if (atoi(param1) < 0 || atoi(param1) > N*N || atoi(param2) < 0 || atoi(param2) > N*N)
+    if (atoi(param1) < 0 || atoi(param1) > N*N || atoi(param2) < 1 || atoi(param2) > N*N)
         return PARAM_OUT_OF_RANGE_FOR_GENERATE;
     return NO_ERROR;
 }
@@ -259,7 +259,7 @@ ERROR readCommand(command *pCommand, game* pGame) {
     if (!correctNumberOfParams(name, numberOfParams))
         return INCORRECT_NUMBER_OF_PARAMS;
     if (param1){
-        printf("inside readCommand:\n param1: %s\n", param1); /*todo debugPrint*/
+        if (DEBUG)printf("inside readCommand:\n param1: %s\n", param1); /*todo debugPrint*/
         strcpy(pCommand->param1, param1);
     }
     if (param2)
@@ -367,7 +367,7 @@ int readInteger(char *token, int *pInt) {
     return 1;
 }
 void printWelcomeMessage(){
-	printf("-- Welcome to Roee and Omer's Sudoko game! --\n");
+	printf("-- Welcome to Roee and Omer's Sudoku game! --\n");
 }
 void printGameMode(game* g){
 	switch(g->currMode){
@@ -384,6 +384,6 @@ void printGameMode(game* g){
 }
 void askForCommand(game* g){
 	printf("Game Mode = ");printGameMode(g);printf("\n");
-	printf("Please enter you command:\n");
+	printf("Please enter your command:\n");
 }
 

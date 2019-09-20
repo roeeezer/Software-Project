@@ -4,18 +4,19 @@
  *      Author: roee
  */
 #include "error.h"
-
+#define DEBUG_ERROR 1 /*TODO debugPrint*/
 /**
  * Prints the relevant error message
  * @param error
- * @param pCommand
+ * @param pCommand the command which was issued
+ * @param N the maximum allowed int value on the board.
  */
 
 void printErrorMessage(ERROR error, command *pCommand, int N) {
     switch(error) {
         case NO_ERROR:
         	/*temp: just for debuging*/
-        	printf("No error message!\n");
+        	if (DEBUG_ERROR)printf("No error message!\n");
             break;
         case INPUT_TOO_LONG:
             printf("Error: input must be at most 256 characters long.\n");
@@ -31,11 +32,8 @@ void printErrorMessage(ERROR error, command *pCommand, int N) {
             break;
         case PARAM_OUT_OF_RANGE:
             break;
-        case INPUT_ERROR:
-            printf("INPUT_ERROR message not implemented\n");
-            break;
         case MALLOC_ERROR:
-            printf("Error: malloc has failed\n");
+            printf("Error: malloc has failed!\n");
             break;
         case UNKNOWN_ERROR:
             printf("An unknown error occurred. This shouldn't happen\n");
@@ -105,22 +103,29 @@ void printErrorMessage(ERROR error, command *pCommand, int N) {
             break;
         case PARAM_OUT_OF_RANGE_FOR_SET:
             printf("Error: the first two parameters must be integers between 1 and %d, "
-                   "and the third must be between 0 and %d\n", N, N);
+                   "and the third must be an integer between 0 and %d\n", N, N);
             break;
         case PARAM_OUT_OF_RANGE_FOR_GUESS:
             printf("Error: both parameters must be integers between 1 and %d\n", N);
             break;
         case PARAM_OUT_OF_RANGE_FOR_GENERATE:
-            printf("Error: both parameters must be integers between 0 and %d\n", N * N);
+            printf("Error: both parameters must be integers, "
+                   "X must be between 0 and %d, and Y must be between 1 and %d \n", N * N, N * N);
             break;
         case HINT_OR_GUESS_BOARD_ERRONEOUS:
+            printf("Error: This command is invalid when the board contains errors.\n");
             break;
         case HINT_OR_GUESS_FIXED_CELL:
+            printf("Error: That cell is fixed!\n");
             break;
         case HINT_OR_GUESS_NON_EMPTY_CELL:
+            printf("Error: this cell already contains a value.\n");
             break;
         case GUROBI_UNABLE_TO_SOLVE:
+            printf("Error: Could not solve board. Either the board "
+                   "is unsolvable or an internal Gurobi occurred \n");
             break;
+
     }
 }
 

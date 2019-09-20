@@ -336,7 +336,7 @@ ERROR addBlockConstraints(GRBmodel *model, VAR *varArr, int *ind, double *val, i
                 if (index > 0){
                     grbError = GRBaddconstr(model, index, ind, val, GRB_EQUAL, 1.0, NULL);
                     if (grbError) {
-                        printf("ERROR in block constraint!\n");
+                        printf("ERROR in block constraint!\n"); /*TODO debugPrint*/
                         return GUROBI_GENERAL_ERROR;
                     }
                 }
@@ -370,7 +370,7 @@ ERROR addRowConstraints(GRBmodel *model, VAR *varArr, int *ind, double *val, int
             if (index > 0){
                 grbError = GRBaddconstr(model, index, ind, val, GRB_EQUAL, 1.0, NULL);
                 if (grbError) {
-                    printf("ERROR in row constraint!\n");
+                    printf("ERROR in row constraint!\n"); /*TODO debugPrint*/
                     return GUROBI_GENERAL_ERROR;
                 }
             }
@@ -403,7 +403,7 @@ ERROR addColConstraints(GRBmodel *model, VAR *varArr, int *ind, double *val, int
             if (index > 0){
                 grbError = GRBaddconstr(model, index, ind, val, GRB_EQUAL, 1.0, NULL);
                 if (grbError) {
-                    printf("ERROR in col constraint!\n");
+                    printf("ERROR in col constraint!\n"); /*TODO debugPrint*/
                     return GUROBI_GENERAL_ERROR;
                 }
             }
@@ -491,13 +491,15 @@ void cleanUp(int *ind, double *val, double *lowerBound, double *upperBound, doub
  * @param varCount size of this array
  */
 ERROR createVarArr(VAR *varArr, int varCount, int N, board *pBoard) {
-    int i, j, v, index;
+    int i, j, v, index, atLeastOneValidAssignment;
     index = 0;
     for (i = 0; i < N; i++) {
         for (j = 0; j < N; j++) {
+            atLeastOneValidAssignment = 0;
             if (emptyCell(pBoard, i, j)) {
                 for (v = 1; v < N + 1; v++) {/*Values are 1-indexed*/
                     if (validAsignment(pBoard, v, i, j)) {
+                        atLeastOneValidAssignment = 1;
                         if (index > varCount) {
                             if (DEBUG) printf("VarCount exceeded in creating varArr\n");
                             return GUROBI_GENERAL_ERROR; /*Shouldn't happen */
@@ -507,6 +509,10 @@ ERROR createVarArr(VAR *varArr, int varCount, int N, board *pBoard) {
                         (varArr+index)->val = v;
                         index++;
                     }
+                }
+                if (!atLeastOneValidAssignment) {
+                    if (DEBUG)printf("Not one valid assignment\n"); /*TODO debugPrint*/
+                    return GUROBI_UNABLE_TO_SOLVE;
                 }
             }
         }

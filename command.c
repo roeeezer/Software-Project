@@ -21,6 +21,7 @@ command* createCommand(){
 	res->param1 = param1;
 	res->param2 = param2;
     res->param3 = param3;
+    res->name = NONE;
 	return res;
 }
 void destroyCommand(command* PcurrCommand){

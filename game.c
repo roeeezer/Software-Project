@@ -172,21 +172,28 @@ ERROR executeDefaultEdit(game* g){
     g->currMode = EDIT_MODE;
     return NO_ERROR;/*the only possible error is malloc fatal error*/
 }
+
+/**
+ * Receives a command and a game, and performs it.
+ * Calls checkLegalParam to make sure that the command is legal.
+ * Errors arising from command execution are returned.
+ * @param pCommand
+ * @param pGame
+ * @return appropriate error, or NO_ERROR if command executed succesfully
+ */
 ERROR executeCommand(command* pCommand, game* pGame){
     ERROR error;
     moveNode *move;
     int res;
-    if(commandIsAMove(pCommand)){
-    	move = createMoveNode(pCommand);
-    }
     error = checkLegalParam(pCommand, pGame);
-
-    error = NO_ERROR;  /*TODO: remove this after finishing checkLegalParam*/
-
     if (error != NO_ERROR)
         return error;
 
     /*After this point, command is assumed legal for this game state.*/
+    if(commandIsAMove(pCommand)){
+    	move = createMoveNode(pCommand);
+    }
+
     switch(pCommand->name) {
         case SOLVE:
             error= executeSolveOrEditCommand(pCommand,pGame,error);
@@ -262,7 +269,7 @@ ERROR executeCommand(command* pCommand, game* pGame){
     if(commandIsAMove(pCommand)&&error!=NO_ERROR){
     	destroyMoveNode(move);
     }
-    if(commandIsAMove(pCommand)&&error==NO_ERROR){
+    else if(commandIsAMove(pCommand)&&error==NO_ERROR){
     	makeMoveTheLastInTheList(pGame->undoList,pGame->undoList->curr);
     	addMove(pGame->undoList,move);
     	promoteCurrPointer(pGame->undoList);
@@ -400,7 +407,7 @@ ERROR executeGenerateCommand(game *game,moveNode* move, int x, int y) {
         return GENERATE_NOT_ENOUGH_CELLS;
     cpBoard = createBoard(origBoard->rows, origBoard->columns);
     copyBoard(cpBoard, origBoard);
-    for (i = 0; i < 1000; i++) {
+    for (i = 0; i < 2; i++) { /*TODO CHANGE BACK TO 1000*/
         success = fillXRandomCells(cpBoard, x);
         if (success){
             error = solveILP(cpBoard);
