@@ -23,7 +23,6 @@ ERROR saveGame(board* b,board* bTypes,char* path,int gameMode){
 
 	fo = fopen(path,"w+");
 	if(fo==NULL){
-		/*TODO: deal with the error*/
 		return FOPEN_ERROR;
 	}
 	if(fprintf(fo,"%d %d\n",b->rows,b->columns)<0){

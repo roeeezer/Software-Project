@@ -6,7 +6,7 @@
 #include "error.h"
 #include "board.h"
 
-#define DEBUG 1
+#define DEBUG 0
 
 typedef struct{
    int row, col, val;

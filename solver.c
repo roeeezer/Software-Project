@@ -29,7 +29,7 @@ ERROR solveILP(board* pBoard){
     error = setUpGurobi(cpBoard, 1, NULL, NULL, NULL);
     if (error == NO_ERROR)
         copyBoard(pBoard, cpBoard);
-    else if (DEBUG) /*TODO debugPrint*/
+    else if (DEBUG)
         printf("Error in solveILP\n");
     destroyBoard(cpBoard);
     return error;
@@ -45,7 +45,6 @@ ERROR solveILP(board* pBoard){
  * @return
  */
 ERROR solveLPForTargetCell(board *pBoard, int i, int j, int *cellValues, double *cellScores, int *numOfValuesInCell) {
-    /*TODO @Omer go over this*/
     board* cpBoard;
     int counter, varCount, index;
     ERROR error;
@@ -63,7 +62,7 @@ ERROR solveLPForTargetCell(board *pBoard, int i, int j, int *cellValues, double 
     copyBoard(cpBoard, pBoard);
     simpleAutofill(cpBoard);
     if (DEBUG && (resultVars == NULL || solValues == NULL))
-        if (DEBUG) printf("Your arrays are NULL!\n"); /*TODO debugPrint*/
+        if (DEBUG) printf("Your arrays are NULL!\n");
     *numOfValuesInCell = 0;
     index = 0;
     for (counter = 0; counter < varCount; counter++) {
@@ -75,7 +74,7 @@ ERROR solveLPForTargetCell(board *pBoard, int i, int j, int *cellValues, double 
         }
     }
     destroyBoard(cpBoard);
-    return NO_ERROR; /*TODO change this func not done*/
+    return NO_ERROR;
 }
 
 /**
@@ -111,7 +110,7 @@ ERROR solveLPWithThreshold(board *pBoard, double threshold){
     if (cellValues == NULL)
         return MALLOC_ERROR;
     if (DEBUG && (resultVars == NULL || solValues == NULL))
-        if (DEBUG) printf("Your arrays are NULL!\n"); /*TODO debugPrint*/
+        if (DEBUG) printf("Your arrays are NULL!\n");
     for (i = 0; i < varCount;) {
         numOfValuesInCell = 0;
         index = 0;
@@ -195,7 +194,7 @@ int chooseWithThreshold(double *scoresArr, int *valuesArr, double threshold, int
             break;
         }
     }
-    if ((resIndex == -1) && DEBUG) printf("Problem with chooseWithThreshold!\n"); /*TODO debugPrint*/
+    if ((resIndex == -1) && DEBUG) printf("Problem with chooseWithThreshold!\n");
     return valuesArr[resIndex];
 }
 

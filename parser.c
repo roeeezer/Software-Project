@@ -217,7 +217,7 @@ ERROR readCommand(command *pCommand, game* pGame) {
     int numberOfParams = 0;
     char *param1, *param2, *param3, *param4;
     char input[MAX_INPUT_SIZE];
-    char* res; /*TODO: Make result an array of size MAX_INPUT_SIZE?*/
+    char* res;
     char* token;
     commandName name;
     char *delim = " \t\r\n";
@@ -229,7 +229,7 @@ ERROR readCommand(command *pCommand, game* pGame) {
         pCommand->name = EXIT;
         return NO_ERROR;
     }
-    while (strcmp(res, "\n") == 0){ /*TODO: change it so blank lines count as empty commands and nothing happens*/
+    while (strcmp(res, "\n") == 0){
         res = fgets(input, MAX_INPUT_SIZE, stdin);
         if (res == NULL){
             pCommand->name = EXIT;
@@ -259,7 +259,7 @@ ERROR readCommand(command *pCommand, game* pGame) {
     if (!correctNumberOfParams(name, numberOfParams))
         return INCORRECT_NUMBER_OF_PARAMS;
     if (param1){
-        if (DEBUG) printf("inside readCommand:\n param1: %s\n", param1); /*todo debugPrint*/
+        if (DEBUG) printf("inside readCommand:\n param1: %s\n", param1);
         strcpy(pCommand->param1, param1);
     }
     if (param2)
@@ -341,7 +341,7 @@ int correctNumberOfParams(commandName name, int numOfParams) {
     return 0;
 }
 
-int checkValidFloat(char* str){/*TODO: complete this method*/
+int checkValidFloat(char* str){
     int i, decimalSeen;
     decimalSeen = 0;
     for (i = 0; i < (int)strlen(str); i++){
@@ -355,17 +355,7 @@ int checkValidFloat(char* str){/*TODO: complete this method*/
     return 1;
 }
 
-/*
- * Reads an integer from the token to a given integer point
- * Returns 1 if the token is a str representing a integer (succeeded in conversion)
- * Returns 0 otherwise*/
-int readInteger(char *token, int *pInt) {
-    if (token == NULL)
-        return 0;
-    *pInt = atoi(token); /*Per specifications, assumes valid integer*/
-    /*TODO: add checking to see if input is valid int*/
-    return 1;
-}
+
 void printWelcomeMessage(){
 	printf("-- Welcome to Roee and Omer's Sudoku game! --\n");
 }

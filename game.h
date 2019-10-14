@@ -39,14 +39,7 @@ typedef struct{
 game* createGame();
 void destroyGame(game* game);
 
-/*TODO make these methods private after testing*/
-ERROR executeGuessHintCommand(board *pBoard, board *boardTypes, int x, int y);
 
-/*TODO make these methods private after testing*/
-ERROR executeHintCommand(board *pBoard, board *bTypes, int x, int y);
-
-/*TODO make these methods private after testing*/
-ERROR executeValidateCommand(board *pBoard);
 /**
  * @param PcurrCommand the pointer to the command
  * @param Pgame the relevent game
